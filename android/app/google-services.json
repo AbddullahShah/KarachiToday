@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "449858198896",
+    "project_id": "KarachiToday-f3161",
+    "storage_bucket": "KarachiToday-f3161.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:449858198896:android:a578a641167f45f99243b5",
+        "android_client_info": {
+          "package_name": "com.karachitoday"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "449858198896-mcmg7v9crciqfv2nimrj3m01620tgbst.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAsCDafwToRQ_ZOPVo5GjQjwTRI9XcNnvY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "449858198896-mcmg7v9crciqfv2nimrj3m01620tgbst.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
