@@ -35,7 +35,7 @@ const styles = StyleSheet.create({
   }),
   text: {
     fontSize: fontsSize.md2,
-    fontFamily: fontsFamily.semibold,
+    fontFamily: fontsFamily.medium,
     color: colors.onPrimary,
   },
 });

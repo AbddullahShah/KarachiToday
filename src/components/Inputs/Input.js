@@ -2,16 +2,27 @@ import {
   heightPercentageToDP,
   widthPercentageToDP,
 } from 'react-native-responsive-screen';
-import React from 'react';
+import React, {useState} from 'react';
 
 // local import
-import {View, TextInput, Text, StyleSheet} from 'react-native';
+import {
+  View,
+  TextInput,
+  Text,
+  StyleSheet,
+  Image,
+  Pressable,
+} from 'react-native';
 import {fontsFamily, fontsSize} from '../../constants/fonts';
+import colors from '../../constants/colors';
+import images from '../../assets/images';
 
 const Input = ({
   value,
   placeholderText,
   isPassword,
+  icon,
+  label,
   handleOnChangeTxt,
   keyboardType,
   editable = true,
@@ -20,9 +31,21 @@ const Input = ({
   errorType,
   ...props
 }) => {
+  const [isSecure, setIsSecure] = useState(isPassword || false);
   return (
     <>
-      <View style={styles.container(marginTop)}>
+      <Text style={styles.label(marginTop)}>{label}</Text>
+      <View style={styles.container}>
+        {icon && (
+          <Image
+            source={icon}
+            resizeMode="contain"
+            style={{
+              width: widthPercentageToDP(5),
+              height: widthPercentageToDP(5),
+            }}
+          />
+        )}
         <TextInput
           editable={editable}
           value={value}
@@ -30,10 +53,24 @@ const Input = ({
           placeholderTextColor="#c6c6c6"
           style={styles.textInput}
           onChangeText={handleOnChangeTxt}
-          secureTextEntry={isPassword}
+          secureTextEntry={isSecure}
           keyboardType={keyboardType}
           {...props}
         />
+        {isPassword && (
+          <Pressable
+            onPress={() => setIsSecure(!isSecure)}
+            style={styles.passWrapper}>
+            <Image
+              source={!isSecure ? images.OpenEye : images.CloseEye}
+              resizeMode="contain"
+              style={{
+                width: '100%',
+                height: '100%',
+              }}
+            />
+          </Pressable>
+        )}
       </View>
       {error && <Text style={styles.errorText}>{errorType}</Text>}
     </>
@@ -43,22 +80,28 @@ const Input = ({
 export default Input;
 
 const styles = StyleSheet.create({
-  container: marginTop => ({
-    width: '100%',
+  label: marginTop => ({
     marginTop: marginTop,
-    height: heightPercentageToDP(6),
-    backgroundColor: '#f4f4f4',
-    justifyContent: 'center',
-    borderRadius: widthPercentageToDP(100),
-    borderColor: '#d7d7d7',
-    borderWidth: 0.5,
+    fontFamily: fontsFamily.semibold,
+    fontSize: fontsSize.md2,
+    color: colors.textDark,
   }),
+  container: {
+    width: '100%',
+    marginTop: heightPercentageToDP(1),
+    flexDirection: 'row',
+    alignItems: 'center',
+    height: heightPercentageToDP(6),
+    backgroundColor: '#F0F0F0',
+    paddingHorizontal: widthPercentageToDP(4),
+    borderRadius: widthPercentageToDP(2),
+  },
   textInput: {
     fontSize: fontsSize.md2,
+    width: widthPercentageToDP(50),
     padding: 0,
-    width: widthPercentageToDP(80),
+    marginLeft: widthPercentageToDP(2),
     color: 'grey',
-    marginLeft: widthPercentageToDP(5),
   },
   errorText: {
     fontFamily: fontsFamily.regular,
@@ -67,5 +110,11 @@ const styles = StyleSheet.create({
     fontSize: fontsSize.sm2,
     alignSelf: 'flex-start',
     color: '#ff0202',
+  },
+  passWrapper: {
+    position: 'absolute',
+    width: widthPercentageToDP(5),
+    height: widthPercentageToDP(5),
+    right: widthPercentageToDP(4),
   },
 });

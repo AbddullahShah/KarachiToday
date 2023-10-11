@@ -12,7 +12,7 @@
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		5B6DB509F876419FB3607598 /* Inter-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4B3715BE47E24A5B906133C9 /* Inter-Medium.ttf */; };
-		7699B88040F8A987B510C191 /* libPods-KarachiToday-QatarHomeTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 19F6CBCC0A4E27FBF8BF4A61 /* libPods-KarachiToday-QatarHomeTests.a */; };
+		7699B88040F8A987B510C191 /* libPods-KarachiToday-KarachiTodayTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 19F6CBCC0A4E27FBF8BF4A61 /* libPods-KarachiToday-KarachiTodayTests.a */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		A819EA9BB9DB44A9B65A4276 /* Inter-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 3491991D272C4780B8A75931 /* Inter-Bold.ttf */; };
 		ACD7D9A1800143C78E7C98FE /* Inter-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = CC9DEAC1C7F64C0AAD0B1DF8 /* Inter-Black.ttf */; };
@@ -36,7 +36,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		00E356EE1AD99517003FC87E /* QatarHomeTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = QatarHomeTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		00E356EE1AD99517003FC87E /* KarachiTodayTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = KarachiTodayTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		0CD1DCEB0F184954885CD2F1 /* Inter-ExtraLight.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter-ExtraLight.ttf"; path = "../src/assets/fonts/Inter-ExtraLight.ttf"; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* KarachiToday.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = KarachiToday.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = KarachiToday/AppDelegate.h; sourceTree = "<group>"; };
@@ -45,16 +45,16 @@
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = KarachiToday/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = KarachiToday/main.m; sourceTree = "<group>"; };
 		194C0848537B43029E864F02 /* Inter-Thin.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter-Thin.ttf"; path = "../src/assets/fonts/Inter-Thin.ttf"; sourceTree = "<group>"; };
-		19F6CBCC0A4E27FBF8BF4A61 /* libPods-KarachiToday-QatarHomeTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-KarachiToday-QatarHomeTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		19F6CBCC0A4E27FBF8BF4A61 /* libPods-KarachiToday-KarachiTodayTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-KarachiToday-KarachiTodayTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		3491991D272C4780B8A75931 /* Inter-Bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter-Bold.ttf"; path = "../src/assets/fonts/Inter-Bold.ttf"; sourceTree = "<group>"; };
 		3B4392A12AC88292D35C810B /* Pods-KarachiToday.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-KarachiToday.debug.xcconfig"; path = "Target Support Files/Pods-KarachiToday/Pods-KarachiToday.debug.xcconfig"; sourceTree = "<group>"; };
 		4B3715BE47E24A5B906133C9 /* Inter-Medium.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter-Medium.ttf"; path = "../src/assets/fonts/Inter-Medium.ttf"; sourceTree = "<group>"; };
 		5709B34CF0A7D63546082F79 /* Pods-KarachiToday.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-KarachiToday.release.xcconfig"; path = "Target Support Files/Pods-KarachiToday/Pods-KarachiToday.release.xcconfig"; sourceTree = "<group>"; };
-		5B7EB9410499542E8C5724F5 /* Pods-KarachiToday-QatarHomeTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-KarachiToday-QatarHomeTests.debug.xcconfig"; path = "Target Support Files/Pods-KarachiToday-QatarHomeTests/Pods-KarachiToday-QatarHomeTests.debug.xcconfig"; sourceTree = "<group>"; };
+		5B7EB9410499542E8C5724F5 /* Pods-KarachiToday-KarachiTodayTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-KarachiToday-KarachiTodayTests.debug.xcconfig"; path = "Target Support Files/Pods-KarachiToday-KarachiTodayTests/Pods-KarachiToday-KarachiTodayTests.debug.xcconfig"; sourceTree = "<group>"; };
 		5DCACB8F33CDC322A6C60F78 /* libPods-KarachiToday.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-KarachiToday.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		720E503D02014275AE01C6EB /* Inter-SemiBold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter-SemiBold.ttf"; path = "../src/assets/fonts/Inter-SemiBold.ttf"; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = KarachiToday/LaunchScreen.storyboard; sourceTree = "<group>"; };
-		89C6BE57DB24E9ADA2F236DE /* Pods-KarachiToday-QatarHomeTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-KarachiToday-QatarHomeTests.release.xcconfig"; path = "Target Support Files/Pods-KarachiToday-QatarHomeTests/Pods-KarachiToday-QatarHomeTests.release.xcconfig"; sourceTree = "<group>"; };
+		89C6BE57DB24E9ADA2F236DE /* Pods-KarachiToday-KarachiTodayTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-KarachiToday-KarachiTodayTests.release.xcconfig"; path = "Target Support Files/Pods-KarachiToday-KarachiTodayTests/Pods-KarachiToday-KarachiTodayTests.release.xcconfig"; sourceTree = "<group>"; };
 		AFAB4AFC51744BE8842C5157 /* Inter-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter-Regular.ttf"; path = "../src/assets/fonts/Inter-Regular.ttf"; sourceTree = "<group>"; };
 		BF8FE70E2A7164C1002CEF71 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		BF94E49E2A71793B00C4E539 /* KarachiToday.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = KarachiToday.entitlements; path = KarachiToday/KarachiToday.entitlements; sourceTree = "<group>"; };
@@ -94,7 +94,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7699B88040F8A987B510C191 /* libPods-KarachiToday-QatarHomeTests.a in Frameworks */,
+				7699B88040F8A987B510C191 /* libPods-KarachiToday-KarachiTodayTests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -130,7 +130,7 @@
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
 				5DCACB8F33CDC322A6C60F78 /* libPods-KarachiToday.a */,
-				19F6CBCC0A4E27FBF8BF4A61 /* libPods-KarachiToday-QatarHomeTests.a */,
+				19F6CBCC0A4E27FBF8BF4A61 /* libPods-KarachiToday-KarachiTodayTests.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -177,7 +177,7 @@
 			isa = PBXGroup;
 			children = (
 				13B07F961A680F5B00A75B9A /* KarachiToday.app */,
-				00E356EE1AD99517003FC87E /* QatarHomeTests.xctest */,
+				00E356EE1AD99517003FC87E /* KarachiTodayTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -187,8 +187,8 @@
 			children = (
 				3B4392A12AC88292D35C810B /* Pods-KarachiToday.debug.xcconfig */,
 				5709B34CF0A7D63546082F79 /* Pods-KarachiToday.release.xcconfig */,
-				5B7EB9410499542E8C5724F5 /* Pods-KarachiToday-QatarHomeTests.debug.xcconfig */,
-				89C6BE57DB24E9ADA2F236DE /* Pods-KarachiToday-QatarHomeTests.release.xcconfig */,
+				5B7EB9410499542E8C5724F5 /* Pods-KarachiToday-KarachiTodayTests.debug.xcconfig */,
+				89C6BE57DB24E9ADA2F236DE /* Pods-KarachiToday-KarachiTodayTests.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -228,9 +228,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		00E356ED1AD99517003FC87E /* QatarHomeTests */ = {
+		00E356ED1AD99517003FC87E /* KarachiTodayTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 00E357021AD99517003FC87E /* Build configuration list for PBXNativeTarget "QatarHomeTests" */;
+			buildConfigurationList = 00E357021AD99517003FC87E /* Build configuration list for PBXNativeTarget "KarachiTodayTests" */;
 			buildPhases = (
 				A55EABD7B0C7F3A422A6CC61 /* [CP] Check Pods Manifest.lock */,
 				00E356EA1AD99517003FC87E /* Sources */,
@@ -244,9 +244,9 @@
 			dependencies = (
 				00E356F51AD99517003FC87E /* PBXTargetDependency */,
 			);
-			name = QatarHomeTests;
-			productName = QatarHomeTests;
-			productReference = 00E356EE1AD99517003FC87E /* QatarHomeTests.xctest */;
+			name = KarachiTodayTests;
+			productName = KarachiTodayTests;
+			productReference = 00E356EE1AD99517003FC87E /* KarachiTodayTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 		13B07F861A680F5B00A75B9A /* KarachiToday */ = {
@@ -289,7 +289,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "QatarHome" */;
+			buildConfigurationList = 83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "KarachiToday" */;
 			compatibilityVersion = "Xcode 12.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -303,7 +303,7 @@
 			projectRoot = "";
 			targets = (
 				13B07F861A680F5B00A75B9A /* KarachiToday */,
-				00E356ED1AD99517003FC87E /* QatarHomeTests */,
+				00E356ED1AD99517003FC87E /* KarachiTodayTests */,
 			);
 		};
 /* End PBXProject section */
@@ -386,7 +386,7 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-KarachiToday-QatarHomeTests-checkManifestLockResult.txt",
+				"$(DERIVED_FILE_DIR)/Pods-KarachiToday-KarachiTodayTests-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -421,15 +421,15 @@
 			files = (
 			);
 			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-KarachiToday-QatarHomeTests/Pods-KarachiToday-QatarHomeTests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-KarachiToday-KarachiTodayTests/Pods-KarachiToday-KarachiTodayTests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-KarachiToday-QatarHomeTests/Pods-KarachiToday-QatarHomeTests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-KarachiToday-KarachiTodayTests/Pods-KarachiToday-KarachiTodayTests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-KarachiToday-QatarHomeTests/Pods-KarachiToday-QatarHomeTests-frameworks.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-KarachiToday-KarachiTodayTests/Pods-KarachiToday-KarachiTodayTests-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		E235C05ADACE081382539298 /* [CP] Copy Pods Resources */ = {
@@ -468,15 +468,15 @@
 			files = (
 			);
 			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-KarachiToday-QatarHomeTests/Pods-KarachiToday-QatarHomeTests-resources-${CONFIGURATION}-input-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-KarachiToday-KarachiTodayTests/Pods-KarachiToday-KarachiTodayTests-resources-${CONFIGURATION}-input-files.xcfilelist",
 			);
 			name = "[CP] Copy Pods Resources";
 			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-KarachiToday-QatarHomeTests/Pods-KarachiToday-QatarHomeTests-resources-${CONFIGURATION}-output-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-KarachiToday-KarachiTodayTests/Pods-KarachiToday-KarachiTodayTests-resources-${CONFIGURATION}-output-files.xcfilelist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-KarachiToday-QatarHomeTests/Pods-KarachiToday-QatarHomeTests-resources.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-KarachiToday-KarachiTodayTests/Pods-KarachiToday-KarachiTodayTests-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		FD10A7F022414F080027D42C /* Start Packager */ = {
@@ -530,14 +530,14 @@
 /* Begin XCBuildConfiguration section */
 		00E356F61AD99517003FC87E /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 5B7EB9410499542E8C5724F5 /* Pods-KarachiToday-QatarHomeTests.debug.xcconfig */;
+			baseConfigurationReference = 5B7EB9410499542E8C5724F5 /* Pods-KarachiToday-KarachiTodayTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
 				);
-				INFOPLIST_FILE = QatarHomeTests/Info.plist;
+				INFOPLIST_FILE = KarachiTodayTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.4;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -557,11 +557,11 @@
 		};
 		00E356F71AD99517003FC87E /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 89C6BE57DB24E9ADA2F236DE /* Pods-KarachiToday-QatarHomeTests.release.xcconfig */;
+			baseConfigurationReference = 89C6BE57DB24E9ADA2F236DE /* Pods-KarachiToday-KarachiTodayTests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COPY_PHASE_STRIP = NO;
-				INFOPLIST_FILE = QatarHomeTests/Info.plist;
+				INFOPLIST_FILE = KarachiTodayTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.4;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -775,7 +775,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		00E357021AD99517003FC87E /* Build configuration list for PBXNativeTarget "QatarHomeTests" */ = {
+		00E357021AD99517003FC87E /* Build configuration list for PBXNativeTarget "KarachiTodayTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				00E356F61AD99517003FC87E /* Debug */,
@@ -793,7 +793,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "QatarHome" */ = {
+		83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "KarachiToday" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				83CBBA201A601CBA00E9B192 /* Debug */,

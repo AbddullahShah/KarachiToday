@@ -23,7 +23,7 @@ import images from '../../assets/images';
 import {fontsFamily, fontsSize} from '../../constants/fonts';
 import {skipOnboard} from '../../redux/userSlice';
 
-const ONBOARD_IMAGE = [images.banner1, images.banner2, images.banner1];
+const ONBOARD_IMAGE = [images.Onboard1, images.Onboard2, images.Onboard3];
 const ONBOARD_TEXT = {
   0: 'News from Reliable source only.',
   1: 'Stay Informed, Anytime, Anywhere',
@@ -36,20 +36,18 @@ const Onboard = () => {
 
   const [activeIndex, setActiveIndex] = useState(0);
 
-  useEffect(() => {
-    if (activeIndex === 2) {
-      // dispatch(skipOnboard());
-      navigation.reset({
-        index: 0,
-        routes: [{name: 'MainStack'}],
-      });
-    }
-  }, [activeIndex]);
+  const onSkip = () => {
+    dispatch(skipOnboard());
+    navigation.reset({
+      index: 0,
+      routes: [{name: 'MainStack'}],
+    });
+  };
 
   const renderBanner = ({item}) => {
     return (
       <View style={styles.renderBannerStyle}>
-        <Image source={item} resizeMode="stretch" style={styles.bannerImg} />
+        <Image source={item} resizeMode="contain" style={styles.bannerImg} />
       </View>
     );
   };
@@ -102,9 +100,7 @@ const Onboard = () => {
           </Text>
         </View>
       </View>
-      <Pressable
-        style={styles.skipBtn}
-        onPress={() => setActiveIndex(Math.round(activeIndex) + 1)}>
+      <Pressable style={styles.skipBtn} onPress={() => onSkip()}>
         <Text style={styles.txt2}>Skip</Text>
       </Pressable>
     </View>
@@ -146,8 +142,7 @@ const styles = StyleSheet.create({
   },
   renderBannerStyle: {
     width: width * 0.9,
-    height: heightPercentageToDP(18),
-    backgroundColor: 'red',
+    height: heightPercentageToDP(40),
     overflow: 'hidden',
   },
   bannerImg: {

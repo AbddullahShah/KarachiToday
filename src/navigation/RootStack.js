@@ -10,7 +10,6 @@ const Stack = createNativeStackNavigator();
 
 const RootStack = () => {
   const isOnboard = useSelector(state => state.user.isOnboard);
-  console.log(isOnboard);
 
   return (
     <Stack.Navigator

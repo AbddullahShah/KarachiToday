@@ -2,8 +2,6 @@ import {
   widthPercentageToDP,
   heightPercentageToDP,
 } from 'react-native-responsive-screen';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import Toast from 'react-native-toast-message';
 import {
   KeyboardAvoidingView,
   Platform,
@@ -15,9 +13,11 @@ import {
   TouchableOpacity,
   Image,
 } from 'react-native';
+import CheckBox from '@react-native-community/checkbox';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import Toast from 'react-native-toast-message';
 import React, {useState} from 'react';
 import {useNavigation} from '@react-navigation/native';
-import CountryPicker from 'react-native-country-picker-modal';
 import {Formik} from 'formik';
 import * as Yup from 'yup';
 
@@ -33,6 +33,8 @@ import {setLoader} from '../../redux/globalSlice';
 import {setUser} from '../../redux/userSlice';
 import languages from '../../lang/languages';
 import images from '../../assets/images';
+import PrimaryHeader from '../../components/Headers/PrimaryHeader';
+import SimpleModals from '../../components/Modals/SimpleModals';
 
 const Login = () => {
   const navigation = useNavigation();
@@ -40,12 +42,16 @@ const Login = () => {
 
   const selectedLang = useSelector(state => state.language.selectedLang);
 
-  const [show, setShow] = useState(false);
-  const [countryCode, setCountryCode] = useState('PK');
-  const [selectCountry, setSelectCountry] = useState('92');
+  const [isRemember, setIsRemember] = useState(false);
 
   const SignInSchema = Yup.object().shape({
-    mobileNo: Yup.number()
+    email: Yup.number()
+      .typeError("That doesn't look like a phone number")
+      .positive("A phone number can't start with a minus")
+      .integer("A phone number can't include a decimal point")
+      .min(8)
+      .required('A phone number is required'),
+    password: Yup.number()
       .typeError("That doesn't look like a phone number")
       .positive("A phone number can't start with a minus")
       .integer("A phone number can't include a decimal point")
@@ -61,11 +67,7 @@ const Login = () => {
     if (value.mobileNo.at(0) === '0') phoneNum = value.mobileNo.substring(1);
     else phoneNum = value.mobileNo;
 
-    let payload = {
-      phone: '+' + selectCountry + phoneNum,
-      deviceToken: fcmToken ? fcmToken : 'abc',
-      deviceType: Platform.OS,
-    };
+    let payload = {};
     apiRequest
       .post(endPoints.login, payload)
       .then(res => {
@@ -94,21 +96,26 @@ const Login = () => {
   };
 
   return (
-    <View style={styles.container}>
-      <ScrollView
-        contentContainerStyle={{
-          flex: 1,
-          width: '100%',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}>
-        <KeyboardAvoidingView
-          behavior={Platform.OS === 'android' ? 'height' : 'padding'}>
-          <View style={styles.wrapper}>
+    <>
+      <View style={styles.container}>
+        <ScrollView
+          contentContainerStyle={{
+            flex: 1,
+            width: '100%',
+            alignItems: 'center',
+          }}>
+          <KeyboardAvoidingView
+            behavior={Platform.OS === 'android' ? 'height' : 'padding'}
+            style={styles.wrapper}>
+            <PrimaryHeader
+              onPress={() => navigation.goBack()}
+              style={{marginTop: heightPercentageToDP(6)}}
+            />
             <Text style={styles.heading}>{languages[selectedLang].signIn}</Text>
             <Formik
               initialValues={{
-                mobileNo: '',
+                passwordemail: '',
+                password: '',
               }}
               onSubmit={value => {
                 signIn(value);
@@ -123,70 +130,87 @@ const Login = () => {
                 isValid,
                 handleSubmit,
               }) => (
-                <View>
+                <View style={{flex: 1}}>
                   <Text style={styles.titleStyle}>
-                    {
-                      languages[selectedLang]
-                        .pleaseEnterYourEmailAddressandPassword
-                    }
+                    Welcome! Let’s drive in into your account!
                   </Text>
-                  <TouchableOpacity
-                    activeOpacity={0.7}
-                    onPress={() => setShow(true)}
-                    style={styles.countryPicker}>
-                    <View>
-                      <CountryPicker
-                        visible={show}
-                        onClose={() => setShow(false)}
-                        {...{
-                          countryCode: countryCode,
-                          withFilter: true,
-                          withFlag: true,
-                          withCountryNameButton: true,
-                          withAlphaFilter: true,
-                          withFlagButton: true,
-                          onSelect: e => {
-                            setCountryCode(e.cca2);
-                            setSelectCountry(e.callingCode[0]);
-                            setShow(false);
-                          },
-                          containerButtonStyle: {},
-                        }}
-                      />
-                    </View>
-                    <Image
-                      source={images.down_arrow}
-                      style={styles.dropDownIc}
-                    />
-                  </TouchableOpacity>
+
                   <Input
-                    placeholderText={'Enter your phone number'}
-                    value={values.mobileNo}
-                    handleOnChangeTxt={handleChange('mobileNo')}
-                    onBlur={() => setFieldTouched('mobileNo')}
-                    keyboardType={'number-pad'}
-                    error={touched.mobileNo && errors.mobileNo}
-                    errorType={errors.mobileNo}
+                    label={'Email'}
+                    icon={images.Email}
+                    placeholderText={'Email'}
+                    value={values.email}
+                    handleOnChangeTxt={handleChange('email')}
+                    onBlur={() => setFieldTouched('email')}
+                    keyboardType={'email'}
+                    error={touched.email && errors.email}
+                    errorType={errors.email}
                     marginTop={heightPercentageToDP(3)}
                   />
+                  <Input
+                    isPassword
+                    label={'Password'}
+                    icon={images.Lock}
+                    placeholderText={'Password'}
+                    value={values.password}
+                    handleOnChangeTxt={handleChange('password')}
+                    onBlur={() => setFieldTouched('password')}
+                    keyboardType={'email'}
+                    error={touched.password && errors.password}
+                    errorType={errors.password}
+                    marginTop={heightPercentageToDP(3)}
+                  />
+                  <View style={styles.rememberWrapper}>
+                    <View style={styles.checkBox}>
+                      <CheckBox
+                        disabled={false}
+                        value={isRemember}
+                        onValueChange={newValue => setIsRemember(newValue)}
+                        tintColors={{
+                          true: colors.primary,
+                          false: colors.textLight,
+                        }}
+                      />
+                      <Text style={styles.txt1}>Remeber me</Text>
+                    </View>
+                    <Text
+                      onPress={() => {}}
+                      style={[styles.txt1, {color: colors.primary}]}>
+                      Forgot password?
+                    </Text>
+                  </View>
+                  <View style={{marginTop: heightPercentageToDP(4)}}>
+                    <Text style={styles.txt3}>
+                      Don’t have an account?{' '}
+                      <Text
+                        style={styles.txt4}
+                        onPress={() => navigation.navigate('Register')}>
+                        Sign Up
+                      </Text>
+                    </Text>
+                  </View>
+
                   <PrimaryButton
                     disabled={!isValid}
                     text={languages[selectedLang].signIn}
                     onPress={handleSubmit}
-                    style={{marginTop: heightPercentageToDP(5)}}
+                    style={{
+                      position: 'absolute',
+                      bottom: heightPercentageToDP(4),
+                    }}
                   />
-                  <Pressable onPress={() => navigation.navigate('Register')}>
-                    <Text style={styles.text2}>
-                      {languages[selectedLang].createaAccount}
-                    </Text>
-                  </Pressable>
                 </View>
               )}
             </Formik>
-          </View>
-        </KeyboardAvoidingView>
-      </ScrollView>
-    </View>
+          </KeyboardAvoidingView>
+        </ScrollView>
+      </View>
+      <SimpleModals
+        title="Sign in Successful!"
+        message={'You will be directed to the homepage.'}
+        isVisible={false}
+      />
+    </>
   );
 };
 
@@ -196,8 +220,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.white,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   heading: {
     textAlign: 'left',
@@ -205,10 +227,11 @@ const styles = StyleSheet.create({
     fontSize: fontsSize.xl2,
     fontFamily: fontsFamily.bold,
     color: colors.textDark,
+    marginTop: heightPercentageToDP(3),
   },
   wrapper: {
-    width: '90%',
-    alignSelf: 'center',
+    flex: 1,
+    width: '85%',
   },
   titleStyle: {
     textAlign: 'left',
@@ -218,35 +241,31 @@ const styles = StyleSheet.create({
     color: colors.textDark,
     marginTop: heightPercentageToDP(2),
   },
-  text2: {
+  txt1: {
+    fontSize: fontsSize.md1,
+    fontFamily: fontsFamily.semibold,
+    color: colors.textDark,
+  },
+  txt3: {
+    fontFamily: fontsFamily.medium,
+    fontSize: fontsSize.md1,
+    color: colors.textDark,
     textAlign: 'center',
-    alignSelf: 'center',
-    fontSize: fontsSize.md1,
-    fontFamily: fontsFamily.regular,
-    marginTop: heightPercentageToDP(2),
-    color: colors.secondary,
-    textDecorationLine: 'underline',
   },
-  countryPicker: {
+  txt4: {
+    color: colors.primary,
+    fontFamily: fontsFamily.semibold,
+  },
+  checkBox: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    backgroundColor: '#f4f4f4',
     alignItems: 'center',
-    height: heightPercentageToDP(6),
-    borderRadius: widthPercentageToDP(100),
-    paddingHorizontal: widthPercentageToDP(4),
-    marginTop: heightPercentageToDP(3),
-    borderColor: '#d7d7d7',
-    borderWidth: 0.5,
   },
-  subtitle: {
-    fontSize: fontsSize.md1,
-    fontFamily: fontsFamily.regular,
-    color: colors.textLight,
-    marginLeft: widthPercentageToDP(10),
-  },
-  dropDownIc: {
-    width: widthPercentageToDP(4),
-    height: widthPercentageToDP(4),
+  rememberWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: heightPercentageToDP(4),
+    borderBottomWidth: 1,
+    borderBottomColor: '#F0F0F0',
   },
 });

@@ -1,40 +1,25 @@
 import {widthPercentageToDP} from 'react-native-responsive-screen';
-import {Image, StyleSheet, TouchableOpacity, Text, View} from 'react-native';
+import {Image, StyleSheet, Pressable, View} from 'react-native';
 import React from 'react';
 
 // local import
-import {fontsFamily, fontsSize} from '../../constants/fonts';
-import colors from '../../constants/colors';
 import images from '../../assets/images';
 
-const PrimaryHeader = ({title, leftOnPress, rightOnPress, ...props}) => {
+const PrimaryHeader = ({title, onPress, ...props}) => {
   return (
-    <View style={[styles.container, {...props.style}]}>
-      <TouchableOpacity
-        style={styles.notification}
-        activeOpacity={0.8}
-        onPress={leftOnPress}>
+    <View style={[styles.container, props.style]}>
+      <Pressable onPress={onPress} style={styles.backBtn}>
         <Image
-          source={images.notification}
-          style={{width: '50%', height: '50%'}}
+          source={images.Arrow}
           resizeMode="contain"
+          style={{width: '100%', height: '100%'}}
         />
-      </TouchableOpacity>
-      {title && (
-        <Text numberOfLines={1} style={styles.text}>
-          {title} 👋
-        </Text>
-      )}
-      <TouchableOpacity
-        style={styles.profile}
-        activeOpacity={0.8}
-        onPress={rightOnPress}>
-        <Image
-          source={images.avatar}
-          style={{width: '90%', height: '90%'}}
-          resizeMode="contain"
-        />
-      </TouchableOpacity>
+      </Pressable>
+      <Image
+        source={images.Logo}
+        resizeMode="contain"
+        style={styles.logoStyle}
+      />
     </View>
   );
 };
@@ -43,34 +28,17 @@ export default PrimaryHeader;
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  notification: {
-    width: widthPercentageToDP(10),
-    height: widthPercentageToDP(10),
-    backgroundColor: colors.primaryLightExtra,
-    borderRadius: 100,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  profile: {
-    width: widthPercentageToDP(10),
-    height: widthPercentageToDP(10),
-    borderColor: colors.primary,
-    borderWidth: 1,
-    backgroundColor: colors.primaryLightExtra,
-    borderRadius: 100,
-    alignItems: 'center',
-    justifyContent: 'center',
+  backBtn: {
+    width: widthPercentageToDP(6),
+    height: widthPercentageToDP(6),
+    position: 'absolute',
+    left: 0,
   },
-  text: {
-    fontFamily: fontsFamily.medium,
-    fontSize: fontsSize.md2,
-    color: colors.textDark,
-    width: widthPercentageToDP(60),
-    textAlign: 'center',
-    textTransform: 'capitalize',
+  logoStyle: {
+    width: widthPercentageToDP(16),
+    height: widthPercentageToDP(16),
   },
 });
