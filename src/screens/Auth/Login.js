@@ -45,18 +45,14 @@ const Login = () => {
   const [isRemember, setIsRemember] = useState(false);
 
   const SignInSchema = Yup.object().shape({
-    email: Yup.number()
-      .typeError("That doesn't look like a phone number")
-      .positive("A phone number can't start with a minus")
-      .integer("A phone number can't include a decimal point")
-      .min(8)
-      .required('A phone number is required'),
-    password: Yup.number()
-      .typeError("That doesn't look like a phone number")
-      .positive("A phone number can't start with a minus")
-      .integer("A phone number can't include a decimal point")
-      .min(8)
-      .required('A phone number is required'),
+    email: Yup.string()
+      .email('Email address is not valid')
+      .required('Email address is required')
+      .matches(
+        /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
+        'Email address is not valid',
+      ),
+    password: Yup.string().required('Password is required'),
   });
 
   const signIn = async value => {
@@ -114,7 +110,7 @@ const Login = () => {
             <Text style={styles.heading}>{languages[selectedLang].signIn}</Text>
             <Formik
               initialValues={{
-                passwordemail: '',
+                email: '',
                 password: '',
               }}
               onSubmit={value => {
@@ -161,17 +157,37 @@ const Login = () => {
                     marginTop={heightPercentageToDP(3)}
                   />
                   <View style={styles.rememberWrapper}>
-                    <View style={styles.checkBox}>
-                      <CheckBox
-                        disabled={false}
-                        value={isRemember}
-                        onValueChange={newValue => setIsRemember(newValue)}
-                        tintColors={{
-                          true: colors.primary,
-                          false: colors.textLight,
-                        }}
-                      />
-                      <Text style={styles.txt1}>Remeber me</Text>
+                    <View style={styles.checkBoxWrapper}>
+                      {Platform.OS === 'ios' ? (
+                        <View style={styles.checkBox}>
+                          <CheckBox
+                            disabled={false}
+                            boxType="square"
+                            value={isRemember}
+                            onValueChange={newValue => setIsRemember(newValue)}
+                            tintColors={{
+                              true: colors.primary,
+                              false: colors.textLight,
+                            }}
+                            hideBox
+                            style={{
+                              height: widthPercentageToDP(6),
+                              width: widthPercentageToDP(6),
+                            }}
+                          />
+                        </View>
+                      ) : (
+                        <CheckBox
+                          disabled={false}
+                          value={isRemember}
+                          onValueChange={newValue => setIsRemember(newValue)}
+                          tintColors={{
+                            true: colors.primary,
+                            false: colors.textLight,
+                          }}
+                        />
+                      )}
+                      <Text style={styles.txt1}>Remember me</Text>
                     </View>
                     <Text
                       onPress={() => {}}
@@ -256,9 +272,19 @@ const styles = StyleSheet.create({
     color: colors.primary,
     fontFamily: fontsFamily.semibold,
   },
-  checkBox: {
+  checkBoxWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
+  },
+  checkBox: {
+    borderWidth: 1,
+    borderColor: '#000',
+    height: widthPercentageToDP(6),
+    width: widthPercentageToDP(6),
+    borderRadius: widthPercentageToDP(1),
+    marginRight: widthPercentageToDP(2),
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   rememberWrapper: {
     flexDirection: 'row',

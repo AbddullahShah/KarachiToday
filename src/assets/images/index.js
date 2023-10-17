@@ -11,4 +11,7 @@ export default Images = {
   OpenEye: require('../images/open_eye.png'),
   Lock: require('../images/lock.png'),
   Success: require('../images/success.png'),
+  Tick: require('../images/tick.png'),
+  English: require('../images/english.png'),
+  Urdu: require('../images/urdu.png'),
 };

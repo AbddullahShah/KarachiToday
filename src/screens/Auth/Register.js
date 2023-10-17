@@ -45,48 +45,43 @@ const Register = () => {
   const [isRemember, setIsRemember] = useState(false);
 
   const SignUpSchema = Yup.object().shape({
-    username: Yup.string()
-      .required('Username is required')
-      .min(5, 'Minimum at least 5 character'),
-    mobileNo: Yup.number()
-      .test(
-        'onlyNumbers',
-        `Mobile number must be 6 or more than 6 number at least`,
-        value => value.toString().length >= 6,
-      )
-      .typeError("That doesn't look like a phone number")
-      .positive("A phone number can't start with a minus")
-      .integer("A phone number can't include a decimal point")
-
-      .required('A phone number is required'),
+    email: Yup.string()
+      .email('This email address is not valid')
+      .required('Please enter your email address!')
+      .matches(
+        /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
+        'This email address is not valid',
+      ),
+    password: Yup.string()
+      .min(8, 'Password must be at least 8 characters')
+      .required('Please choose a password'),
   });
 
   const signUp = async value => {
-    dispatch(setLoader(true));
-    const fcmToken = await AsyncStorage.getItem('fcmToken');
-
-    let phoneNum;
-    if (value.mobileNo.at(0) === '0') phoneNum = value.mobileNo.substring(1);
-    else phoneNum = value.mobileNo;
-
-    let payload = {};
-    apiRequest
-      .post(endPoints.register, payload)
-      .then(res => {
-        dispatch(setLoader(false));
-        if (res.data.data.otp) {
-          navigation.navigate('Otp', {data: res.data.data});
-        }
-        console.log('OTP ===>', res.data.data.otp);
-      })
-      .catch(err => {
-        console.log(err);
-        dispatch(setLoader(false));
-        Toast.show({
-          type: 'error',
-          text1: err.data.message,
-        });
-      });
+    navigation.navigate('Languages');
+    // dispatch(setLoader(true));
+    // const fcmToken = await AsyncStorage.getItem('fcmToken');
+    // let phoneNum;
+    // if (value.mobileNo.at(0) === '0') phoneNum = value.mobileNo.substring(1);
+    // else phoneNum = value.mobileNo;
+    // let payload = {};
+    // apiRequest
+    //   .post(endPoints.register, payload)
+    //   .then(res => {
+    //     dispatch(setLoader(false));
+    //     if (res.data.data.otp) {
+    //       navigation.navigate('Otp', {data: res.data.data});
+    //     }
+    //     console.log('OTP ===>', res.data.data.otp);
+    //   })
+    //   .catch(err => {
+    //     console.log(err);
+    //     dispatch(setLoader(false));
+    //     Toast.show({
+    //       type: 'error',
+    //       text1: err.data.message,
+    //     });
+    //   });
   };
 
   return (
@@ -108,11 +103,11 @@ const Register = () => {
             <Text style={styles.heading}>Create Account</Text>
             <Formik
               initialValues={{
-                passwordemail: '',
+                email: '',
                 password: '',
               }}
               onSubmit={value => {
-                signIn(value);
+                signUp(value);
               }}
               validationSchema={SignUpSchema}>
               {({
@@ -126,7 +121,7 @@ const Register = () => {
               }) => (
                 <View style={{flex: 1}}>
                   <Text style={styles.titleStyle}>
-                    Join our community and personalize your news expernice.
+                    Join our community and personalize your news experience.
                   </Text>
 
                   <Input
@@ -155,16 +150,36 @@ const Register = () => {
                     marginTop={heightPercentageToDP(3)}
                   />
                   <View style={styles.rememberWrapper}>
-                    <View style={styles.checkBox}>
-                      <CheckBox
-                        disabled={false}
-                        value={isRemember}
-                        onValueChange={newValue => setIsRemember(newValue)}
-                        tintColors={{
-                          true: colors.primary,
-                          false: colors.textLight,
-                        }}
-                      />
+                    <View style={styles.checkBoxWrapper}>
+                      {Platform.OS === 'ios' ? (
+                        <View style={styles.checkBox}>
+                          <CheckBox
+                            disabled={false}
+                            boxType="square"
+                            value={isRemember}
+                            onValueChange={newValue => setIsRemember(newValue)}
+                            tintColors={{
+                              true: colors.primary,
+                              false: colors.textLight,
+                            }}
+                            hideBox
+                            style={{
+                              height: widthPercentageToDP(6),
+                              width: widthPercentageToDP(6),
+                            }}
+                          />
+                        </View>
+                      ) : (
+                        <CheckBox
+                          disabled={false}
+                          value={isRemember}
+                          onValueChange={newValue => setIsRemember(newValue)}
+                          tintColors={{
+                            true: colors.primary,
+                            false: colors.textLight,
+                          }}
+                        />
+                      )}
                       <Text style={styles.txt1}>I agree to KarachiToday</Text>
                     </View>
                     <Text
@@ -178,7 +193,7 @@ const Register = () => {
                       Already have an account?{' '}
                       <Text
                         style={styles.txt4}
-                        onPress={() => navigation.navigate('Register')}>
+                        onPress={() => navigation.navigate('Login')}>
                         Sign In
                       </Text>
                     </Text>
@@ -250,9 +265,19 @@ const styles = StyleSheet.create({
     color: colors.primary,
     fontFamily: fontsFamily.semibold,
   },
-  checkBox: {
+  checkBoxWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
+  },
+  checkBox: {
+    borderWidth: 1,
+    borderColor: '#000',
+    height: widthPercentageToDP(6),
+    width: widthPercentageToDP(6),
+    borderRadius: widthPercentageToDP(1),
+    marginRight: widthPercentageToDP(2),
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   rememberWrapper: {
     flexDirection: 'row',
