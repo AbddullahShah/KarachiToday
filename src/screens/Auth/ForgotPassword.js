@@ -10,9 +10,8 @@ import {
   Text,
   View,
 } from 'react-native';
-import CheckBox from '@react-native-community/checkbox';
 import Toast from 'react-native-toast-message';
-import React, {useState} from 'react';
+import React from 'react';
 import {useNavigation} from '@react-navigation/native';
 import {Formik} from 'formik';
 import * as Yup from 'yup';
@@ -26,19 +25,16 @@ import apiRequest from '../../utils/apiRequest';
 import endPoints from '../../constants/endPoints';
 import {useDispatch, useSelector} from 'react-redux';
 import {setLoader} from '../../redux/globalSlice';
-import {setUser} from '../../redux/userSlice';
 import languages from '../../lang/languages';
 import images from '../../assets/images';
 import PrimaryHeader from '../../components/Headers/PrimaryHeader';
 import SimpleModals from '../../components/Modals/SimpleModals';
 
-const Login = () => {
+const ForgotPassword = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
 
   const selectedLang = useSelector(state => state.language.selectedLang);
-
-  const [isRemember, setIsRemember] = useState(false);
 
   const SignInSchema = Yup.object().shape({
     email: Yup.string()
@@ -48,29 +44,26 @@ const Login = () => {
         /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
         'Email address is not valid',
       ),
-    password: Yup.string().required('Password is required'),
   });
 
-  const signIn = async value => {
+  const forgotPassword = async value => {
     dispatch(setLoader(true));
     let payload = {
       email: value.email,
-      password: value.password,
     };
     apiRequest
-      .post(endPoints.login, payload)
+      .post(endPoints.forgotPassword, payload)
       .then(res => {
         dispatch(setLoader(false));
         if (res.data.success) {
-          dispatch(setUser(res.data));
-          navigation.reset({
-            index: 0,
-            routes: [{name: 'HomeStack'}],
+          navigation.navigate('OTPVerify', {
+            data: res.data.token,
+            email: value.email,
           });
         } else {
           Toast.show({
             type: 'error',
-            text1: res?.data?.message,
+            text1: res?.data || 'Something went wrong',
           });
         }
       })
@@ -79,7 +72,7 @@ const Login = () => {
         dispatch(setLoader(false));
         Toast.show({
           type: 'error',
-          text1: err?.data,
+          text1: res?.data || 'Something went wrong',
         });
       });
   };
@@ -100,14 +93,13 @@ const Login = () => {
               onPress={() => navigation.goBack()}
               style={{marginTop: heightPercentageToDP(6)}}
             />
-            <Text style={styles.heading}>{languages[selectedLang].signIn}</Text>
+            <Text style={styles.heading}>Reset Your Password</Text>
             <Formik
               initialValues={{
                 email: '',
-                password: '',
               }}
               onSubmit={value => {
-                signIn(value);
+                forgotPassword(value);
               }}
               validationSchema={SignInSchema}>
               {({
@@ -121,7 +113,8 @@ const Login = () => {
               }) => (
                 <View style={{flex: 1}}>
                   <Text style={styles.titleStyle}>
-                    Welcome! Let’s drive in into your account!
+                    Please enter your email and we will send an OTP code in the
+                    next step to reset your password.
                   </Text>
 
                   <Input
@@ -136,72 +129,10 @@ const Login = () => {
                     errorType={errors.email}
                     marginTop={heightPercentageToDP(3)}
                   />
-                  <Input
-                    isPassword
-                    label={'Password'}
-                    icon={images.Lock}
-                    placeholderText={'Password'}
-                    value={values.password}
-                    handleOnChangeTxt={handleChange('password')}
-                    onBlur={() => setFieldTouched('password')}
-                    keyboardType={'email'}
-                    error={touched.password && errors.password}
-                    errorType={errors.password}
-                    marginTop={heightPercentageToDP(3)}
-                  />
-                  <View style={styles.rememberWrapper}>
-                    <View style={styles.checkBoxWrapper}>
-                      {Platform.OS === 'ios' ? (
-                        <View style={styles.checkBox}>
-                          <CheckBox
-                            disabled={false}
-                            boxType="square"
-                            value={isRemember}
-                            onValueChange={newValue => setIsRemember(newValue)}
-                            tintColors={{
-                              true: colors.primary,
-                              false: colors.textLight,
-                            }}
-                            hideBox
-                            style={{
-                              height: widthPercentageToDP(6),
-                              width: widthPercentageToDP(6),
-                            }}
-                          />
-                        </View>
-                      ) : (
-                        <CheckBox
-                          disabled={false}
-                          value={isRemember}
-                          onValueChange={newValue => setIsRemember(newValue)}
-                          tintColors={{
-                            true: colors.primary,
-                            false: colors.textLight,
-                          }}
-                        />
-                      )}
-                      <Text style={styles.txt1}>Remember me</Text>
-                    </View>
-                    <Text
-                      onPress={() => navigation.navigate('ForgotPassword')}
-                      style={[styles.txt1, {color: colors.primary}]}>
-                      Forgot password?
-                    </Text>
-                  </View>
-                  <View style={{marginTop: heightPercentageToDP(4)}}>
-                    <Text style={styles.txt3}>
-                      Don’t have an account?{' '}
-                      <Text
-                        style={styles.txt4}
-                        onPress={() => navigation.navigate('Register')}>
-                        Sign Up
-                      </Text>
-                    </Text>
-                  </View>
 
                   <PrimaryButton
                     disabled={!isValid}
-                    text={languages[selectedLang].signIn}
+                    text={'Continue'}
                     onPress={handleSubmit}
                     style={{
                       position: 'absolute',
@@ -223,7 +154,7 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default ForgotPassword;
 
 const styles = StyleSheet.create({
   container: {
@@ -249,42 +180,5 @@ const styles = StyleSheet.create({
     fontFamily: fontsFamily.regular,
     color: colors.textDark,
     marginTop: heightPercentageToDP(2),
-  },
-  txt1: {
-    fontSize: fontsSize.md1,
-    fontFamily: fontsFamily.semibold,
-    color: colors.textDark,
-  },
-  txt3: {
-    fontFamily: fontsFamily.medium,
-    fontSize: fontsSize.md1,
-    color: colors.textDark,
-    textAlign: 'center',
-  },
-  txt4: {
-    color: colors.primary,
-    fontFamily: fontsFamily.semibold,
-  },
-  checkBoxWrapper: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  checkBox: {
-    borderWidth: 1,
-    borderColor: '#000',
-    height: widthPercentageToDP(6),
-    width: widthPercentageToDP(6),
-    borderRadius: widthPercentageToDP(1),
-    marginRight: widthPercentageToDP(2),
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  rememberWrapper: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingVertical: heightPercentageToDP(4),
-    borderBottomWidth: 1,
-    borderBottomColor: '#F0F0F0',
   },
 });

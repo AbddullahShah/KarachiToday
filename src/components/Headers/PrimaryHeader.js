@@ -5,7 +5,7 @@ import React from 'react';
 // local import
 import images from '../../assets/images';
 
-const PrimaryHeader = ({title, onPress, ...props}) => {
+const PrimaryHeader = ({title, onPress, isLogo = true, ...props}) => {
   return (
     <View style={[styles.container, props.style]}>
       <Pressable onPress={onPress} style={styles.backBtn}>
@@ -15,11 +15,13 @@ const PrimaryHeader = ({title, onPress, ...props}) => {
           style={{width: '100%', height: '100%'}}
         />
       </Pressable>
-      <Image
-        source={images.Logo}
-        resizeMode="contain"
-        style={styles.logoStyle}
-      />
+      {isLogo && (
+        <Image
+          source={images.Logo}
+          resizeMode="contain"
+          style={styles.logoStyle}
+        />
+      )}
     </View>
   );
 };

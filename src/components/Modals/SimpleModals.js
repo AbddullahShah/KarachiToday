@@ -2,7 +2,7 @@ import {
   heightPercentageToDP,
   widthPercentageToDP,
 } from 'react-native-responsive-screen';
-import React from 'react';
+import React, {useEffect} from 'react';
 import {
   View,
   Modal,
@@ -17,6 +17,7 @@ import {
 import {fontsFamily, fontsSize} from '../../constants/fonts';
 import colors from '../../constants/colors';
 import images from '../../assets/images';
+import globalStyle from '../../utils/globalStyle';
 
 const {width, height} = Dimensions.get('window');
 
@@ -24,7 +25,7 @@ const SimpleModals = ({
   navigation,
   isVisible,
   onPress,
-  icon = images.Success,
+  icon = images.Tick,
   title = 'Success',
   message,
   ...props
@@ -33,11 +34,18 @@ const SimpleModals = ({
     <Modal animationType="fade" transparent={true} visible={isVisible}>
       <View style={styles.centeredView}>
         <View style={styles.lModalView}>
-          <Image
-            source={icon}
-            style={styles.imgStyleCont}
-            resizeMode={'contain'}
-          />
+          <View style={{...globalStyle.center}}>
+            <Image
+              source={images.Bubbles}
+              style={styles.imgStyleCont}
+              resizeMode={'contain'}
+            />
+            <Image
+              source={icon}
+              style={styles.iconStyle}
+              resizeMode={'contain'}
+            />
+          </View>
           <Text style={styles.txt1}>{title}</Text>
           <Text style={styles.txt2}>Please wait...</Text>
           <Text style={styles.txt3}>{message}</Text>
@@ -99,5 +107,13 @@ const styles = StyleSheet.create({
   imgStyleCont: {
     width: width * 0.4,
     height: width * 0.4,
+    marginLeft: widthPercentageToDP(-4),
+    marginTop: heightPercentageToDP(-1),
+  },
+  iconStyle: {
+    width: width * 0.1,
+    height: width * 0.1,
+    position: 'absolute',
+    tintColor: 'white',
   },
 });

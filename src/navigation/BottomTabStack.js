@@ -23,22 +23,22 @@ const bottomTabData = [
   {
     name: 'Home',
     component: Home,
-    image: images.Radio,
+    image: images.Home,
   },
   {
     name: 'Discover',
     component: Discover,
-    image: images.Radio,
+    image: images.Discover,
   },
   {
     name: 'Bookmark',
     component: Bookmark,
-    image: images.Radio,
+    image: images.Bookmark,
   },
   {
     name: 'Profile',
     component: Profile,
-    image: images.Radio,
+    image: images.Profile,
   },
 ];
 
@@ -86,13 +86,19 @@ const styles = StyleSheet.create({
       Platform.OS === 'ios'
         ? heightPercentageToDP(11)
         : heightPercentageToDP(10),
-    backgroundColor: colors.bg,
+    backgroundColor: colors.white,
     borderTopWidth: undefined,
-    backgroundColor: 'white',
-    marginTop: heightPercentageToDP(2),
     borderTopRightRadius: widthPercentageToDP(10),
     borderTopLeftRadius: widthPercentageToDP(10),
-    elevation: 10,
+
+    shadowColor: 'gray',
+    shadowOffset: {
+      width: 0,
+      height: -1,
+    },
+    shadowOpacity: 0.27,
+    shadowRadius: 4.65,
+    elevation: 6,
   },
   iconBox: {
     width: widthPercentageToDP(20),
@@ -101,8 +107,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   tabImage: focused => ({
-    width: widthPercentageToDP(5.5),
-    height: widthPercentageToDP(5.5),
+    width: widthPercentageToDP(6),
+    height: widthPercentageToDP(6),
     tintColor: !focused ? 'grey' : colors.primary,
   }),
   tabTitle: focused => ({

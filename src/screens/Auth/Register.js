@@ -5,16 +5,12 @@ import {
 import {
   KeyboardAvoidingView,
   Platform,
-  Pressable,
   ScrollView,
   StyleSheet,
   Text,
   View,
-  TouchableOpacity,
-  Image,
 } from 'react-native';
 import CheckBox from '@react-native-community/checkbox';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import Toast from 'react-native-toast-message';
 import React, {useState} from 'react';
 import {useNavigation} from '@react-navigation/native';
@@ -30,11 +26,11 @@ import apiRequest from '../../utils/apiRequest';
 import endPoints from '../../constants/endPoints';
 import {useDispatch, useSelector} from 'react-redux';
 import {setLoader} from '../../redux/globalSlice';
-import {setUser} from '../../redux/userSlice';
 import languages from '../../lang/languages';
 import images from '../../assets/images';
 import PrimaryHeader from '../../components/Headers/PrimaryHeader';
 import SimpleModals from '../../components/Modals/SimpleModals';
+import {setUser} from '../../redux/userSlice';
 
 const Register = () => {
   const navigation = useNavigation();
@@ -58,30 +54,26 @@ const Register = () => {
   });
 
   const signUp = async value => {
-    navigation.navigate('Languages');
-    // dispatch(setLoader(true));
-    // const fcmToken = await AsyncStorage.getItem('fcmToken');
-    // let phoneNum;
-    // if (value.mobileNo.at(0) === '0') phoneNum = value.mobileNo.substring(1);
-    // else phoneNum = value.mobileNo;
-    // let payload = {};
-    // apiRequest
-    //   .post(endPoints.register, payload)
-    //   .then(res => {
-    //     dispatch(setLoader(false));
-    //     if (res.data.data.otp) {
-    //       navigation.navigate('Otp', {data: res.data.data});
-    //     }
-    //     console.log('OTP ===>', res.data.data.otp);
-    //   })
-    //   .catch(err => {
-    //     console.log(err);
-    //     dispatch(setLoader(false));
-    //     Toast.show({
-    //       type: 'error',
-    //       text1: err.data.message,
-    //     });
-    //   });
+    dispatch(setLoader(true));
+    let payload = {
+      email: value.email,
+      password: value.password,
+    };
+    apiRequest
+      .post(endPoints.register, payload)
+      .then(res => {
+        dispatch(setLoader(false));
+        dispatch(setUser(res.data));
+        navigation.navigate('Languages');
+      })
+      .catch(err => {
+        console.log(err);
+        dispatch(setLoader(false));
+        Toast.show({
+          type: 'error',
+          text1: err?.data || 'Some thing went wrong',
+        });
+      });
   };
 
   return (

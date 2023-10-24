@@ -10,4 +10,8 @@ export default styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
   },
+  center: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
 });

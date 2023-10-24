@@ -3,9 +3,6 @@ import {
   heightPercentageToDP,
 } from 'react-native-responsive-screen';
 import {
-  KeyboardAvoidingView,
-  Platform,
-  Pressable,
   ScrollView,
   StyleSheet,
   Text,
@@ -14,48 +11,47 @@ import {
   Image,
   FlatList,
 } from 'react-native';
-import CheckBox from '@react-native-community/checkbox';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import Toast from 'react-native-toast-message';
 import React, {useState} from 'react';
 import {useNavigation} from '@react-navigation/native';
-import {Formik} from 'formik';
-import * as Yup from 'yup';
 
 // local import
-import Input from '../../components/Inputs/Input';
 import PrimaryButton from '../../components/Buttons/PrimaryButton';
 import {fontsFamily, fontsSize} from '../../constants/fonts';
 import colors from '../../constants/colors';
-import apiRequest from '../../utils/apiRequest';
-import endPoints from '../../constants/endPoints';
 import {useDispatch, useSelector} from 'react-redux';
 import {setLoader} from '../../redux/globalSlice';
-import {setUser} from '../../redux/userSlice';
-import languages from '../../lang/languages';
 import images from '../../assets/images';
 import PrimaryHeader from '../../components/Headers/PrimaryHeader';
 import SimpleModals from '../../components/Modals/SimpleModals';
 import DividerHorizontal from '../../components/DividerHorizontal';
+import {setLanguage} from '../../redux/languageSlice';
 
-const Languages = () => {
+const Languages = ({...props}) => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
+
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [lang, setLang] = useState([
     {
-      lang: 'Urdu',
-      icon: images.Urdu,
-    },
-    {
       lang: 'English',
       icon: images.English,
+    },
+    {
+      lang: 'Urdu',
+      icon: images.Urdu,
     },
   ]);
 
   const selectedLang = useSelector(state => state.language.selectedLang);
 
-  const onChangeLang = async value => {};
+  const onSelectedLanguage = () => {
+    dispatch(setLoader(true));
+    setTimeout(() => {
+      dispatch(setLoader(false));
+      dispatch(setLanguage(selectedIndex));
+      navigation.navigate('CustomizeNews');
+    }, 2000);
+  };
 
   return (
     <>
@@ -114,7 +110,7 @@ const Languages = () => {
         </ScrollView>
         <PrimaryButton
           text={'Continue'}
-          onPress={() => {}}
+          onPress={() => onSelectedLanguage()}
           style={{
             position: 'absolute',
             bottom: heightPercentageToDP(4),
@@ -189,7 +185,7 @@ const styles = StyleSheet.create({
     borderRadius: 100,
   },
   progressLineActive: {
-    width: widthPercentageToDP(10),
+    width: widthPercentageToDP(20),
     height: heightPercentageToDP(1),
     backgroundColor: colors.primary,
     borderRadius: 100,

@@ -37,7 +37,7 @@ const App = () => {
           <Provider store={store}>
             <Loader />
             <PersistGate persistor={persistor}>
-              <NavigationContainer>
+              <NavigationContainer theme={{colors: {background: 'white'}}}>
                 <RootStack />
                 <Toast />
               </NavigationContainer>
