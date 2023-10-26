@@ -10,4 +10,8 @@ export default endPoints = {
   uploadUserImage: 'user/profile/pic/',
   forgotPassword: 'user/forgot-password/',
   resetPassword: 'user/reset-password/',
+  getAllBlogs: 'blog/all/blogs',
+  getBlogsByCategory: 'blog/search/blog/category/',
+  getAllCategories: 'blog/all/category/',
+  categorySearchByTitle: 'blog/search/category/',
 };

@@ -10,11 +10,14 @@ import {
   TouchableOpacity,
   Image,
   FlatList,
+  Dimensions,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useNavigation} from '@react-navigation/native';
 import {useDispatch, useSelector} from 'react-redux';
 import Toast from 'react-native-toast-message';
+
+const {width, height} = Dimensions.get('window');
 
 // local import
 import PrimaryButton from '../../components/Buttons/PrimaryButton';
@@ -22,10 +25,10 @@ import {fontsFamily, fontsSize} from '../../constants/fonts';
 import colors from '../../constants/colors';
 import PrimaryHeader from '../../components/Headers/PrimaryHeader';
 import SimpleModals from '../../components/Modals/SimpleModals';
-import localData from '../../utils/localData';
 import endPoints from '../../constants/endPoints';
 import apiRequest from '../../utils/apiRequest';
 import {setLoader} from '../../redux/globalSlice';
+import images from '../../assets/images';
 
 const CustomizeNews = ({...props}) => {
   const navigation = useNavigation();
@@ -34,46 +37,62 @@ const CustomizeNews = ({...props}) => {
   const selectedLang = useSelector(state => state.language.selectedLang);
   const {islLogin, userData} = useSelector(state => state.user);
 
-  const [categories, setCategories] = useState(localData.newsCategories);
+  const [newsCategories, setNewsCategories] = useState([]);
 
   const gotoEditProfile = () => {
-    const filterCat = categories.filter(x => x.isActive === true);
-    if (filterCat.length === 0) {
-      alert('Please select at least one or more news categories');
-    } else {
-      dispatch(setLoader(true));
-      let payload = {
-        UserCategories: [
-          '65383655f9dbc39d016552ba',
-          '653842989305e57cf9c1e7d8',
-        ],
-      };
-      apiRequest
-        .put(endPoints.updateUser + userData?.user?._id, payload)
-        .then(res => {
-          dispatch(setLoader(false));
-          navigation.navigate('EditProfile');
-        })
-        .catch(err => {
-          console.log(err);
-          dispatch(setLoader(false));
-          Toast.show({
-            type: 'error',
-            text1: err?.data || 'Some thing went wrong',
-          });
+    dispatch(setLoader(true));
+    const filterCat = newsCategories.filter(x => x.isActive === true);
+    const idx = filterCat.map(x => x._id);
+    let payload = {
+      UserCategories: idx,
+    };
+    apiRequest
+      .put(endPoints.updateUser + userData?.user?._id, payload)
+      .then(res => {
+        dispatch(setLoader(false));
+        navigation.navigate('EditProfile');
+      })
+      .catch(err => {
+        console.log(err);
+        dispatch(setLoader(false));
+        Toast.show({
+          type: 'error',
+          text1: err?.data || 'Some thing went wrong',
         });
-    }
+      });
   };
 
   const onSelectCat = index => {
-    let tempArr = [...categories];
+    let tempArr = [...newsCategories];
     if (tempArr[index].isActive) {
       tempArr[index].isActive = false;
     } else {
       tempArr[index].isActive = true;
     }
-    setCategories(tempArr);
+    setNewsCategories(tempArr);
   };
+
+  const getAllCategories = () => {
+    dispatch(setLoader(true));
+    apiRequest
+      .get(endPoints.getAllCategories)
+      .then(res => {
+        const result = res.data.allCategory.map((item, index) => ({
+          ...item,
+          isActive: false,
+        }));
+        setNewsCategories(result);
+        dispatch(setLoader(false));
+      })
+      .catch(err => {
+        console.log(err);
+        dispatch(setLoader(false));
+      });
+  };
+
+  useEffect(() => {
+    getAllCategories();
+  }, []);
 
   return (
     <>
@@ -97,13 +116,15 @@ const CustomizeNews = ({...props}) => {
               Don’t worry, you can always update your preferences later.
             </Text>
             <FlatList
-              data={categories}
+              data={newsCategories}
               numColumns={3}
               scrollEnabled={false}
               style={{marginTop: heightPercentageToDP(3)}}
               contentContainerStyle={{gap: widthPercentageToDP(3)}}
               columnWrapperStyle={{gap: widthPercentageToDP(3)}}
-              ListFooterComponent={() => <View style={{height: 20}} />}
+              ListFooterComponent={() => (
+                <View style={{height: height * 0.2}} />
+              )}
               renderItem={({item, index}) => {
                 return (
                   <TouchableOpacity
@@ -111,7 +132,9 @@ const CustomizeNews = ({...props}) => {
                     onPress={() => onSelectCat(index)}
                     style={styles.card(item.isActive, index)}>
                     <Image
-                      source={item.icon}
+                      source={
+                        item.img !== undefined ? {uri: item.img} : images.Dummy
+                      }
                       resizeMode="contain"
                       style={{
                         width: widthPercentageToDP(10),
@@ -128,8 +151,19 @@ const CustomizeNews = ({...props}) => {
           </View>
         </ScrollView>
         <PrimaryButton
-          text={'Continue'}
-          onPress={() => gotoEditProfile()}
+          text={
+            newsCategories.filter(x => x.isActive === true).length === 0
+              ? 'Skip'
+              : 'Continue'
+          }
+          onPress={() => {
+            const filterCat = newsCategories.filter(x => x.isActive === true);
+            if (filterCat.length === 0) {
+              navigation.navigate('EditProfile');
+            } else {
+              gotoEditProfile();
+            }
+          }}
           style={{
             position: 'absolute',
             bottom: heightPercentageToDP(4),

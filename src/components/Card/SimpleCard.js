@@ -20,7 +20,9 @@ import images from '../../assets/images';
 import globalStyle from '../../utils/globalStyle';
 import {fontsFamily, fontsSize} from '../../constants/fonts';
 
-const SimpleCard = ({item, onPress}) => {
+const SimpleCard = ({id, image, title, views, onPress, date}) => {
+  const onShare = () => {};
+  const handleMenu = () => {};
   return (
     <TouchableOpacity
       onPress={onPress}
@@ -28,21 +30,18 @@ const SimpleCard = ({item, onPress}) => {
       style={{...styles.storiesCard}}>
       <View style={{width: '70%'}}>
         <Text numberOfLines={2} style={styles.txt4}>
-          Breaking News:
-        </Text>
-        <Text numberOfLines={3} style={styles.txt4}>
-          Investigation Report Exposes Political Corruption in Pakistan
+          {title}
         </Text>
         <View
           style={{
             ...globalStyle.rcb,
-            marginTop: height * 0.01,
+            marginTop: height * 0.02,
           }}>
           <View style={{...globalStyle.rc, gap: width * 0.03}}>
-            <Text style={styles.txt1}>3 days ago</Text>
+            <Text style={styles.txt1}>{new Date(date).getDay()} days ago</Text>
             <View style={{...globalStyle.rc, gap: width * 0.01}}>
               <Image source={images.OpenEye} style={{...styles.eyeImg}} />
-              <Text style={styles.txt1}>38.5k</Text>
+              <Text style={styles.txt1}>{views || 0}</Text>
             </View>
             <View style={{...globalStyle.rc, gap: width * 0.01}}>
               <Image source={images.message} style={{...styles.msgImg}} />
@@ -55,7 +54,7 @@ const SimpleCard = ({item, onPress}) => {
       <View style={{width: '30%'}}>
         <View style={{...styles.storiesImg}}>
           <Image
-            source={images.Banner}
+            source={image !== undefined ? {uri: image} : images.Dummy}
             style={{...styles.img100, ...{borderRadius: width * 0.02}}}
             resizeMode="cover"
           />
@@ -65,10 +64,10 @@ const SimpleCard = ({item, onPress}) => {
             ...globalStyle.rc,
             ...styles.shares,
           }}>
-          <TouchableOpacity activeOpacity={0.8}>
+          <TouchableOpacity activeOpacity={0.8} onPress={() => onShare()}>
             <Image source={images.Share} style={{...styles.msgImg}} />
           </TouchableOpacity>
-          <TouchableOpacity activeOpacity={0.8}>
+          <TouchableOpacity activeOpacity={0.8} onPress={() => handleMenu()}>
             <Image source={images.Menu} style={{...styles.msgImg}} />
           </TouchableOpacity>
         </View>

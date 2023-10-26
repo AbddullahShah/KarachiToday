@@ -24,6 +24,8 @@ export default Images = {
   Share: require('./share.png'),
   Menu: require('./menu.png'),
   Search: require('./search.png'),
+  Dummy: require('./dummy.png'),
+  Empty: require('./empty.png'),
 
   // News Categories
   Politics: require('./newsCategory/politics.png'),

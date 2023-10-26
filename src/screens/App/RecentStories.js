@@ -22,7 +22,7 @@ import {setLoader} from '../../redux/globalSlice';
 import LoadMore from '../../components/Buttons/LoadMore';
 import BackHeader from '../../components/Headers/BackHeader';
 
-const Bookmark = ({...props}) => {
+const RecentStories = ({...props}) => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
 
@@ -96,6 +96,12 @@ const Bookmark = ({...props}) => {
           ...item,
           isActive: false,
         }));
+        let dummyData = {
+          _id: 0,
+          name: 'All',
+          isActive: true,
+        };
+        result.unshift(dummyData);
         setNewsCategories(result);
         dispatch(setLoader(false));
       })
@@ -152,7 +158,11 @@ const Bookmark = ({...props}) => {
   return (
     <View style={styles.container}>
       <View style={styles.wrapper}>
-        <BackHeader isLogo title={'Bookmark'} rightPress={() => {}} />
+        <BackHeader
+          title={'Recent Stories'}
+          leftPress={() => navigation.goBack()}
+          rightPress={() => {}}
+        />
         <FlatList
           horizontal
           initialNumToRender={5}
@@ -196,7 +206,7 @@ const Bookmark = ({...props}) => {
               title={item?.title}
               views={item?.views}
               date={item?.createdAt}
-              onPress={() => navigation.navigate('BlogDetail', {data: item})}
+              onPress={() => {}}
             />
           )}
         />
@@ -205,7 +215,7 @@ const Bookmark = ({...props}) => {
   );
 };
 
-export default Bookmark;
+export default RecentStories;
 
 const styles = StyleSheet.create({
   container: {

@@ -30,7 +30,7 @@ const HomeHeader = ({name, image, onPress}) => {
       <View style={{...globalStyle.rc, gap: width * 0.03}}>
         <View style={styles.avatar}>
           <Image
-            source={image !== undefined ? {uri: image} : images.Avatar}
+            source={image !== undefined ? {uri: image} : images.Dummy}
             resizeMode="cover"
             style={styles.img100}
           />

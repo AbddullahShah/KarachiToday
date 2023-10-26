@@ -7,7 +7,6 @@ import {
   View,
   Dimensions,
   Image,
-  Text,
   TouchableOpacity,
 } from 'react-native';
 import React from 'react';
@@ -19,29 +18,37 @@ import colors from '../../constants/colors';
 import images from '../../assets/images';
 import {fontsFamily, fontsSize} from '../../constants/fonts';
 
-const BackHeader = ({title, leftPress, rightPress, isLogo = false}) => {
+const BlogDetailHeader = ({leftPress, onShare, onMenu}) => {
   return (
     <View style={styles.wrapper}>
       <TouchableOpacity activeOpacity={0.8} onPress={leftPress}>
         <Image
-          source={isLogo ? images.Logo : images.Arrow}
+          source={images.Arrow}
           resizeMode="contain"
-          style={isLogo ? styles.logoImg : styles.iconImg}
+          style={styles.backImg}
         />
       </TouchableOpacity>
-      <Text style={styles.title}>{title}</Text>
-      <TouchableOpacity onPress={rightPress}>
-        <Image
-          source={images.Search}
-          resizeMode="contain"
-          style={styles.iconImg}
-        />
-      </TouchableOpacity>
+      <View style={styles.rightWrapper}>
+        <TouchableOpacity activeOpacity={0.8} onPress={onShare}>
+          <Image
+            source={images.Share}
+            resizeMode="contain"
+            style={styles.iconImg}
+          />
+        </TouchableOpacity>
+        <TouchableOpacity activeOpacity={0.8} onPress={onMenu}>
+          <Image
+            source={images.Menu}
+            resizeMode="contain"
+            style={styles.iconImg}
+          />
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
 
-export default BackHeader;
+export default BlogDetailHeader;
 
 const styles = StyleSheet.create({
   wrapper: {
@@ -51,17 +58,22 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: height * 0.02,
   },
-  iconImg: {
+  backImg: {
     width: widthPercentageToDP(5),
     height: widthPercentageToDP(5),
   },
-  logoImg: {
-    width: widthPercentageToDP(7),
-    height: widthPercentageToDP(7),
+  iconImg: {
+    width: widthPercentageToDP(4),
+    height: widthPercentageToDP(4),
   },
   title: {
     fontFamily: fontsFamily.semibold,
     fontSize: fontsSize.md2,
     color: colors.textDark,
+  },
+  rightWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: widthPercentageToDP(4),
   },
 });

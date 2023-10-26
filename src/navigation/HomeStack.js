@@ -4,6 +4,9 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 // screens
 import BottomTabStack from './BottomTabStack';
 import Trending from '../screens/App/Trending';
+import RecentStories from '../screens/App/RecentStories';
+import BlogDetail from '../screens/App/BlogDetail';
+import Comments from '../screens/App/Comments';
 
 const Stack = createNativeStackNavigator();
 
@@ -14,6 +17,9 @@ const HomeStack = () => {
       screenOptions={{headerShown: false}}>
       <Stack.Screen name="BottomTabStack" component={BottomTabStack} />
       <Stack.Screen name="Trending" component={Trending} />
+      <Stack.Screen name="RecentStories" component={RecentStories} />
+      <Stack.Screen name="BlogDetail" component={BlogDetail} />
+      <Stack.Screen name="Comments" component={Comments} />
     </Stack.Navigator>
   );
 };

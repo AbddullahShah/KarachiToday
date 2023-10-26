@@ -7,12 +7,12 @@ import {
   StyleSheet,
   View,
   Dimensions,
-  Image,
   Text,
   TouchableOpacity,
   FlatList,
+  Image,
 } from 'react-native';
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 
 const {width, height} = Dimensions.get('window');
@@ -20,33 +20,213 @@ const {width, height} = Dimensions.get('window');
 // local imports
 import colors from '../../constants/colors';
 import {useNavigation} from '@react-navigation/native';
-import images from '../../assets/images';
 import globalStyle from '../../utils/globalStyle';
 import {fontsFamily, fontsSize} from '../../constants/fonts';
 import SimpleCard from '../../components/Card/SimpleCard';
 import TrendingCard from '../../components/Card/TrendingCard';
 import HomeHeader from '../../components/Headers/HomeHeader';
-
-const newsCategories = ['All', 'Politics', 'Technology', 'Business', 'Sports'];
+import endPoints from '../../constants/endPoints';
+import apiRequest from '../../utils/apiRequest';
+import {setLoader} from '../../redux/globalSlice';
+import LoadMore from '../../components/Buttons/LoadMore';
+import images from '../../assets/images';
 
 const Home = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
 
   const selectedLang = useSelector(state => state.language.selectedLang);
-
-  const [isSelectedCat, setIsSelectedCat] = useState(0);
-
   const {islLogin, userData} = useSelector(state => state.user);
+
+  const [newsCategories, setNewsCategories] = useState([]);
+  const [isFetching, setIsFetching] = useState(true);
+
+  // Blogs data states
+  const [page, setPage] = useState(1);
+  const [allBlogs, setAllBlogs] = useState([]);
+  const [totalPages, setTotalPages] = useState(0);
+
+  // Trending data states
+  const [trendingPage, setTrendingPage] = useState(1);
+  const [trendingData, setTrendingData] = useState([]);
+  const [totalTrendingPages, setTotalTrendingPages] = useState(0);
 
   const config = {
     headers: {
       'Content-Type': 'application/json',
-      Authorization: 'Bearer' + userData?.token,
+      Authorization: 'Bearer ' + userData?.token,
     },
   };
 
-  console.log(userData);
+  const getTrendingData = () => {
+    dispatch(setLoader(true));
+    apiRequest
+      .get(endPoints.categorySearchByTitle + 'Trending')
+      .then(res => {
+        console.log('idxxxxx', res.data.data.category[0]._id);
+        apiRequest
+          .get(
+            endPoints.getBlogsByCategory +
+              res.data.data.category[0]._id +
+              '?limit=5&page=1',
+          )
+          .then(res => {
+            setTrendingData(res.data.data.blog);
+            setTotalTrendingPages(res.data.totalPages);
+            dispatch(setLoader(false));
+          })
+          .catch(err => {
+            console.log(err);
+            dispatch(setLoader(false));
+          });
+      })
+      .catch(err => {
+        console.log(err);
+        dispatch(setLoader(false));
+      });
+  };
+
+  const getMoreTrendingData = () => {
+    if (isFetching && totalTrendingPages > trendingPage) {
+      dispatch(setLoader(true));
+      apiRequest
+        .get(endPoints.categorySearchByTitle + 'Trending')
+        .then(res => {
+          apiRequest
+            .get(
+              endPoints.getBlogsByCategory +
+                res.data.data.category[0]._id +
+                '?limit=5&page=' +
+                (trendingPage + 1),
+            )
+            .then(res => {
+              dispatch(setLoader(false));
+              setTrendingData([...trendingData, ...res.data.data.blog]);
+              setTrendingPage(trendingPage + 1);
+            })
+            .catch(err => {
+              console.log(err);
+              dispatch(setLoader(false));
+            });
+        })
+        .catch(err => {
+          console.log(err);
+          dispatch(setLoader(false));
+        });
+    }
+  };
+
+  const getAllBlogs = id => {
+    dispatch(setLoader(true));
+    apiRequest
+      .get(endPoints.getAllBlogs + '?limit=5&page=1', config)
+      .then(res => {
+        setAllBlogs(res.data.data);
+        setTotalPages(res.data.totalPages);
+        dispatch(setLoader(false));
+        if (id !== undefined) {
+          setPage(1);
+        }
+      })
+      .catch(err => {
+        console.log(err);
+        dispatch(setLoader(false));
+      });
+  };
+
+  const getMoreBlogData = () => {
+    const filter = newsCategories.filter(x => x.isActive === true);
+    if (isFetching) {
+      let URL;
+      if (filter[0]?._id === 0) {
+        URL = endPoints.getAllBlogs;
+      } else {
+        URL = endPoints.getBlogsByCategory + filter[0]?._id;
+      }
+      dispatch(setLoader(true));
+      apiRequest
+        .get(URL + '?limit=5&page=' + (page + 1), config)
+        .then(res => {
+          setAllBlogs([...allBlogs, ...res.data.data]);
+          dispatch(setLoader(false));
+          setPage(page + 1);
+        })
+        .catch(err => {
+          console.log(err);
+          dispatch(setLoader(false));
+        });
+    }
+  };
+
+  const getAllCategories = () => {
+    dispatch(setLoader(true));
+    apiRequest
+      .get(endPoints.getAllCategories)
+      .then(res => {
+        const result = res.data.allCategory.map((item, index) => ({
+          ...item,
+          isActive: false,
+        }));
+        let dummyData = {
+          _id: 0,
+          name: 'All',
+          isActive: true,
+        };
+        result.unshift(dummyData);
+        setNewsCategories(result);
+        dispatch(setLoader(false));
+      })
+      .catch(err => {
+        console.log(err);
+        setIsFetching(true);
+        dispatch(setLoader(false));
+      });
+  };
+
+  const getBlogsByCategoryId = id => {
+    if (id === 0) {
+      getAllBlogs(id);
+    } else {
+      dispatch(setLoader(true));
+      apiRequest
+        .get(endPoints.getBlogsByCategory + id + '?limit=5&page=1')
+        .then(res => {
+          setAllBlogs(res.data.data.blog);
+          setTotalPages(res.data.totalPages);
+          dispatch(setLoader(false));
+        })
+        .catch(err => {
+          console.log(err);
+          dispatch(setLoader(false));
+        });
+    }
+  };
+
+  const handleCategories = id => {
+    let tempArr = [...newsCategories];
+    const result = tempArr.map(item => {
+      if (item._id === id) {
+        return {
+          ...item,
+          isActive: true,
+        };
+      } else {
+        return {
+          ...item,
+          isActive: false,
+        };
+      }
+    });
+    getBlogsByCategoryId(id);
+    setNewsCategories(result);
+  };
+
+  useEffect(() => {
+    getTrendingData();
+    getAllCategories();
+    getAllBlogs();
+  }, []);
+
   return (
     <View style={styles.container}>
       <ScrollView style={styles.wrapper} showsVerticalScrollIndicator={false}>
@@ -57,35 +237,58 @@ const Home = () => {
           onPress={() => {}}
         />
 
-        <View style={{...globalStyle.rcb, marginTop: height * 0.04}}>
-          <Text style={styles.txt2}>Trending</Text>
-          <Text
-            style={styles.txt3}
-            onPress={() => navigation.navigate('Trending')}>
-            {'View All >'}
-          </Text>
-        </View>
+        {trendingData.length === 0 && allBlogs.length === 0 && (
+          <View style={styles.empty}>
+            <Image
+              source={images.Empty}
+              style={{width: width * 0.4, height: width * 0.4}}
+              resizeMode="contain"
+            />
+          </View>
+        )}
+
+        {trendingData && trendingData.length !== 0 && (
+          <View style={{...globalStyle.rcb, marginTop: height * 0.04}}>
+            <Text style={styles.txt2}>Trending</Text>
+            <Text
+              style={styles.txt3}
+              onPress={() => navigation.navigate('Trending')}>
+              {'View All'}
+            </Text>
+          </View>
+        )}
 
         <FlatList
-          initialNumToRender={5}
-          data={Array(10).fill(undefined)}
-          keyExtractor={(_, index) => index.toString()}
           horizontal
+          data={trendingData}
+          initialNumToRender={5}
+          keyExtractor={(_, index) => index.toString()}
+          onEndReachedThreshold={0.5}
+          onEndReached={getMoreTrendingData}
           style={{marginTop: height * 0.02}}
           showsHorizontalScrollIndicator={false}
           renderItem={({item, index}) => (
-            <TrendingCard item={item} onPress={() => {}} />
+            <TrendingCard
+              id={item?._id}
+              image={item?.featureImg}
+              title={item?.title}
+              views={item?.views}
+              date={item?.createdAt}
+              onPress={() => navigation.navigate('BlogDetail', {data: item})}
+            />
           )}
         />
 
-        <View style={{...globalStyle.rcb, marginTop: height * 0.04}}>
-          <Text style={styles.txt2}>Recent Stories</Text>
-          <Text
-            style={styles.txt3}
-            onPress={() => navigation.navigate('Trending')}>
-            {'View All >'}
-          </Text>
-        </View>
+        {newsCategories && newsCategories.length !== 0 && (
+          <View style={{...globalStyle.rcb, marginTop: height * 0.04}}>
+            <Text style={styles.txt2}>Recent Stories</Text>
+            <Text
+              style={styles.txt3}
+              onPress={() => navigation.navigate('RecentStories')}>
+              {'View All'}
+            </Text>
+          </View>
+        )}
 
         <FlatList
           horizontal
@@ -98,10 +301,10 @@ const Home = () => {
             return (
               <TouchableOpacity
                 activeOpacity={0.8}
-                onPress={() => setIsSelectedCat(index)}
-                style={{...styles.categoryBox(index, isSelectedCat)}}>
-                <Text style={{...styles.catTxt(index, isSelectedCat)}}>
-                  {item}
+                onPress={() => handleCategories(item._id)}
+                style={{...styles.categoryBox(item.isActive)}}>
+                <Text style={{...styles.catTxt(item.isActive)}}>
+                  {item.name}
                 </Text>
               </TouchableOpacity>
             );
@@ -109,13 +312,27 @@ const Home = () => {
         />
 
         <FlatList
+          data={allBlogs}
           initialNumToRender={5}
-          data={Array(10).fill(undefined)}
           keyExtractor={(_, index) => index.toString()}
           style={{marginTop: height * 0.02}}
           showsVerticalScrollIndicator={false}
+          ListFooterComponent={() => {
+            if (totalPages > page) {
+              return <LoadMore onPress={getMoreBlogData} />;
+            } else {
+              return null;
+            }
+          }}
           renderItem={({item, index}) => (
-            <SimpleCard item={item} onPress={() => {}} />
+            <SimpleCard
+              id={item?._id}
+              image={item?.featureImg}
+              title={item?.title}
+              views={item?.views}
+              date={item?.createdAt}
+              onPress={() => navigation.navigate('BlogDetail', {data: item})}
+            />
           )}
         />
         <View style={{height: heightPercentageToDP(10)}} />
@@ -135,6 +352,11 @@ const styles = StyleSheet.create({
     width: '90%',
     alignSelf: 'center',
   },
+  txt1: {
+    fontFamily: fontsFamily.medium,
+    fontSize: fontsSize.md1,
+    color: colors.white,
+  },
   txt2: {
     marginTop: heightPercentageToDP(0.5),
     fontFamily: fontsFamily.semibold,
@@ -152,18 +374,23 @@ const styles = StyleSheet.create({
     width: width * 0.7,
     marginRight: width * 0.04,
   },
-  categoryBox: (index, isSelectedCat) => ({
-    backgroundColor: index === isSelectedCat ? colors.primary : colors.white,
+  categoryBox: isActive => ({
+    backgroundColor: isActive ? colors.primary : colors.white,
+    borderColor: isActive ? colors.primary : colors.textLight,
     borderWidth: 1,
-    borderColor: index === isSelectedCat ? colors.primary : colors.textLight,
     paddingHorizontal: width * 0.05,
     paddingVertical: width * 0.02,
     borderRadius: width / 2,
     marginRight: width * 0.02,
   }),
-  catTxt: (index, isSelectedCat) => ({
+  catTxt: isActive => ({
     fontFamily: fontsFamily.regular,
     fontSize: fontsSize.sm2,
-    color: index === isSelectedCat ? colors.white : colors.textLight,
+    color: isActive ? colors.white : colors.textLight,
   }),
+  empty: {
+    alignSelf: 'center',
+    position: 'absolute',
+    top: height * 0.35,
+  },
 });
