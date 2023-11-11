@@ -9,8 +9,11 @@ import {
   Image,
   Text,
   TouchableOpacity,
+  Share,
+  Alert,
 } from 'react-native';
-import React from 'react';
+import React, {useState} from 'react';
+import {useNavigation} from '@react-navigation/native';
 
 const {width, height} = Dimensions.get('window');
 
@@ -19,54 +22,89 @@ import images from '../../assets/images';
 import globalStyle from '../../utils/globalStyle';
 import {fontsFamily, fontsSize} from '../../constants/fonts';
 import colors from '../../constants/colors';
+import MenuModal from '../Modals/MenuModal';
 
 const TrendingCard = ({id, image, title, views, onPress, date}) => {
-  const onShare = () => {};
-  const handleMenu = () => {};
+  const navigation = useNavigation();
+
+  const [isModal, setIsModal] = useState(false);
+
+  const onShare = async () => {
+    try {
+      const result = await Share.share({
+        message: title,
+      });
+      if (result.action === Share.sharedAction) {
+        if (result.activityType) {
+          // shared with activity type of result.activityType
+        } else {
+          // shared
+        }
+      } else if (result.action === Share.dismissedAction) {
+        // dismissed
+      }
+    } catch (error) {
+      Alert.alert(error.message);
+    }
+  };
+
+  const handleMenu = () => {
+    setIsModal(true);
+  };
 
   return (
-    <TouchableOpacity
-      onPress={onPress}
-      activeOpacity={1}
-      style={styles.trendingCard}>
-      <View style={styles.cardImg}>
-        <Image
-          source={image !== undefined ? {uri: image} : images.Dummy}
-          style={styles.img100}
-          resizeMode="cover"
-        />
-      </View>
-
-      <Text numberOfLines={3} style={styles.txt4}>
-        {title}
-      </Text>
-      <View
-        style={{
-          ...globalStyle.rcb,
-          marginTop: height * 0.01,
-        }}>
-        <View style={{...globalStyle.rc, gap: width * 0.03}}>
-          <Text style={styles.txt1}>{new Date(date).getDay()} days ago</Text>
-          <View style={{...globalStyle.rc, gap: width * 0.01}}>
-            <Image source={images.OpenEye} style={styles.eyeImg} />
-            <Text style={styles.txt1}>{views || 0}</Text>
-          </View>
-          <View style={{...globalStyle.rc, gap: width * 0.01}}>
-            <Image source={images.message} style={styles.msgImg} />
-            <Text style={styles.txt1}>3.2k</Text>
-          </View>
+    <>
+      <TouchableOpacity
+        onPress={onPress}
+        activeOpacity={1}
+        style={styles.trendingCard}>
+        <View style={styles.cardImg}>
+          <Image
+            source={image !== undefined ? {uri: image} : images.Dummy}
+            style={styles.img100}
+            resizeMode="cover"
+          />
         </View>
 
-        <View style={{...globalStyle.rc, gap: width * 0.03}}>
-          <TouchableOpacity activeOpacity={0.8} onPress={() => onShare()}>
-            <Image source={images.Share} style={styles.msgImg} />
-          </TouchableOpacity>
-          <TouchableOpacity activeOpacity={0.8} onPress={() => handleMenu()}>
-            <Image source={images.Menu} style={styles.msgImg} />
-          </TouchableOpacity>
+        <Text numberOfLines={3} style={styles.txt4}>
+          {title}
+        </Text>
+        <View
+          style={{
+            ...globalStyle.rcb,
+            marginTop: height * 0.01,
+          }}>
+          <View style={{...globalStyle.rc, gap: width * 0.03}}>
+            <Text style={styles.txt1}>{new Date(date).getDay()} days ago</Text>
+            <View style={{...globalStyle.rc, gap: width * 0.01}}>
+              <Image source={images.OpenEye} style={styles.eyeImg} />
+              <Text style={styles.txt1}>{views || 0}</Text>
+            </View>
+            <TouchableOpacity
+              style={{...globalStyle.rc, gap: width * 0.01}}
+              onPress={() => navigation.navigate('Comments', {data: id})}
+              activeOpacity={0.5}>
+              <Image source={images.message} style={styles.msgImg} />
+              <Text style={styles.txt1}>3.2k</Text>
+            </TouchableOpacity>
+          </View>
+
+          <View style={{...globalStyle.rc, gap: width * 0.03}}>
+            <TouchableOpacity activeOpacity={0.8} onPress={() => onShare()}>
+              <Image source={images.Share} style={styles.msgImg} />
+            </TouchableOpacity>
+            <TouchableOpacity activeOpacity={0.8} onPress={() => handleMenu()}>
+              <Image source={images.Menu} style={styles.msgImg} />
+            </TouchableOpacity>
+          </View>
         </View>
-      </View>
-    </TouchableOpacity>
+      </TouchableOpacity>
+      <MenuModal
+        isVisible={isModal}
+        onClose={() => setIsModal(false)}
+        blogID={id}
+      />
+    </>
   );
 };
 

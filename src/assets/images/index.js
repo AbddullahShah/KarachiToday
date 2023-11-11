@@ -26,6 +26,12 @@ export default Images = {
   Search: require('./search.png'),
   Dummy: require('./dummy.png'),
   Empty: require('./empty.png'),
+  SearchEmpty: require('./search_no.png'),
+  Close: require('./close.png'),
+  Setting: require('./setting.png'),
+  IBtn: require('./i_btn.png'),
+  Feedback: require('./feedback.png'),
+  Send: require('./send.png'),
 
   // News Categories
   Politics: require('./newsCategory/politics.png'),

@@ -1,11 +1,4 @@
-import {
-  StyleSheet,
-  View,
-  Dimensions,
-  Text,
-  TouchableOpacity,
-  FlatList,
-} from 'react-native';
+import {StyleSheet, View, Dimensions, Text, FlatList} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 
@@ -19,8 +12,10 @@ import SimpleCard from '../../components/Card/SimpleCard';
 import endPoints from '../../constants/endPoints';
 import apiRequest from '../../utils/apiRequest';
 import {setLoader} from '../../redux/globalSlice';
-import LoadMore from '../../components/Buttons/LoadMore';
 import BackHeader from '../../components/Headers/BackHeader';
+import {Image} from 'react-native';
+import images from '../../assets/images';
+import {setSavedID} from '../../redux/userSlice';
 
 const Bookmark = ({...props}) => {
   const navigation = useNavigation();
@@ -29,13 +24,7 @@ const Bookmark = ({...props}) => {
   const selectedLang = useSelector(state => state.language.selectedLang);
   const {islLogin, userData} = useSelector(state => state.user);
 
-  const [newsCategories, setNewsCategories] = useState([]);
-  const [isFetching, setIsFetching] = useState(true);
-
-  // Blogs data states
-  const [page, setPage] = useState(1);
-  const [allBlogs, setAllBlogs] = useState([]);
-  const [totalPages, setTotalPages] = useState(0);
+  const [data, setData] = useState([]);
 
   const config = {
     headers: {
@@ -44,162 +33,72 @@ const Bookmark = ({...props}) => {
     },
   };
 
-  const getAllBlogs = id => {
-    dispatch(setLoader(true));
+  const getBookmark = () => {
     apiRequest
-      .get(endPoints.getAllBlogs + '?limit=10&page=1', config)
+      .get(endPoints.getSaveBlogs, config)
       .then(res => {
-        console.log(res.data);
-        setAllBlogs(res.data.data);
-        setTotalPages(res.data.totalPages);
-        dispatch(setLoader(false));
-        if (id !== undefined) {
-          setPage(1);
-        }
+        setData(res.data);
+        const savedID = res?.data?.map(x => x._id);
+        dispatch(setSavedID(savedID));
       })
       .catch(err => {
         console.log(err);
-        dispatch(setLoader(false));
       });
-  };
-
-  const getMoreBlogData = () => {
-    const filter = newsCategories.filter(x => x.isActive === true);
-    if (isFetching) {
-      let URL;
-      if (filter[0]?._id === 0) {
-        URL = endPoints.getAllBlogs;
-      } else {
-        URL = endPoints.getBlogsByCategory + filter[0]?._id;
-      }
-      dispatch(setLoader(true));
-      apiRequest
-        .get(URL + '?limit=10&page=' + (page + 1), config)
-        .then(res => {
-          setAllBlogs([...allBlogs, ...res.data.data]);
-          dispatch(setLoader(false));
-          setPage(page + 1);
-        })
-        .catch(err => {
-          console.log(err);
-          dispatch(setLoader(false));
-        });
-    }
-  };
-
-  const getAllCategories = () => {
-    dispatch(setLoader(true));
-    apiRequest
-      .get(endPoints.getAllCategories)
-      .then(res => {
-        const result = res.data.allCategory.map((item, index) => ({
-          ...item,
-          isActive: false,
-        }));
-        setNewsCategories(result);
-        dispatch(setLoader(false));
-      })
-      .catch(err => {
-        console.log(err);
-        setIsFetching(true);
-        dispatch(setLoader(false));
-      });
-  };
-
-  const getBlogsByCategoryId = id => {
-    if (id === 0) {
-      getAllBlogs(id);
-    } else {
-      dispatch(setLoader(true));
-      apiRequest
-        .get(endPoints.getBlogsByCategory + id + '?limit=5&page=1')
-        .then(res => {
-          setAllBlogs(res.data.data.blog);
-          setTotalPages(res.data.totalPages);
-          dispatch(setLoader(false));
-        })
-        .catch(err => {
-          console.log(err);
-          dispatch(setLoader(false));
-        });
-    }
-  };
-
-  const handleCategories = id => {
-    let tempArr = [...newsCategories];
-    const result = tempArr.map(item => {
-      if (item._id === id) {
-        return {
-          ...item,
-          isActive: true,
-        };
-      } else {
-        return {
-          ...item,
-          isActive: false,
-        };
-      }
-    });
-    getBlogsByCategoryId(id);
-    setNewsCategories(result);
   };
 
   useEffect(() => {
-    getAllBlogs();
-    getAllCategories();
+    const unsubscribe = navigation.addListener('focus', () => {
+      getBookmark();
+    });
+
+    return unsubscribe;
+  }, []);
+
+  useEffect(() => {
+    getBookmark();
   }, []);
 
   return (
     <View style={styles.container}>
       <View style={styles.wrapper}>
-        <BackHeader isLogo title={'Bookmark'} rightPress={() => {}} />
-        <FlatList
-          horizontal
-          initialNumToRender={5}
-          data={newsCategories}
-          keyExtractor={(_, index) => index.toString()}
-          style={{marginTop: height * 0.02}}
-          showsHorizontalScrollIndicator={false}
-          renderItem={({item, index}) => {
-            return (
-              <TouchableOpacity
-                activeOpacity={0.8}
-                onPress={() => handleCategories(item._id)}
-                style={styles.categoryBox(item.isActive)}>
-                <Text style={styles.catTxt(item.isActive)}>{item.name}</Text>
-              </TouchableOpacity>
-            );
-          }}
+        <BackHeader
+          isLogo
+          title={'Bookmark'}
+          rightPress={() => navigation.navigate('Search')}
         />
-        <FlatList
-          data={allBlogs}
-          initialNumToRender={5}
-          keyExtractor={(_, index) => index.toString()}
-          style={{marginTop: height * 0.02}}
-          showsVerticalScrollIndicator={false}
-          ListFooterComponent={() => {
-            if (totalPages > page) {
-              return (
-                <>
-                  <LoadMore onPress={getMoreBlogData} />
-                  <View style={{height: height * 0.2}} />
-                </>
-              );
-            } else {
-              return <View style={{height: height * 0.2}} />;
-            }
-          }}
-          renderItem={({item, index}) => (
-            <SimpleCard
-              id={item?._id}
-              image={item?.featureImg}
-              title={item?.title}
-              views={item?.views}
-              date={item?.createdAt}
-              onPress={() => navigation.navigate('BlogDetail', {data: item})}
+
+        {data.length === 0 ? (
+          <View style={styles.emptyWrapper}>
+            <Image
+              source={images.Empty}
+              style={{width: width * 0.4, height: width * 0.4}}
+              resizeMode="contain"
             />
-          )}
-        />
+            <Text style={styles.txt1}>Empty!</Text>
+            <Text style={styles.txt2}>
+              You have not saved any news to this collection.
+            </Text>
+          </View>
+        ) : (
+          <FlatList
+            data={data}
+            initialNumToRender={5}
+            keyExtractor={(_, index) => index.toString()}
+            style={{marginTop: height * 0.02}}
+            showsVerticalScrollIndicator={false}
+            renderItem={({item, index}) => (
+              <SimpleCard
+                id={item?._id}
+                image={item?.featureImg}
+                title={item?.title}
+                views={item?.views}
+                date={item?.createdAt}
+                onRefresh={() => getBookmark()}
+                onPress={() => navigation.navigate('BlogDetail', {data: item})}
+              />
+            )}
+          />
+        )}
       </View>
     </View>
   );
@@ -213,21 +112,28 @@ const styles = StyleSheet.create({
     backgroundColor: colors.bg,
   },
   wrapper: {
+    flex: 1,
     width: '90%',
     alignSelf: 'center',
   },
-  categoryBox: isActive => ({
-    backgroundColor: isActive ? colors.primary : colors.white,
-    borderColor: isActive ? colors.primary : colors.textLight,
-    borderWidth: 1,
-    paddingHorizontal: width * 0.05,
-    paddingVertical: width * 0.02,
-    borderRadius: width / 2,
-    marginRight: width * 0.02,
-  }),
-  catTxt: isActive => ({
+  emptyWrapper: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  txt1: {
+    fontFamily: fontsFamily.bold,
+    fontSize: fontsSize.xl2,
+    color: colors.textDark,
+    marginTop: height * 0.01,
+    textAlign: 'center',
+  },
+  txt2: {
+    width: '80%',
     fontFamily: fontsFamily.regular,
-    fontSize: fontsSize.sm2,
-    color: isActive ? colors.white : colors.textLight,
-  }),
+    fontSize: fontsSize.md2,
+    color: colors.textLight,
+    marginTop: height * 0.02,
+    textAlign: 'center',
+  },
 });

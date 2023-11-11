@@ -36,7 +36,7 @@ const Home = () => {
   const dispatch = useDispatch();
 
   const selectedLang = useSelector(state => state.language.selectedLang);
-  const {islLogin, userData} = useSelector(state => state.user);
+  const {userData} = useSelector(state => state.user);
 
   const [newsCategories, setNewsCategories] = useState([]);
   const [isFetching, setIsFetching] = useState(true);
@@ -234,7 +234,7 @@ const Home = () => {
         <HomeHeader
           name={userData?.user?.name}
           image={userData?.user?.profile_pic}
-          onPress={() => {}}
+          onPress={() => navigation.navigate('Notification')}
         />
 
         {trendingData.length === 0 && allBlogs.length === 0 && (
@@ -324,7 +324,7 @@ const Home = () => {
               return null;
             }
           }}
-          renderItem={({item, index}) => (
+          renderItem={({item}) => (
             <SimpleCard
               id={item?._id}
               image={item?.featureImg}

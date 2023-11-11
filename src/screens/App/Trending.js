@@ -95,7 +95,7 @@ const Trending = ({...props}) => {
         <BackHeader
           title={'Trending'}
           leftPress={() => navigation.goBack()}
-          rightPress={() => {}}
+          rightPress={() => navigation.navigate('Search')}
         />
         <FlatList
           data={trendingData}

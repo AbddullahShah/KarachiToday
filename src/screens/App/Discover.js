@@ -33,8 +33,14 @@ const Bookmark = ({...props}) => {
   const selectedLang = useSelector(state => state.language.selectedLang);
   const {islLogin, userData} = useSelector(state => state.user);
 
-  // Trending data states
   const [isFetching, setIsFetching] = useState(true);
+
+  // Blogs data states
+  const [page, setPage] = useState(1);
+  const [allBlogs, setAllBlogs] = useState([]);
+  const [totalPages, setTotalPages] = useState(0);
+
+  // Trending data states
   const [trendingPage, setTrendingPage] = useState(1);
   const [trendingData, setTrendingData] = useState([]);
   const [totalTrendingPages, setTotalTrendingPages] = useState(0);
@@ -103,14 +109,54 @@ const Bookmark = ({...props}) => {
     }
   };
 
+  const getAllBlogs = id => {
+    dispatch(setLoader(true));
+    apiRequest
+      .get(endPoints.getAllBlogs + '?limit=5&page=1', config)
+      .then(res => {
+        setAllBlogs(res.data.data);
+        setTotalPages(res.data.totalPages);
+        dispatch(setLoader(false));
+        if (id !== undefined) {
+          setPage(1);
+        }
+      })
+      .catch(err => {
+        console.log(err);
+        dispatch(setLoader(false));
+      });
+  };
+
+  const getMoreBlogData = () => {
+    if (isFetching && totalPages > page) {
+      dispatch(setLoader(true));
+      apiRequest
+        .get(endPoints.getAllBlogs + '?limit=5&page=' + (page + 1), config)
+        .then(res => {
+          setAllBlogs([...allBlogs, ...res.data.data]);
+          dispatch(setLoader(false));
+          setPage(page + 1);
+        })
+        .catch(err => {
+          console.log(err);
+          dispatch(setLoader(false));
+        });
+    }
+  };
+
   useEffect(() => {
     getTrendingData();
+    getAllBlogs();
   }, []);
 
   return (
     <View style={styles.container}>
       <View style={styles.wrapper}>
-        <BackHeader isLogo title={'Discover'} rightPress={() => {}} />
+        <BackHeader
+          isLogo
+          title={'Discover'}
+          rightPress={() => navigation.navigate('Search')}
+        />
         <ScrollView showsVerticalScrollIndicator={false}>
           {trendingData && trendingData.length !== 0 && (
             <View style={{...globalStyle.rcb, marginTop: height * 0.04}}>
@@ -125,11 +171,11 @@ const Bookmark = ({...props}) => {
 
           <FlatList
             horizontal
-            data={trendingData}
+            data={allBlogs}
             initialNumToRender={5}
             keyExtractor={(_, index) => index.toString()}
             onEndReachedThreshold={0.5}
-            onEndReached={getMoreTrendingData}
+            onEndReached={getMoreBlogData}
             style={{marginTop: height * 0.02}}
             showsHorizontalScrollIndicator={false}
             renderItem={({item, index}) => (

@@ -19,7 +19,14 @@ import colors from '../../constants/colors';
 import images from '../../assets/images';
 import {fontsFamily, fontsSize} from '../../constants/fonts';
 
-const BackHeader = ({title, leftPress, rightPress, isLogo = false}) => {
+const BackHeader = ({
+  title,
+  leftPress = () => {},
+  rightPress = () => {},
+  rightIcon = images.Search,
+  isLogo = false,
+  isRight = true,
+}) => {
   return (
     <View style={styles.wrapper}>
       <TouchableOpacity activeOpacity={0.8} onPress={leftPress}>
@@ -30,11 +37,14 @@ const BackHeader = ({title, leftPress, rightPress, isLogo = false}) => {
         />
       </TouchableOpacity>
       <Text style={styles.title}>{title}</Text>
-      <TouchableOpacity onPress={rightPress}>
+      <TouchableOpacity onPress={isRight ? rightPress : null}>
         <Image
-          source={images.Search}
+          source={rightIcon}
           resizeMode="contain"
-          style={styles.iconImg}
+          style={[
+            styles.iconImg,
+            {tintColor: isRight ? colors.textDark : 'white'},
+          ]}
         />
       </TouchableOpacity>
     </View>

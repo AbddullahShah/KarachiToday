@@ -161,7 +161,7 @@ const RecentStories = ({...props}) => {
         <BackHeader
           title={'Recent Stories'}
           leftPress={() => navigation.goBack()}
-          rightPress={() => {}}
+          rightPress={() => navigation.navigate('Search')}
         />
         <FlatList
           horizontal

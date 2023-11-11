@@ -5,6 +5,7 @@ import {
   ScrollView,
   Image,
   Text,
+  TouchableOpacity,
 } from 'react-native';
 import React from 'react';
 import {useDispatch, useSelector} from 'react-redux';
@@ -56,15 +57,20 @@ const BlogDetail = ({...props}) => {
               gap: width * 0.03,
               marginTop: height * 0.02,
             }}>
-            <Text style={styles.txt1}>1 days ago</Text>
+            <Text style={styles.txt1}>
+              {new Date(data?.createdAt).getDate()} days ago
+            </Text>
             <View style={{...globalStyle.rc, gap: width * 0.01}}>
               <Image source={images.OpenEye} style={styles.eyeImg} />
               <Text style={styles.txt1}>1</Text>
             </View>
-            <View style={{...globalStyle.rc, gap: width * 0.01}}>
+            <TouchableOpacity
+              activeOpacity={0.8}
+              onPress={() => navigation.navigate('Comments', {data: data._id})}
+              style={{...globalStyle.rc, gap: width * 0.01}}>
               <Image source={images.message} style={styles.msgImg} />
               <Text style={styles.txt1}>3.2k</Text>
-            </View>
+            </TouchableOpacity>
           </View>
 
           <RenderHtml

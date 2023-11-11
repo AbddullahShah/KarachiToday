@@ -14,4 +14,10 @@ export default endPoints = {
   getBlogsByCategory: 'blog/search/blog/category/',
   getAllCategories: 'blog/all/category/',
   categorySearchByTitle: 'blog/search/category/',
+  getSaveBlogs: 'user/saved/blogs/',
+  saveUnsavedBlogs: 'user/saved/blog/',
+  hideUnHideBlogs: 'user/hide/blog/',
+  searchBlogByTitle: 'blog/search/blog/',
+  getCommentsByBlog: 'blog/findcomment/',
+  postComments: 'blog/comment/',
 };
