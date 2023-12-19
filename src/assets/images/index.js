@@ -1,5 +1,5 @@
 export default Images = {
-  Logo: require('./logo.png'),
+  Logo: require('./Logo.png'),
   Logo_Horizontal: require('./logo_horizontal.png'),
   Onboard1: require('./onboard1.png'),
   Onboard2: require('./onboard1.png'),

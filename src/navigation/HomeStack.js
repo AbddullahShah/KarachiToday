@@ -9,6 +9,7 @@ import BlogDetail from '../screens/App/BlogDetail';
 import Comments from '../screens/App/Comments';
 import Search from '../screens/App/Search';
 import Notification from '../screens/App/Notification';
+import EditProfile from '../screens/App/EditProfileInsideApp';
 
 const Stack = createNativeStackNavigator();
 
@@ -24,6 +25,8 @@ const HomeStack = () => {
       <Stack.Screen name="Comments" component={Comments} />
       <Stack.Screen name="Search" component={Search} />
       <Stack.Screen name="Notification" component={Notification} />
+      <Stack.Screen name="EditProfile" component={EditProfile} />
+
     </Stack.Navigator>
   );
 };

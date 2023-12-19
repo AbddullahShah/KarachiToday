@@ -12,25 +12,27 @@ import {
 } from 'react-native';
 import React from 'react';
 
-const {width, height} = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
 
 // local imports
 import colors from '../../constants/colors';
 import images from '../../assets/images';
 import globalStyle from '../../utils/globalStyle';
-import {fontsFamily, fontsSize} from '../../constants/fonts';
+import { fontsFamily, fontsSize } from '../../constants/fonts';
 
-const HomeHeader = ({name, image, onPress}) => {
+const HomeHeader = ({ name, image, onPress, onPressProfile }) => {
   return (
     <View
       style={{
         ...globalStyle.rcb,
         marginTop: height * 0.02,
       }}>
-      <View style={{...globalStyle.rc, gap: width * 0.03}}>
+      <TouchableOpacity style={{ ...globalStyle.rc, gap: width * 0.03 }}
+        onPress={onPressProfile}
+      >
         <View style={styles.avatar}>
           <Image
-            source={image !== undefined ? {uri: image} : images.Dummy}
+            source={image !== undefined ? { uri: image } : images.Dummy}
             resizeMode="cover"
             style={styles.img100}
           />
@@ -41,7 +43,7 @@ const HomeHeader = ({name, image, onPress}) => {
             {name}
           </Text>
         </View>
-      </View>
+      </TouchableOpacity>
       <TouchableOpacity
         activeOpacity={0.8}
         style={styles.notifiIc}
@@ -52,7 +54,7 @@ const HomeHeader = ({name, image, onPress}) => {
           style={styles.img100}
         />
       </TouchableOpacity>
-    </View>
+    </View >
   );
 };
 

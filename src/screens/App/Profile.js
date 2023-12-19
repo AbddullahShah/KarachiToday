@@ -13,21 +13,21 @@ import {
   View,
 } from 'react-native';
 import React from 'react';
-import {useDispatch, useSelector} from 'react-redux';
-import {useNavigation} from '@react-navigation/native';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigation } from '@react-navigation/native';
 
 // local import
 import colors from '../../constants/colors';
 import images from '../../assets/images';
-import {fontsFamily, fontsSize} from '../../constants/fonts';
-import {logoutUser} from '../../redux/userSlice';
+import { fontsFamily, fontsSize } from '../../constants/fonts';
+import { logoutUser } from '../../redux/userSlice';
 import languages from '../../lang/languages';
 
 const Profile = () => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
 
-  const {isLogin, userData} = useSelector(state => state.user);
+  const { isLogin, userData } = useSelector(state => state.user);
   const selectedLang = useSelector(state => state.language.selectedLang);
 
   const logout = () => {
@@ -43,7 +43,7 @@ const Profile = () => {
           dispatch(logoutUser());
           navigation.reset({
             index: 0,
-            routes: [{name: 'MainStack'}],
+            routes: [{ name: 'MainStack' }],
           });
         },
       },
@@ -63,7 +63,7 @@ const Profile = () => {
           dispatch(logoutUser());
           navigation.reset({
             index: 0,
-            routes: [{name: 'MainStack'}],
+            routes: [{ name: 'MainStack' }],
           });
         },
       },
@@ -76,53 +76,79 @@ const Profile = () => {
         style={styles.mainWrapper}
         showsVerticalScrollIndicator={false}>
         <View style={styles.wrapper}>
-          <TouchableOpacity
+          <View
             style={styles.avatar}
             activeOpacity={0.8}
-            onPress={() => {}}>
+          // onPress={() => { }}
+          >
             <Image
               source={
                 userData?.user?.profile_pic !== undefined
-                  ? {uri: userData?.user?.profile_pic}
+                  ? { uri: userData?.user?.profile_pic }
                   : images.Dummy
               }
               style={styles.img}
               resizeMode="cover"
             />
-          </TouchableOpacity>
-          <View style={styles.card}>
-            <Text style={styles.text1}>Profile Info</Text>
-            <Text style={styles.text2}>Name</Text>
-            <Text style={styles.text3}>{userData?.user?.name}</Text>
-            {userData?.user?.phone_number && (
-              <Text style={styles.text2}>Phone</Text>
-            )}
-            {userData?.user?.phone_number && (
-              <Text style={styles.text3}>{userData?.user?.phone_number}</Text>
-            )}
-            <Text style={styles.text2}>Email</Text>
-            <Text style={styles.text3}>{userData?.user?.email}</Text>
-            {userData?.user?.bio && <Text style={styles.text2}>Bio</Text>}
-            {userData?.user?.bio && (
-              <Text style={styles.text3}>{userData?.user?.bio}</Text>
-            )}
           </View>
-          <TouchableOpacity
-            activeOpacity={0.8}
-            onPress={() => deleteAccount()}
-            style={[styles.card, {backgroundColor: colors.primary}]}>
-            <Text style={[styles.text3, {color: colors.white}]}>
-              Account Delete
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            activeOpacity={0.8}
-            onPress={() => logout()}
-            style={[styles.card, {backgroundColor: 'red'}]}>
-            <Text style={[styles.text3, {color: colors.white}]}>Logout</Text>
-          </TouchableOpacity>
+          <View style={styles.card}>
+            <View style={{ justifyContent: 'space-between', flexDirection: 'row' }}>
+              <Text style={styles.text1}>Profile Info</Text>
+              <TouchableOpacity
+                onPress={() => navigation.navigate('EditProfile')}
+              >
+                <Image
+                  source={images.Edit}
+                  style={{ height: 20, width: 20 }}
+                  resizeMode="cover"
+                />
+              </TouchableOpacity>
+            </View>
+
+            <View style={styles.seprator}>
+              <Text style={styles.text2}>Name</Text>
+              <Text style={styles.text3}>{userData?.user?.name}</Text>
+            </View>
+            <View style={styles.seprator}>
+              {userData?.user?.phone_number && (
+                <Text style={styles.text2}>Phone</Text>
+              )}
+              {userData?.user?.phone_number && (
+                <Text style={styles.text3}>{userData?.user?.phone_number}</Text>
+              )}
+            </View>
+            <View style={styles.seprator}>
+              <Text style={styles.text2}>Email</Text>
+              <Text style={styles.text3}>{userData?.user?.email}</Text>
+            </View>
+            <View style={styles.seprator}>
+              {userData?.user?.bio && <Text style={styles.text2}>Bio</Text>}
+              {userData?.user?.bio && (
+                <Text style={styles.text3}>{userData?.user?.bio}</Text>
+              )}
+            </View>
+          </View>
+
+          <View style={{ alignItems: 'center', }}>
+            <TouchableOpacity
+              activeOpacity={0.8}
+              onPress={() => deleteAccount()}
+              style={[styles.card, styles.buttonResize, { backgroundColor: colors.primary, }]}>
+              <Text style={[styles.text3, { color: colors.white }]}>
+                Account Delete
+              </Text>
+            </TouchableOpacity>
+          </View>
+          <View style={{ alignItems: 'center', }}>
+            <TouchableOpacity
+              activeOpacity={0.8}
+              onPress={() => logout()}
+              style={[styles.card, styles.buttonResize, { backgroundColor: 'red' }]}>
+              <Text style={[styles.text3, { color: colors.white }]}>Logout</Text>
+            </TouchableOpacity>
+          </View>
         </View>
-        <View style={{height: 100}} />
+        <View style={{ height: 100 }} />
       </ScrollView>
     </View>
   );
@@ -158,14 +184,24 @@ const styles = StyleSheet.create({
     shadowRadius: 3.84,
     elevation: 5,
   },
+  buttonResize: {
+    width: widthPercentageToDP(70),
+    alignItems: 'center'
+    // height: widthPercentageToDP(21),
+  },
   avatar: {
-    width: widthPercentageToDP(24),
-    height: widthPercentageToDP(24),
-    borderRadius: widthPercentageToDP(2),
+    width: widthPercentageToDP(21),
+    height: widthPercentageToDP(21),
+    borderRadius: widthPercentageToDP(10),
     backgroundColor: colors.primary,
     alignItems: 'center',
     justifyContent: 'center',
     alignSelf: 'center',
+  },
+  img: {
+    width: '93%',
+    height: '93%',
+    borderRadius: widthPercentageToDP(10),
   },
   text1: {
     fontFamily: fontsFamily.bold,
@@ -193,9 +229,10 @@ const styles = StyleSheet.create({
     paddingVertical: heightPercentageToDP(1),
     marginTop: heightPercentageToDP(2),
   },
-  img: {
-    width: '94%',
-    height: '94%',
-    borderRadius: widthPercentageToDP(2),
-  },
+  seprator: {
+    borderBottomColor: 'grey',
+    borderBottomWidth: 0.5,
+    paddingBottom: 10
+  }
+
 });

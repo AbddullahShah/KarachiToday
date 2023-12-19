@@ -235,6 +235,7 @@ const Home = () => {
           name={userData?.user?.name}
           image={userData?.user?.profile_pic}
           onPress={() => navigation.navigate('Notification')}
+          onPressProfile={() => navigation.navigate('Profile')}
         />
 
         {trendingData.length === 0 && allBlogs.length === 0 && (
