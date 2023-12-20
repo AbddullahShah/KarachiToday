@@ -103,10 +103,10 @@ const Login = () => {
             <Text style={styles.heading}>{languages[selectedLang].signIn}</Text>
             <Formik
               initialValues={{
-                email: 'abddullahshah@gmail.com',
-                password: '12345678',
-                // email: '',
-                // password: '',
+                // email: 'abddullahshah@gmail.com',
+                // password: '12345678',
+                email: '',
+                password: '',
               }}
               onSubmit={value => {
                 signIn(value);
