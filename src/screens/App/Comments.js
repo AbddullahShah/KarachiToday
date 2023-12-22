@@ -28,6 +28,7 @@ import CommentInput from '../../components/Inputs/CommentInput';
 import { setLoader } from '../../redux/globalSlice';
 import apiRequest from '../../utils/apiRequest';
 import endPoints from '../../constants/endPoints';
+import moment from "moment";
 
 const Comments = ({ ...props }) => {
   const blogID = props?.route?.params?.data;
@@ -62,11 +63,11 @@ const Comments = ({ ...props }) => {
     apiRequest
       .get(endPoints.getCommentsByBlog + blogID, config)
       .then(res => {
-        const filter = res.data.data.filter(
-          x => new Date(x.updatedAt).getDay() === new Date().getDay(),
-        );
-        setNewestData(filter);
         setData(res.data.data);
+        let comentsFilter = res.data.data.filter(x => {
+          return moment.utc(x.updatedAt).format('l') == moment.utc(new Date()).format('l')
+        })
+        setNewestData(comentsFilter);
         dispatch(setLoader(false));
       })
       .catch(err => {
@@ -83,7 +84,6 @@ const Comments = ({ ...props }) => {
     apiRequest
       .post(endPoints.postComments + blogID, params, config)
       .then(res => {
-        console.log(res.data,'resresresresresresresresresres')
         getComments();
       })
       .catch(err => {

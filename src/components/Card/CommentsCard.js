@@ -1,16 +1,17 @@
-import {StyleSheet, View, Dimensions, Text, Image} from 'react-native';
+import { StyleSheet, View, Dimensions, Text, Image } from 'react-native';
 import React from 'react';
+import moment from "moment";
 
-const {width, height} = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
 
 // local imports
 import colors from '../../constants/colors';
 import globalStyle from '../../utils/globalStyle';
-import {fontsFamily, fontsSize} from '../../constants/fonts';
+import { fontsFamily, fontsSize } from '../../constants/fonts';
 import images from '../../assets/images';
 
 const CommentsCard = ({
-  onPress = () => {},
+  onPress = () => { },
   id,
   username = 'User',
   date,
@@ -26,13 +27,14 @@ const CommentsCard = ({
           gap: width * 0.04,
         }}>
         <Image
-          source={image !== undefined ? {uri: image} : images.Avatar}
-          style={{width: width * 0.09, height: width * 0.09}}
+          source={image !== undefined ? { uri: image } : images.Avatar}
+          style={{ width: width * 0.09, height: width * 0.09 }}
           resizeMode="contain"
         />
         <View>
           <Text style={styles.txt1}>{username}</Text>
-          <Text style={styles.txt2}>{new Date(date).getDay()} days ago</Text>
+          <Text style={styles.txt2}> {moment(date).calendar()}</Text>
+          {/* <Text style={styles.txt2}>{new Date(date).getDay()} days ago</Text> */}
         </View>
       </View>
       <Text style={styles.txt3}>{comments}</Text>

@@ -1,25 +1,27 @@
-import {StyleSheet, View, Dimensions, FlatList} from 'react-native';
-import React, {useEffect, useState} from 'react';
-import {useDispatch, useSelector} from 'react-redux';
+import { StyleSheet, View, Dimensions, FlatList } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
-const {width, height} = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
 
 // local imports
 import colors from '../../constants/colors';
-import {useNavigation} from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import SimpleCard from '../../components/Card/SimpleCard';
 import endPoints from '../../constants/endPoints';
 import apiRequest from '../../utils/apiRequest';
-import {setLoader} from '../../redux/globalSlice';
+import { setLoader } from '../../redux/globalSlice';
 import LoadMore from '../../components/Buttons/LoadMore';
 import BackHeader from '../../components/Headers/BackHeader';
 
-const Trending = ({...props}) => {
+const Trending = ({ ...props }) => {
+  const screenTitle = props?.route?.params?.screenTitle;
+
   const navigation = useNavigation();
   const dispatch = useDispatch();
 
   const selectedLang = useSelector(state => state.language.selectedLang);
-  const {islLogin, userData} = useSelector(state => state.user);
+  const { islLogin, userData } = useSelector(state => state.user);
 
   const [isFetching, setIsFetching] = useState(true);
 
@@ -36,8 +38,8 @@ const Trending = ({...props}) => {
         apiRequest
           .get(
             endPoints.getBlogsByCategory +
-              res.data.data.category[0]._id +
-              '?limit=5&page=1',
+            res.data.data.category[0]._id +
+            '?limit=5&page=1',
           )
           .then(res => {
             setTrendingData(res.data.data.allBlogsFinal);
@@ -64,9 +66,9 @@ const Trending = ({...props}) => {
           apiRequest
             .get(
               endPoints.getBlogsByCategory +
-                res.data.data.category[0]._id +
-                '?limit=5&page=' +
-                (trendingPage + 1),
+              res.data.data.category[0]._id +
+              '?limit=5&page=' +
+              (trendingPage + 1),
             )
             .then(res => {
               dispatch(setLoader(false));
@@ -93,7 +95,7 @@ const Trending = ({...props}) => {
     <View style={styles.container}>
       <View style={styles.wrapper}>
         <BackHeader
-          title={'Trending'}
+          title={screenTitle ? screenTitle : 'Trending'}
           leftPress={() => navigation.goBack()}
           rightPress={() => navigation.navigate('Search')}
         />
@@ -101,21 +103,21 @@ const Trending = ({...props}) => {
           data={trendingData}
           initialNumToRender={5}
           keyExtractor={(_, index) => index.toString()}
-          style={{flex: 1, marginTop: height * 0.02}}
+          style={{ flex: 1, marginTop: height * 0.02 }}
           showsVerticalScrollIndicator={false}
           ListFooterComponent={() => {
             if (totalTrendingPages > trendingPage) {
               return (
                 <>
                   <LoadMore onPress={getMoreTrendingData} />
-                  <View style={{height: height * 0.1}} />
+                  <View style={{ height: height * 0.1 }} />
                 </>
               );
             } else {
-              return <View style={{height: height * 0.1}} />;
+              return <View style={{ height: height * 0.1 }} />;
             }
           }}
-          renderItem={({item, index}) => (
+          renderItem={({ item, index }) => (
             <SimpleCard
               id={item?._id}
               image={item?.featureImg}
@@ -123,7 +125,7 @@ const Trending = ({...props}) => {
               views={item?.views}
               commentCount={item?.commentCount}
               date={item?.createdAt}
-              onPress={() => navigation.navigate('BlogDetail', {data: item})}
+              onPress={() => navigation.navigate('BlogDetail', { data: item })}
             />
           )}
         />

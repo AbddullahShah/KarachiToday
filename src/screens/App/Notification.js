@@ -36,7 +36,6 @@ const Notification = () => {
       .get(endPoints.findBlogcomment + userData?.user?._id, config)
       .then(res => {
         setmyComments(res.data.data)
-        console.log(res.data.data, "resresresresresresresresresresresresresres")
         dispatch(setLoader(false));
       })
       .catch(err => {

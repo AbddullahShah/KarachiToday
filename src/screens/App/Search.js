@@ -50,7 +50,7 @@ const Search = ({...props}) => {
         .get(endPoints.searchBlogByTitle + text, config)
         .then(res => {
           clearTimeout(timer);
-          setData(res.data.data.blog);
+          setData(res.data.data.allBlogsFinal);
           setIsLoader(false);
         })
         .catch(err => {

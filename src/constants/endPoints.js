@@ -21,4 +21,5 @@ export default endPoints = {
   getCommentsByBlog: 'blog/findcomment/',
   postComments: 'blog/comment/',
   findBlogcomment: 'blog/findBlogcomment/',
+  oneBlog: '/blog/one/blogs/',
 };

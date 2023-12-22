@@ -253,7 +253,7 @@ const Home = () => {
             <Text style={styles.txt2}>Trending</Text>
             <Text
               style={styles.txt3}
-              onPress={() => navigation.navigate('Trending')}>
+              onPress={() => navigation.navigate('Trending', { screenTitle: 'Trending' })}>
               {'View All'}
             </Text>
           </View>
@@ -312,7 +312,6 @@ const Home = () => {
             );
           }}
         />
-
         <FlatList
           data={allBlogs}
           initialNumToRender={5}
