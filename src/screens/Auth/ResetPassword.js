@@ -66,6 +66,7 @@ const ResetPassword = ({...props}) => {
         Toast.show({
           type: 'error',
           text1: res?.data || 'Something went wrong',
+          position: 'bottom'
         });
       });
   };

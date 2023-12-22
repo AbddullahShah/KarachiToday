@@ -29,7 +29,8 @@ const Profile = () => {
 
   const { isLogin, userData } = useSelector(state => state.user);
   const selectedLang = useSelector(state => state.language.selectedLang);
-
+  console.log(userData?.user?.email, "")
+  
   const logout = () => {
     Alert.alert('Logout your account', 'Are you sure logout your account', [
       {
@@ -104,29 +105,31 @@ const Profile = () => {
                 />
               </TouchableOpacity>
             </View>
-
-            <View style={styles.seprator}>
-              <Text style={styles.text2}>Name</Text>
-              <Text style={styles.text3}>{userData?.user?.name}</Text>
-            </View>
-            <View style={styles.seprator}>
-              {userData?.user?.phone_number && (
+            {userData?.user?.name && (
+              <View style={styles.seprator}>
+                <Text style={styles.text2}>Name</Text>
+                <Text style={styles.text3}>{userData?.user?.name}</Text>
+              </View>
+            )}
+            {userData?.user?.phone_number && (
+              <View style={styles.seprator}>
                 <Text style={styles.text2}>Phone</Text>
-              )}
-              {userData?.user?.phone_number && (
                 <Text style={styles.text3}>{userData?.user?.phone_number}</Text>
-              )}
-            </View>
-            <View style={styles.seprator}>
-              <Text style={styles.text2}>Email</Text>
-              <Text style={styles.text3}>{userData?.user?.email}</Text>
-            </View>
-            <View style={styles.seprator}>
-              {userData?.user?.bio && <Text style={styles.text2}>Bio</Text>}
-              {userData?.user?.bio && (
+              </View>
+            )}
+            {userData?.user?.email && (
+              <View style={styles.seprator}>
+                <Text style={styles.text2}>Email</Text>
+                <Text style={styles.text3}>{userData?.user?.email.toLowerCase()}</Text>
+                {/* let lowercasetext = text.toLowerCase(); //To convert Lower Case */}
+              </View>
+            )}
+            {userData?.user?.bio && (
+              <View style={styles.seprator}>
+                <Text style={styles.text2}>Bio</Text>
                 <Text style={styles.text3}>{userData?.user?.bio}</Text>
-              )}
-            </View>
+              </View>
+            )}
           </View>
 
           <View style={{ alignItems: 'center', }}>
@@ -218,7 +221,7 @@ const styles = StyleSheet.create({
     fontFamily: fontsFamily.bold,
     fontSize: fontsSize.md1,
     color: colors.textDark,
-    textTransform: 'capitalize',
+    // textTransform: 'capitalize',
   },
   btn1: {
     alignItems: 'center',

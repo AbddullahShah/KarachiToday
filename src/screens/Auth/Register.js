@@ -9,28 +9,29 @@ import {
   StyleSheet,
   Text,
   View,
+  Alert
 } from 'react-native';
 import CheckBox from '@react-native-community/checkbox';
 import Toast from 'react-native-toast-message';
-import React, {useState} from 'react';
-import {useNavigation} from '@react-navigation/native';
-import {Formik} from 'formik';
+import React, { useState } from 'react';
+import { useNavigation } from '@react-navigation/native';
+import { Formik } from 'formik';
 import * as Yup from 'yup';
 
 // local import
 import Input from '../../components/Inputs/Input';
 import PrimaryButton from '../../components/Buttons/PrimaryButton';
-import {fontsFamily, fontsSize} from '../../constants/fonts';
+import { fontsFamily, fontsSize } from '../../constants/fonts';
 import colors from '../../constants/colors';
 import apiRequest from '../../utils/apiRequest';
 import endPoints from '../../constants/endPoints';
-import {useDispatch, useSelector} from 'react-redux';
-import {setLoader} from '../../redux/globalSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { setLoader } from '../../redux/globalSlice';
 import languages from '../../lang/languages';
 import images from '../../assets/images';
 import PrimaryHeader from '../../components/Headers/PrimaryHeader';
 import SimpleModals from '../../components/Modals/SimpleModals';
-import {setUser} from '../../redux/userSlice';
+import { setUser } from '../../redux/userSlice';
 
 const Register = () => {
   const navigation = useNavigation();
@@ -54,26 +55,31 @@ const Register = () => {
   });
 
   const signUp = async value => {
-    dispatch(setLoader(true));
-    let payload = {
-      email: value.email,
-      password: value.password,
-    };
-    apiRequest
-      .post(endPoints.register, payload)
-      .then(res => {
-        dispatch(setLoader(false));
-        dispatch(setUser(res.data));
-        navigation.navigate('Languages');
-      })
-      .catch(err => {
-        console.log(err);
-        dispatch(setLoader(false));
-        Toast.show({
-          type: 'error',
-          text1: err?.data || 'Some thing went wrong',
+    if (isRemember == false) {
+      Alert.alert('Accept Terms & Condition');
+    } else {
+      dispatch(setLoader(true));
+      let payload = {
+        email: value.email.toLowerCase(),
+        password: value.password,
+      };
+      apiRequest
+        .post(endPoints.register, payload)
+        .then(res => {
+          dispatch(setLoader(false));
+          dispatch(setUser(res.data));
+          navigation.navigate('Languages');
+        })
+        .catch(err => {
+          console.log(err);
+          dispatch(setLoader(false));
+          Toast.show({
+            type: 'error',
+            text1: err?.data || 'Some thing went wrong',
+            position: 'bottom'
+          });
         });
-      });
+    }
   };
 
   return (
@@ -81,115 +87,117 @@ const Register = () => {
       <View style={styles.container}>
         <ScrollView
           contentContainerStyle={{
-            flex: 1,
-            width: '100%',
-            alignItems: 'center',
+            // flex: 1,
+            // width: '100%',
+            // alignItems: 'center',
+            width: '90%',
+            marginHorizontal: '5%',
+            paddingBottom: 100
           }}>
-          <KeyboardAvoidingView
+          {/* <KeyboardAvoidingView
             behavior={Platform.OS === 'android' ? 'height' : 'padding'}
-            style={styles.wrapper}>
-            <PrimaryHeader
-              onPress={() => navigation.goBack()}
-              style={{marginTop: heightPercentageToDP(6)}}
-            />
-            <Text style={styles.heading}>Create Account</Text>
-            <Formik
-              initialValues={{
-                email: '',
-                password: '',
-              }}
-              onSubmit={value => {
-                signUp(value);
-              }}
-              validationSchema={SignUpSchema}>
-              {({
-                values,
-                errors,
-                touched,
-                handleChange,
-                setFieldTouched,
-                isValid,
-                handleSubmit,
-              }) => (
-                <View style={{flex: 1}}>
-                  <Text style={styles.titleStyle}>
-                    Join our community and personalize your news experience.
-                  </Text>
+            style={styles.wrapper}> */}
+          <PrimaryHeader
+            onPress={() => navigation.goBack()}
+            style={{ marginTop: heightPercentageToDP(6) }}
+          />
+          <Text style={styles.heading}>Create Account</Text>
+          <Formik
+            initialValues={{
+              email: '',
+              password: '',
+            }}
+            onSubmit={value => {
+              signUp(value);
+            }}
+            validationSchema={SignUpSchema}>
+            {({
+              values,
+              errors,
+              touched,
+              handleChange,
+              setFieldTouched,
+              isValid,
+              handleSubmit,
+            }) => (
+              <View style={{ flex: 1 }}>
+                <Text style={styles.titleStyle}>
+                  Join our community and personalize your news experience.
+                </Text>
 
-                  <Input
-                    label={'Email'}
-                    icon={images.Email}
-                    placeholderText={'Email'}
-                    value={values.email}
-                    handleOnChangeTxt={handleChange('email')}
-                    onBlur={() => setFieldTouched('email')}
-                    keyboardType={'email'}
-                    error={touched.email && errors.email}
-                    errorType={errors.email}
-                    marginTop={heightPercentageToDP(3)}
-                  />
-                  <Input
-                    isPassword
-                    label={'Password'}
-                    icon={images.Lock}
-                    placeholderText={'Password'}
-                    value={values.password}
-                    handleOnChangeTxt={handleChange('password')}
-                    onBlur={() => setFieldTouched('password')}
-                    keyboardType={'email'}
-                    error={touched.password && errors.password}
-                    errorType={errors.password}
-                    marginTop={heightPercentageToDP(3)}
-                  />
-                  <View style={styles.rememberWrapper}>
-                    <View style={styles.checkBoxWrapper}>
-                      {Platform.OS === 'ios' ? (
-                        <View style={styles.checkBox}>
-                          <CheckBox
-                            disabled={false}
-                            boxType="square"
-                            value={isRemember}
-                            onValueChange={newValue => setIsRemember(newValue)}
-                            tintColors={{
-                              true: colors.primary,
-                              false: colors.textLight,
-                            }}
-                            hideBox
-                            style={{
-                              height: widthPercentageToDP(6),
-                              width: widthPercentageToDP(6),
-                            }}
-                          />
-                        </View>
-                      ) : (
+                <Input
+                  label={'Email'}
+                  icon={images.Email}
+                  placeholderText={'Email'}
+                  value={values.email}
+                  handleOnChangeTxt={handleChange('email')}
+                  onBlur={() => setFieldTouched('email')}
+                  keyboardType={'email-address'}
+                  error={touched.email && errors.email}
+                  errorType={errors.email}
+                  marginTop={heightPercentageToDP(3)}
+                />
+                <Input
+                  isPassword
+                  label={'Password'}
+                  icon={images.Lock}
+                  placeholderText={'Password'}
+                  value={values.password}
+                  handleOnChangeTxt={handleChange('password')}
+                  onBlur={() => setFieldTouched('password')}
+                  keyboardType={'password'}
+                  error={touched.password && errors.password}
+                  errorType={errors.password}
+                  marginTop={heightPercentageToDP(3)}
+                />
+                <View style={styles.rememberWrapper}>
+                  <View style={styles.checkBoxWrapper}>
+                    {Platform.OS === 'ios' ? (
+                      <View style={styles.checkBox}>
                         <CheckBox
                           disabled={false}
+                          boxType="square"
                           value={isRemember}
                           onValueChange={newValue => setIsRemember(newValue)}
                           tintColors={{
                             true: colors.primary,
                             false: colors.textLight,
                           }}
+                          hideBox
+                          style={{
+                            height: widthPercentageToDP(6),
+                            width: widthPercentageToDP(6),
+                          }}
                         />
-                      )}
-                      <Text style={styles.txt1}>I agree to KarachiToday</Text>
-                    </View>
+                      </View>
+                    ) : (
+                      <CheckBox
+                        disabled={false}
+                        value={isRemember}
+                        onValueChange={newValue => setIsRemember(newValue)}
+                        tintColors={{
+                          true: colors.primary,
+                          false: colors.textLight,
+                        }}
+                      />
+                    )}
+                    <Text style={styles.txt1}>I agree to KarachiToday</Text>
+                  </View>
+                  <Text
+                    onPress={() => { }}
+                    style={[styles.txt1, { color: colors.primary }]}>
+                    Terms, & Policy.
+                  </Text>
+                </View>
+                <View style={{ marginTop: heightPercentageToDP(4) }}>
+                  <Text style={styles.txt3}>
+                    Already have an account?{' '}
                     <Text
-                      onPress={() => {}}
-                      style={[styles.txt1, {color: colors.primary}]}>
-                      Terms, & Policy.
+                      style={styles.txt4}
+                      onPress={() => navigation.navigate('Login')}>
+                      Sign In
                     </Text>
-                  </View>
-                  <View style={{marginTop: heightPercentageToDP(4)}}>
-                    <Text style={styles.txt3}>
-                      Already have an account?{' '}
-                      <Text
-                        style={styles.txt4}
-                        onPress={() => navigation.navigate('Login')}>
-                        Sign In
-                      </Text>
-                    </Text>
-                  </View>
+                  </Text>
 
                   <PrimaryButton
                     disabled={!isValid}
@@ -197,13 +205,14 @@ const Register = () => {
                     onPress={handleSubmit}
                     style={{
                       position: 'absolute',
-                      bottom: heightPercentageToDP(4),
+                      bottom: heightPercentageToDP(-10),
                     }}
                   />
                 </View>
-              )}
-            </Formik>
-          </KeyboardAvoidingView>
+              </View>
+            )}
+          </Formik>
+          {/* </KeyboardAvoidingView> */}
         </ScrollView>
       </View>
       <SimpleModals

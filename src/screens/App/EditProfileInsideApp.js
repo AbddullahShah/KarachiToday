@@ -48,6 +48,7 @@ const EditProfile = ({ ...props }) => {
   const { islLogin, userData } = useSelector(state => state.user);
 
   useEffect(() => {
+
     userData.user.phone_number && setPhone(JSON.stringify(userData.user.phone_number))
     userData.user.name && setFullName(userData.user.name)
     userData.user.bio && setBio(userData.user.bio)
@@ -87,7 +88,7 @@ const EditProfile = ({ ...props }) => {
               .then(res => {
                 dispatch(setUser(res.data));
                 dispatch(setLoader(false));
-                navigation.navigate('Profile');
+                navigation.navigate('BottomTabStack');
               })
               .catch(err => {
                 console.log(err);
@@ -95,12 +96,14 @@ const EditProfile = ({ ...props }) => {
                 Toast.show({
                   type: 'error',
                   text1: err?.data || 'Some thing went wrong',
+                  position: 'bottom'
                 });
               });
           } else {
             dispatch(setUser(res.data));
             dispatch(setLoader(false));
-            navigation.navigate('Profile');
+            // navigation.navigate('Profile');
+            navigation.navigate('BottomTabStack');
           }
         })
         .catch(err => {
@@ -109,6 +112,7 @@ const EditProfile = ({ ...props }) => {
           Toast.show({
             type: 'error',
             text1: err?.data || 'Some thing went wrong',
+            position: 'bottom'
           });
         });
     }
@@ -119,13 +123,15 @@ const EditProfile = ({ ...props }) => {
       <View style={styles.container}>
         <ScrollView
           contentContainerStyle={{
-            width: '100%',
-            alignItems: 'center',
+            width: '90%',
+            marginHorizontal: '5%',
+            paddingBottom: 100,
           }}>
-          <KeyboardAvoidingView
+          {/* <KeyboardAvoidingView
             style={styles.wrapper}
-            behavior={Platform.OS === 'android' ? 'height' : 'padding'}>
-
+            behavior={Platform.OS === 'android' ? 'height' : 'padding'}> */}
+          {
+            userData?.user?.name != undefined &&
             <Pressable
               onPress={() => navigation.goBack()}
               style={styles.backBtn}>
@@ -135,87 +141,94 @@ const EditProfile = ({ ...props }) => {
                 style={{ width: 30, height: 30, marginTop: 30 }}
               />
             </Pressable>
-            {/* <PrimaryHeader
+          }
+          {/* <PrimaryHeader
               onPress={() => navigation.goBack()}
               style={{ marginTop: heightPercentageToDP(6) }}
             /> */}
 
-            {/* <View style={styles.progressLine}>
+          {/* <View style={styles.progressLine}>
               <View style={styles.progressLineActive} />
             </View> */}
-            <Text style={styles.heading}>Edit public profile</Text>
-            <Text style={styles.txt1}>
-              This profile will appear public, so people can read your
-              comment’s.
-            </Text>
-            <TouchableOpacity
-              activeOpacity={0.8}
-              onPress={() =>
-                ImagePicker.openPicker({
-                  width: 300,
-                  height: 400,
-                  cropping: true,
-                }).then(response => {
-                  setImage(response);
-                })
-              }
-              style={styles.avatar}>
-              <Image
-                source={image ? { uri: image.path } : images.Avatar}
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  borderRadius: 100,
-                }}
-              />
-              <Image
-                source={images.Edit}
-                style={{
-                  width: '25%',
-                  height: '25%',
-                  position: 'absolute',
-                  bottom: 0,
-                  right: 0,
-                }}
-              />
-            </TouchableOpacity>
-            <Input
-              label={'Full Name'}
-              placeholderText={'Enter full name'}
-              value={fullName}
-              handleOnChangeTxt={setFullName}
-              keyboardType={'email'}
-              marginTop={heightPercentageToDP(3)}
+          {
+            (userData?.user?.name != undefined) ? (
+              <Text style={styles.heading}>Edit public profile</Text>
+            ) : (
+              <Text style={styles.heading}>Create public profile</Text>
+            )
+          }
+          <Text style={styles.txt1}>
+            This profile will appear public, so people can read your
+            comment’s.
+          </Text>
+          <TouchableOpacity
+            activeOpacity={0.8}
+            onPress={() =>
+              ImagePicker.openPicker({
+                width: 300,
+                height: 400,
+                cropping: true,
+              }).then(response => {
+                setImage(response);
+              })
+            }
+            style={styles.avatar}>
+            <Image
+              source={userData?.user?.profile_pic ? { uri: userData?.user?.profile_pic } : images.Dummy}
+              style={{
+                width: '100%',
+                height: '100%',
+                borderRadius: 100,
+              }}
             />
-            <Input
-              label={'Phone'}
-              placeholderText={'+111-111-111'}
-              value={phone}
-              handleOnChangeTxt={setPhone}
-              keyboardType={'number-pad'}
-              marginTop={heightPercentageToDP(3)}
+            <Image
+              source={images.Edit}
+              style={{
+                width: '25%',
+                height: '25%',
+                position: 'absolute',
+                bottom: 0,
+                right: 0,
+              }}
             />
-            <Input
-              label={'Bio'}
-              placeholderText={'Like to share stories about tech...'}
-              value={bio}
-              handleOnChangeTxt={setBio}
-              keyboardType={'email'}
-              marginTop={heightPercentageToDP(3)}
-            />
-            <View style={{ height: 100 }} />
-          </KeyboardAvoidingView>
+          </TouchableOpacity>
+          <Input
+            label={'Full Name'}
+            placeholderText={'Enter full name'}
+            value={fullName}
+            handleOnChangeTxt={setFullName}
+            keyboardType={'email'}
+            marginTop={heightPercentageToDP(3)}
+          />
+          <Input
+            label={'Phone'}
+            placeholderText={'+111-111-111'}
+            value={phone}
+            handleOnChangeTxt={setPhone}
+            keyboardType={'number-pad'}
+            marginTop={heightPercentageToDP(3)}
+          />
+          <Input
+            label={'Bio'}
+            placeholderText={'Like to share stories about tech...'}
+            value={bio}
+            handleOnChangeTxt={setBio}
+            keyboardType={'email'}
+            marginTop={heightPercentageToDP(3)}
+          />
+          <View style={{ height: 100 }} />
+          {/* </KeyboardAvoidingView> */}
+          <PrimaryButton
+            text={userData?.user?.name != undefined ? 'Update' : 'Save'}
+            onPress={() => onFinish()}
+            style={{
+              position: 'absolute',
+              bottom: heightPercentageToDP(10),
+              width: widthPercentageToDP(90),
+              alignSelf: 'center',
+            }}
+          />
         </ScrollView>
-        <PrimaryButton
-          text={'Update'}
-          onPress={() => onFinish()}
-          style={{
-            position: 'absolute',
-            bottom: heightPercentageToDP(4),
-            width: widthPercentageToDP(90),
-            alignSelf: 'center',
-          }}
-        />
       </View>
       <SimpleModals
         title="Sign in Successful!"

@@ -12,22 +12,22 @@ import {
   FlatList,
   Image,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
-import {useDispatch, useSelector} from 'react-redux';
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
-const {width, height} = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
 
 // local imports
 import colors from '../../constants/colors';
-import {useNavigation} from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import globalStyle from '../../utils/globalStyle';
-import {fontsFamily, fontsSize} from '../../constants/fonts';
+import { fontsFamily, fontsSize } from '../../constants/fonts';
 import SimpleCard from '../../components/Card/SimpleCard';
 import TrendingCard from '../../components/Card/TrendingCard';
 import HomeHeader from '../../components/Headers/HomeHeader';
 import endPoints from '../../constants/endPoints';
 import apiRequest from '../../utils/apiRequest';
-import {setLoader} from '../../redux/globalSlice';
+import { setLoader } from '../../redux/globalSlice';
 import LoadMore from '../../components/Buttons/LoadMore';
 import images from '../../assets/images';
 
@@ -36,7 +36,7 @@ const Home = () => {
   const dispatch = useDispatch();
 
   const selectedLang = useSelector(state => state.language.selectedLang);
-  const {userData} = useSelector(state => state.user);
+  const { userData } = useSelector(state => state.user);
 
   const [newsCategories, setNewsCategories] = useState([]);
   const [isFetching, setIsFetching] = useState(true);
@@ -67,11 +67,11 @@ const Home = () => {
         apiRequest
           .get(
             endPoints.getBlogsByCategory +
-              res.data.data.category[0]._id +
-              '?limit=5&page=1',
+            res.data.data.category[0]._id +
+            '?limit=5&page=1',
           )
           .then(res => {
-            setTrendingData(res.data.data.blog);
+            setTrendingData(res.data.data.allBlogsFinal);
             setTotalTrendingPages(res.data.totalPages);
             dispatch(setLoader(false));
           })
@@ -95,13 +95,13 @@ const Home = () => {
           apiRequest
             .get(
               endPoints.getBlogsByCategory +
-                res.data.data.category[0]._id +
-                '?limit=5&page=' +
-                (trendingPage + 1),
+              res.data.data.category[0]._id +
+              '?limit=5&page=' +
+              (trendingPage + 1),
             )
             .then(res => {
               dispatch(setLoader(false));
-              setTrendingData([...trendingData, ...res.data.data.blog]);
+              setTrendingData([...trendingData, ...res.data.data.allBlogsFinal]);
               setTrendingPage(trendingPage + 1);
             })
             .catch(err => {
@@ -238,18 +238,18 @@ const Home = () => {
           onPressProfile={() => navigation.navigate('Profile')}
         />
 
-        {trendingData.length === 0 && allBlogs.length === 0 && (
+        {trendingData && trendingData.length === 0 && allBlogs && allBlogs.length === 0 && (
           <View style={styles.empty}>
             <Image
               source={images.Empty}
-              style={{width: width * 0.4, height: width * 0.4}}
+              style={{ width: width * 0.4, height: width * 0.4 }}
               resizeMode="contain"
             />
           </View>
         )}
 
         {trendingData && trendingData.length !== 0 && (
-          <View style={{...globalStyle.rcb, marginTop: height * 0.04}}>
+          <View style={{ ...globalStyle.rcb, marginTop: height * 0.04 }}>
             <Text style={styles.txt2}>Trending</Text>
             <Text
               style={styles.txt3}
@@ -266,22 +266,23 @@ const Home = () => {
           keyExtractor={(_, index) => index.toString()}
           onEndReachedThreshold={0.5}
           onEndReached={getMoreTrendingData}
-          style={{marginTop: height * 0.02}}
+          style={{ marginTop: height * 0.02 }}
           showsHorizontalScrollIndicator={false}
-          renderItem={({item, index}) => (
+          renderItem={({ item, index }) => (
             <TrendingCard
               id={item?._id}
               image={item?.featureImg}
               title={item?.title}
               views={item?.views}
               date={item?.createdAt}
-              onPress={() => navigation.navigate('BlogDetail', {data: item})}
+              commentCount={item?.commentCount}
+              onPress={() => navigation.navigate('BlogDetail', { data: item })}
             />
           )}
         />
 
         {newsCategories && newsCategories.length !== 0 && (
-          <View style={{...globalStyle.rcb, marginTop: height * 0.04}}>
+          <View style={{ ...globalStyle.rcb, marginTop: height * 0.04 }}>
             <Text style={styles.txt2}>Recent Stories</Text>
             <Text
               style={styles.txt3}
@@ -296,15 +297,15 @@ const Home = () => {
           initialNumToRender={5}
           data={newsCategories}
           keyExtractor={(_, index) => index.toString()}
-          style={{marginTop: height * 0.02}}
+          style={{ marginTop: height * 0.02 }}
           showsHorizontalScrollIndicator={false}
-          renderItem={({item, index}) => {
+          renderItem={({ item, index }) => {
             return (
               <TouchableOpacity
                 activeOpacity={0.8}
                 onPress={() => handleCategories(item._id)}
-                style={{...styles.categoryBox(item.isActive)}}>
-                <Text style={{...styles.catTxt(item.isActive)}}>
+                style={{ ...styles.categoryBox(item.isActive) }}>
+                <Text style={{ ...styles.catTxt(item.isActive) }}>
                   {item.name}
                 </Text>
               </TouchableOpacity>
@@ -316,7 +317,7 @@ const Home = () => {
           data={allBlogs}
           initialNumToRender={5}
           keyExtractor={(_, index) => index.toString()}
-          style={{marginTop: height * 0.02}}
+          style={{ marginTop: height * 0.02 }}
           showsVerticalScrollIndicator={false}
           ListFooterComponent={() => {
             if (totalPages > page) {
@@ -325,18 +326,19 @@ const Home = () => {
               return null;
             }
           }}
-          renderItem={({item}) => (
+          renderItem={({ item }) => (
             <SimpleCard
               id={item?._id}
               image={item?.featureImg}
               title={item?.title}
               views={item?.views}
+              commentCount={item?.commentCount}
               date={item?.createdAt}
-              onPress={() => navigation.navigate('BlogDetail', {data: item})}
+              onPress={() => navigation.navigate('BlogDetail', { data: item })}
             />
           )}
         />
-        <View style={{height: heightPercentageToDP(10)}} />
+        <View style={{ height: heightPercentageToDP(10) }} />
       </ScrollView>
     </View>
   );

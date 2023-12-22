@@ -12,21 +12,21 @@ import {
 } from 'react-native';
 import CheckBox from '@react-native-community/checkbox';
 import Toast from 'react-native-toast-message';
-import React, {useState} from 'react';
-import {useNavigation} from '@react-navigation/native';
-import {Formik} from 'formik';
+import React, { useEffect, useState } from 'react';
+import { useNavigation } from '@react-navigation/native';
+import { Formik } from 'formik';
 import * as Yup from 'yup';
 
 // local import
 import Input from '../../components/Inputs/Input';
 import PrimaryButton from '../../components/Buttons/PrimaryButton';
-import {fontsFamily, fontsSize} from '../../constants/fonts';
+import { fontsFamily, fontsSize } from '../../constants/fonts';
 import colors from '../../constants/colors';
 import apiRequest from '../../utils/apiRequest';
 import endPoints from '../../constants/endPoints';
-import {useDispatch, useSelector} from 'react-redux';
-import {setLoader} from '../../redux/globalSlice';
-import {setUser} from '../../redux/userSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { setLoader } from '../../redux/globalSlice';
+import { setUser, setisLogin } from '../../redux/userSlice';
 import languages from '../../lang/languages';
 import images from '../../assets/images';
 import PrimaryHeader from '../../components/Headers/PrimaryHeader';
@@ -35,9 +35,7 @@ import SimpleModals from '../../components/Modals/SimpleModals';
 const Login = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
-
   const selectedLang = useSelector(state => state.language.selectedLang);
-
   const [isRemember, setIsRemember] = useState(false);
 
   const SignInSchema = Yup.object().shape({
@@ -62,10 +60,11 @@ const Login = () => {
       .then(res => {
         dispatch(setLoader(false));
         if (res.data.success) {
-          dispatch(setUser(res.data));
+          dispatch(setUser(res.data, isRemember));
+          dispatch(setisLogin(isRemember));
           navigation.reset({
             index: 0,
-            routes: [{name: 'HomeStack'}],
+            routes: [{ name: 'HomeStack' }],
           });
         } else {
           Toast.show({
@@ -80,6 +79,7 @@ const Login = () => {
         Toast.show({
           type: 'error',
           text1: err?.data,
+          position: 'bottom'
         });
       });
   };
@@ -89,117 +89,118 @@ const Login = () => {
       <View style={styles.container}>
         <ScrollView
           contentContainerStyle={{
-            flex: 1,
-            width: '100%',
-            alignItems: 'center',
+            width: '90%',
+            marginHorizontal: '5%',
+            paddingBottom: 100
           }}>
-          <KeyboardAvoidingView
+          {/* <KeyboardAvoidingView
             behavior={Platform.OS === 'android' ? 'height' : 'padding'}
-            style={styles.wrapper}>
-            <PrimaryHeader
-              onPress={() => navigation.goBack()}
-              style={{marginTop: heightPercentageToDP(6)}}
-            />
-            <Text style={styles.heading}>{languages[selectedLang].signIn}</Text>
-            <Formik
-              initialValues={{
-                // email: 'abddullahshah@gmail.com',
-                // password: '12345678',
-                email: '',
-                password: '',
-              }}
-              onSubmit={value => {
-                signIn(value);
-              }}
-              validationSchema={SignInSchema}>
-              {({
-                values,
-                errors,
-                touched,
-                handleChange,
-                setFieldTouched,
-                isValid,
-                handleSubmit,
-              }) => (
-                <View style={{flex: 1}}>
-                  <Text style={styles.titleStyle}>
-                    Welcome! Let’s drive in into your account!
-                  </Text>
+            style={styles.wrapper}> */}
+          <PrimaryHeader
+            onPress={() => navigation.goBack()}
+            style={{ marginTop: heightPercentageToDP(6) }}
+          />
+          <Text style={styles.heading}>{languages[selectedLang].signIn}</Text>
+          <Formik
+            initialValues={{
+              // email: 'abddullahshah@gmail.com',
+              // password: '12345678',
+              email: 'test@gmail.com',
+              password: '12345678',
+              // email: '',
+              // password: '',
+            }}
+            onSubmit={value => {
+              signIn(value);
+            }}
+            validationSchema={SignInSchema}>
+            {({
+              values,
+              errors,
+              touched,
+              handleChange,
+              setFieldTouched,
+              isValid,
+              handleSubmit,
+            }) => (
+              <View style={{ flex: 1 }}>
+                <Text style={styles.titleStyle}>
+                  Welcome! Let’s drive in into your account!
+                </Text>
 
-                  <Input
-                    label={'Email'}
-                    icon={images.Email}
-                    placeholderText={'Email'}
-                    value={values.email}
-                    handleOnChangeTxt={handleChange('email')}
-                    onBlur={() => setFieldTouched('email')}
-                    keyboardType={'email'}
-                    error={touched.email && errors.email}
-                    errorType={errors.email}
-                    marginTop={heightPercentageToDP(3)}
-                  />
-                  <Input
-                    isPassword
-                    label={'Password'}
-                    icon={images.Lock}
-                    placeholderText={'Password'}
-                    value={values.password}
-                    handleOnChangeTxt={handleChange('password')}
-                    onBlur={() => setFieldTouched('password')}
-                    keyboardType={'email'}
-                    error={touched.password && errors.password}
-                    errorType={errors.password}
-                    marginTop={heightPercentageToDP(3)}
-                  />
-                  <View style={styles.rememberWrapper}>
-                    <View style={styles.checkBoxWrapper}>
-                      {Platform.OS === 'ios' ? (
-                        <View style={styles.checkBox}>
-                          <CheckBox
-                            disabled={false}
-                            boxType="square"
-                            value={isRemember}
-                            onValueChange={newValue => setIsRemember(newValue)}
-                            tintColors={{
-                              true: colors.primary,
-                              false: colors.textLight,
-                            }}
-                            hideBox
-                            style={{
-                              height: widthPercentageToDP(6),
-                              width: widthPercentageToDP(6),
-                            }}
-                          />
-                        </View>
-                      ) : (
+                <Input
+                  label={'Email'}
+                  icon={images.Email}
+                  placeholderText={'Email'}
+                  value={values.email}
+                  handleOnChangeTxt={handleChange('email')}
+                  onBlur={() => setFieldTouched('email')}
+                  keyboardType={'email-address'}
+                  error={touched.email && errors.email}
+                  errorType={errors.email}
+                  marginTop={heightPercentageToDP(3)}
+                />
+                <Input
+                  isPassword
+                  label={'Password'}
+                  icon={images.Lock}
+                  placeholderText={'Password'}
+                  value={values.password}
+                  handleOnChangeTxt={handleChange('password')}
+                  onBlur={() => setFieldTouched('password')}
+                  keyboardType={'password'}
+                  error={touched.password && errors.password}
+                  errorType={errors.password}
+                  marginTop={heightPercentageToDP(3)}
+                />
+                <View style={styles.rememberWrapper}>
+                  <View style={styles.checkBoxWrapper}>
+                    {Platform.OS === 'ios' ? (
+                      <View style={styles.checkBox}>
                         <CheckBox
                           disabled={false}
+                          boxType="square"
                           value={isRemember}
                           onValueChange={newValue => setIsRemember(newValue)}
                           tintColors={{
                             true: colors.primary,
                             false: colors.textLight,
                           }}
+                          hideBox
+                          style={{
+                            height: widthPercentageToDP(6),
+                            width: widthPercentageToDP(6),
+                          }}
                         />
-                      )}
-                      <Text style={styles.txt1}>Remember me</Text>
-                    </View>
+                      </View>
+                    ) : (
+                      <CheckBox
+                        disabled={false}
+                        value={isRemember}
+                        onValueChange={newValue => setIsRemember(newValue)}
+                        tintColors={{
+                          true: colors.primary,
+                          false: colors.textLight,
+                        }}
+                      />
+                    )}
+                    <Text style={styles.txt1}>Remember me</Text>
+                  </View>
+                  <Text
+                    onPress={() => navigation.navigate('ForgotPassword')}
+                    style={[styles.txt1, { color: colors.primary }]}>
+                    Forgot password?
+                  </Text>
+                </View>
+                <View style={{ marginTop: heightPercentageToDP(4) }}>
+                  <Text style={styles.txt3}>
+                    Don’t have an account?{' '}
                     <Text
-                      onPress={() => navigation.navigate('ForgotPassword')}
-                      style={[styles.txt1, {color: colors.primary}]}>
-                      Forgot password?
+                      style={styles.txt4}
+                      onPress={() => navigation.navigate('Register')}>
+                      Sign Up
                     </Text>
-                  </View>
-                  <View style={{marginTop: heightPercentageToDP(4)}}>
-                    <Text style={styles.txt3}>
-                      Don’t have an account?{' '}
-                      <Text
-                        style={styles.txt4}
-                        onPress={() => navigation.navigate('Register')}>
-                        Sign Up
-                      </Text>
-                    </Text>
-                  </View>
+                  </Text>
 
                   <PrimaryButton
                     disabled={!isValid}
@@ -207,13 +208,14 @@ const Login = () => {
                     onPress={handleSubmit}
                     style={{
                       position: 'absolute',
-                      bottom: heightPercentageToDP(4),
+                      bottom: heightPercentageToDP(-10),
                     }}
                   />
                 </View>
-              )}
-            </Formik>
-          </KeyboardAvoidingView>
+              </View>
+            )}
+          </Formik>
+          {/* </KeyboardAvoidingView> */}
         </ScrollView>
       </View>
       <SimpleModals

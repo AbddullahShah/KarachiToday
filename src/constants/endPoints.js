@@ -20,4 +20,5 @@ export default endPoints = {
   searchBlogByTitle: 'blog/search/blog/',
   getCommentsByBlog: 'blog/findcomment/',
   postComments: 'blog/comment/',
+  findBlogcomment: 'blog/findBlogcomment/',
 };

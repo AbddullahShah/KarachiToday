@@ -15,25 +15,25 @@ import {
 import ImagePicker from 'react-native-image-crop-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Toast from 'react-native-toast-message';
-import React, {useState} from 'react';
-import {useNavigation} from '@react-navigation/native';
+import React, { useState } from 'react';
+import { useNavigation } from '@react-navigation/native';
 
 // local import
 import Input from '../../components/Inputs/Input';
 import PrimaryButton from '../../components/Buttons/PrimaryButton';
-import {fontsFamily, fontsSize} from '../../constants/fonts';
+import { fontsFamily, fontsSize } from '../../constants/fonts';
 import colors from '../../constants/colors';
 import apiRequest from '../../utils/apiRequest';
 import endPoints from '../../constants/endPoints';
-import {useDispatch, useSelector} from 'react-redux';
-import {setLoader} from '../../redux/globalSlice';
-import {setUser} from '../../redux/userSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { setLoader } from '../../redux/globalSlice';
+import { setUser } from '../../redux/userSlice';
 import languages from '../../lang/languages';
 import images from '../../assets/images';
 import PrimaryHeader from '../../components/Headers/PrimaryHeader';
 import SimpleModals from '../../components/Modals/SimpleModals';
 
-const EditProfile = ({...props}) => {
+const EditProfile = ({ ...props }) => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
 
@@ -43,7 +43,7 @@ const EditProfile = ({...props}) => {
   const [image, setImage] = useState(null);
 
   const selectedLang = useSelector(state => state.language.selectedLang);
-  const {islLogin, userData} = useSelector(state => state.user);
+  const { islLogin, userData } = useSelector(state => state.user);
 
   const config = {
     headers: {
@@ -87,6 +87,7 @@ const EditProfile = ({...props}) => {
                 Toast.show({
                   type: 'error',
                   text1: err?.data || 'Some thing went wrong',
+                  position: 'bottom'
                 });
               });
           } else {
@@ -101,6 +102,8 @@ const EditProfile = ({...props}) => {
           Toast.show({
             type: 'error',
             text1: err?.data || 'Some thing went wrong',
+            position: 'bottom'
+
           });
         });
     }
@@ -111,92 +114,96 @@ const EditProfile = ({...props}) => {
       <View style={styles.container}>
         <ScrollView
           contentContainerStyle={{
-            width: '100%',
-            alignItems: 'center',
+            // width: '100%',
+            // alignItems: 'center',
+            width: '90%',
+            marginHorizontal: '5%',
+            paddingBottom: 100,
           }}>
-          <KeyboardAvoidingView
+          {/* <KeyboardAvoidingView
             style={styles.wrapper}
-            behavior={Platform.OS === 'android' ? 'height' : 'padding'}>
-            <PrimaryHeader
-              onPress={() => navigation.goBack()}
-              style={{marginTop: heightPercentageToDP(6)}}
+            behavior={Platform.OS === 'android' ? 'height' : 'padding'}> */}
+          <PrimaryHeader
+            onPress={() => navigation.goBack()}
+            style={{ marginTop: heightPercentageToDP(6) }}
+          />
+          <View style={styles.progressLine}>
+            <View style={styles.progressLineActive} />
+          </View>
+          <Text style={styles.heading}>Create public profile</Text>
+          <Text style={styles.txt1}>
+            This profile will appear public, so people can read your
+            comment’s.
+          </Text>
+          <TouchableOpacity
+            activeOpacity={0.8}
+            onPress={() =>
+              ImagePicker.openPicker({
+                width: 300,
+                height: 400,
+                cropping: true,
+              }).then(response => {
+                setImage(response);
+              })
+            }
+            style={styles.avatar}>
+            <Image
+              source={image ? { uri: image.path } : images.Dummy}
+              style={{
+                width: '100%',
+                height: '100%',
+                borderRadius: 100,
+              }}
             />
-            <View style={styles.progressLine}>
-              <View style={styles.progressLineActive} />
-            </View>
-            <Text style={styles.heading}>Create public profile</Text>
-            <Text style={styles.txt1}>
-              This profile will appear public, so people can read your
-              comment’s.
-            </Text>
-            <TouchableOpacity
-              activeOpacity={0.8}
-              onPress={() =>
-                ImagePicker.openPicker({
-                  width: 300,
-                  height: 400,
-                  cropping: true,
-                }).then(response => {
-                  setImage(response);
-                })
-              }
-              style={styles.avatar}>
-              <Image
-                source={image ? {uri: image.path} : images.Avatar}
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  borderRadius: 100,
-                }}
-              />
-              <Image
-                source={images.Edit}
-                style={{
-                  width: '25%',
-                  height: '25%',
-                  position: 'absolute',
-                  bottom: 0,
-                  right: 0,
-                }}
-              />
-            </TouchableOpacity>
-            <Input
-              label={'Full Name'}
-              placeholderText={'Enter full name'}
-              value={fullName}
-              handleOnChangeTxt={setFullName}
-              keyboardType={'email'}
-              marginTop={heightPercentageToDP(3)}
+            <Image
+              source={images.Edit}
+              style={{
+                width: '25%',
+                height: '25%',
+                position: 'absolute',
+                bottom: 0,
+                right: 0,
+              }}
             />
-            <Input
-              label={'Phone'}
-              placeholderText={'+111-111-111'}
-              value={phone}
-              handleOnChangeTxt={setPhone}
-              keyboardType={'number-pad'}
-              marginTop={heightPercentageToDP(3)}
-            />
-            <Input
-              label={'Bio'}
-              placeholderText={'Like to share stories about tech...'}
-              value={bio}
-              handleOnChangeTxt={setBio}
-              keyboardType={'email'}
-              marginTop={heightPercentageToDP(3)}
-            />
-            <View style={{height: 100}} />
-          </KeyboardAvoidingView>
+          </TouchableOpacity>
+          <Input
+            label={'Full Name'}
+            placeholderText={'Enter full name'}
+            value={fullName}
+            handleOnChangeTxt={setFullName}
+            keyboardType={'email'}
+            marginTop={heightPercentageToDP(3)}
+          />
+          <Input
+            label={'Phone'}
+            placeholderText={'+111-111-111'}
+            value={phone}
+            handleOnChangeTxt={setPhone}
+            keyboardType={'number-pad'}
+            marginTop={heightPercentageToDP(3)}
+          />
+          <Input
+            label={'Bio'}
+            placeholderText={'Like to share stories about tech...'}
+            value={bio}
+            handleOnChangeTxt={setBio}
+            keyboardType={'email'}
+            marginTop={heightPercentageToDP(3)}
+          />
+          <View style={{ height: 100 }} />
+          {/* </KeyboardAvoidingView> */}
+          <PrimaryButton
+            text={'Finish'}
+            onPress={() => onFinish()}
+            style={{
+              position: 'absolute',
+              bottom: heightPercentageToDP(10),
+              width: widthPercentageToDP(90),
+              alignSelf: 'center',
+            }}
+          />
         </ScrollView>
-        <PrimaryButton
-          text={'Finish'}
-          onPress={() => onFinish()}
-          style={{
-            position: 'absolute',
-            bottom: heightPercentageToDP(4),
-            width: widthPercentageToDP(90),
-            alignSelf: 'center',
-          }}
-        />
+
       </View>
       <SimpleModals
         title="Sign in Successful!"

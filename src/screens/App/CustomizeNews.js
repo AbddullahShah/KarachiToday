@@ -58,6 +58,7 @@ const CustomizeNews = ({...props}) => {
         Toast.show({
           type: 'error',
           text1: err?.data || 'Some thing went wrong',
+          position: 'bottom'
         });
       });
   };

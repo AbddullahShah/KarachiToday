@@ -8,44 +8,44 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import React from 'react';
-import {useDispatch, useSelector} from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import RenderHtml from 'react-native-render-html';
 
-const {width, height} = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
 
 // local imports
 import colors from '../../constants/colors';
-import {useNavigation} from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import BlogDetailHeader from '../../components/Headers/BlogDetailHeader';
 import images from '../../assets/images';
-import {fontsFamily, fontsSize} from '../../constants/fonts';
+import { fontsFamily, fontsSize } from '../../constants/fonts';
 import globalStyle from '../../utils/globalStyle';
 
-const BlogDetail = ({...props}) => {
+const BlogDetail = ({ ...props }) => {
   const data = props?.route?.params?.data;
   const navigation = useNavigation();
   const dispatch = useDispatch();
 
   const selectedLang = useSelector(state => state.language.selectedLang);
-  const {islLogin, userData} = useSelector(state => state.user);
+  const { islLogin, userData } = useSelector(state => state.user);
 
   return (
     <View style={styles.container}>
       <View style={styles.wrapper}>
         <BlogDetailHeader
           leftPress={() => navigation.goBack()}
-          onShare={() => {}}
-          onMenu={() => {}}
+          onShare={() => { }}
+          onMenu={() => { }}
         />
         <ScrollView showsVerticalScrollIndicator={false}>
           <View style={styles.banner}>
             <Image
               source={
                 data?.featureImg !== undefined
-                  ? {uri: data?.featureImg}
+                  ? { uri: data?.featureImg }
                   : images.Dummy
               }
-              style={{width: '100%', height: '100%'}}
+              style={{ width: '100%', height: '100%' }}
               resizeMode="cover"
             />
           </View>
@@ -60,16 +60,16 @@ const BlogDetail = ({...props}) => {
             <Text style={styles.txt1}>
               {new Date(data?.createdAt).getDate()} days ago
             </Text>
-            <View style={{...globalStyle.rc, gap: width * 0.01}}>
+            <View style={{ ...globalStyle.rc, gap: width * 0.01 }}>
               <Image source={images.OpenEye} style={styles.eyeImg} />
-              <Text style={styles.txt1}>1</Text>
+              <Text style={styles.txt1}>{data.views || 0}</Text>
             </View>
             <TouchableOpacity
               activeOpacity={0.8}
-              onPress={() => navigation.navigate('Comments', {data: data._id})}
-              style={{...globalStyle.rc, gap: width * 0.01}}>
+              onPress={() => navigation.navigate('Comments', { data: data._id })}
+              style={{ ...globalStyle.rc, gap: width * 0.01 }}>
               <Image source={images.message} style={styles.msgImg} />
-              <Text style={styles.txt1}>3.2k</Text>
+              <Text style={styles.txt1}>{data.commentCount || 0}</Text>
             </TouchableOpacity>
           </View>
 

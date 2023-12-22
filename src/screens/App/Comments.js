@@ -12,30 +12,30 @@ import {
   FlatList,
   KeyboardAvoidingView,
 } from 'react-native';
-import React, {useEffect, useRef, useState} from 'react';
-import {useDispatch, useSelector} from 'react-redux';
-import {useNavigation} from '@react-navigation/native';
+import React, { useEffect, useRef, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigation } from '@react-navigation/native';
 
-const {width, height} = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
 
 // local imports
 import colors from '../../constants/colors';
 import BackHeader from '../../components/Headers/BackHeader';
 import globalStyle from '../../utils/globalStyle';
-import {fontsFamily, fontsSize} from '../../constants/fonts';
+import { fontsFamily, fontsSize } from '../../constants/fonts';
 import CommentsCard from '../../components/Card/CommentsCard';
 import CommentInput from '../../components/Inputs/CommentInput';
-import {setLoader} from '../../redux/globalSlice';
+import { setLoader } from '../../redux/globalSlice';
 import apiRequest from '../../utils/apiRequest';
 import endPoints from '../../constants/endPoints';
 
-const Comments = ({...props}) => {
+const Comments = ({ ...props }) => {
   const blogID = props?.route?.params?.data;
   const navigation = useNavigation();
   const dispatch = useDispatch();
 
   const selectedLang = useSelector(state => state.language.selectedLang);
-  const {userData} = useSelector(state => state.user);
+  const { userData } = useSelector(state => state.user);
 
   const tabLineAnimatedValue = useRef(new Animated.Value(0)).current;
   const [isNewest, setIsNewest] = useState(true);
@@ -76,13 +76,14 @@ const Comments = ({...props}) => {
   };
 
   const postComment = data => {
-    dispatch(setLoader(true));
     let params = {
       comment: data,
     };
+    dispatch(setLoader(true));
     apiRequest
       .post(endPoints.postComments + blogID, params, config)
       .then(res => {
+        console.log(res.data,'resresresresresresresresresres')
         getComments();
       })
       .catch(err => {
@@ -123,10 +124,10 @@ const Comments = ({...props}) => {
           data={isNewest ? data : newestData}
           initialNumToRender={5}
           keyExtractor={(_, index) => index.toString()}
-          style={{marginTop: height * 0.02}}
+          style={{ marginTop: height * 0.02 }}
           showsVerticalScrollIndicator={false}
-          ListFooterComponent={() => <View style={{height: height * 0.2}} />}
-          renderItem={({item}) => {
+          ListFooterComponent={() => <View style={{ height: height * 0.2 }} />}
+          renderItem={({ item }) => {
             return (
               <CommentsCard
                 id={item.id}

@@ -12,19 +12,19 @@ import {
   Share,
   Alert,
 } from 'react-native';
-import React, {useState} from 'react';
-import {useNavigation} from '@react-navigation/native';
+import React, { useState } from 'react';
+import { useNavigation } from '@react-navigation/native';
 
-const {width, height} = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
 
 // local imports
 import images from '../../assets/images';
 import globalStyle from '../../utils/globalStyle';
-import {fontsFamily, fontsSize} from '../../constants/fonts';
+import { fontsFamily, fontsSize } from '../../constants/fonts';
 import colors from '../../constants/colors';
 import MenuModal from '../Modals/MenuModal';
 
-const TrendingCard = ({id, image, title, views, onPress, date}) => {
+const TrendingCard = ({ id, image, title, views, onPress, date, commentCount }) => {
   const navigation = useNavigation();
 
   const [isModal, setIsModal] = useState(false);
@@ -60,7 +60,7 @@ const TrendingCard = ({id, image, title, views, onPress, date}) => {
         style={styles.trendingCard}>
         <View style={styles.cardImg}>
           <Image
-            source={image !== undefined ? {uri: image} : images.Dummy}
+            source={image !== undefined ? { uri: image } : images.Dummy}
             style={styles.img100}
             resizeMode="cover"
           />
@@ -74,22 +74,22 @@ const TrendingCard = ({id, image, title, views, onPress, date}) => {
             ...globalStyle.rcb,
             marginTop: height * 0.01,
           }}>
-          <View style={{...globalStyle.rc, gap: width * 0.03}}>
+          <View style={{ ...globalStyle.rc, gap: width * 0.03 }}>
             <Text style={styles.txt1}>{new Date(date).getDay()} days ago</Text>
-            <View style={{...globalStyle.rc, gap: width * 0.01}}>
+            <View style={{ ...globalStyle.rc, gap: width * 0.01 }}>
               <Image source={images.OpenEye} style={styles.eyeImg} />
               <Text style={styles.txt1}>{views || 0}</Text>
             </View>
             <TouchableOpacity
-              style={{...globalStyle.rc, gap: width * 0.01}}
-              onPress={() => navigation.navigate('Comments', {data: id})}
+              style={{ ...globalStyle.rc, gap: width * 0.01 }}
+              onPress={() => navigation.navigate('Comments', { data: id })}
               activeOpacity={0.5}>
               <Image source={images.message} style={styles.msgImg} />
-              <Text style={styles.txt1}>3.2k</Text>
+              <Text style={styles.txt1}>{commentCount || 0}</Text>
             </TouchableOpacity>
           </View>
 
-          <View style={{...globalStyle.rc, gap: width * 0.03}}>
+          <View style={{ ...globalStyle.rc, gap: width * 0.03 }}>
             <TouchableOpacity activeOpacity={0.8} onPress={() => onShare()}>
               <Image source={images.Share} style={styles.msgImg} />
             </TouchableOpacity>

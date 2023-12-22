@@ -40,7 +40,7 @@ const Trending = ({...props}) => {
               '?limit=5&page=1',
           )
           .then(res => {
-            setTrendingData(res.data.data.blog);
+            setTrendingData(res.data.data.allBlogsFinal);
             setTotalTrendingPages(res.data.totalPages);
             dispatch(setLoader(false));
           })
@@ -70,7 +70,7 @@ const Trending = ({...props}) => {
             )
             .then(res => {
               dispatch(setLoader(false));
-              setTrendingData([...trendingData, ...res.data.data.blog]);
+              setTrendingData([...trendingData, ...res.data.data.allBlogsFinal]);
               setTrendingPage(trendingPage + 1);
             })
             .catch(err => {
@@ -121,6 +121,7 @@ const Trending = ({...props}) => {
               image={item?.featureImg}
               title={item?.title}
               views={item?.views}
+              commentCount={item?.commentCount}
               date={item?.createdAt}
               onPress={() => navigation.navigate('BlogDetail', {data: item})}
             />

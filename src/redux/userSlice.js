@@ -1,12 +1,16 @@
-import {createSlice} from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
+import { Alert } from 'react-native';
 
 const userSlice = createSlice({
   name: 'user',
-  initialState: {isLogin: false, isOnboard: true, userData: {}, savedID: []},
+  initialState: { isLogin: false, isOnboard: true, userData: {}, savedID: [] },
   reducers: {
     setUser(state, action) {
-      state.isLogin = true;
+      state.isLogin = false;
       state.userData = action.payload;
+    },
+    setisLogin(state, action) {
+      state.isLogin = action.payload;
     },
     setSavedID(state, action) {
       state.savedID = action.payload;
@@ -21,5 +25,5 @@ const userSlice = createSlice({
   },
 });
 
-export const {setUser, skipOnboard, logoutUser, setSavedID} = userSlice.actions;
+export const { setUser, setisLogin, skipOnboard, logoutUser, setSavedID } = userSlice.actions;
 export default userSlice.reducer;

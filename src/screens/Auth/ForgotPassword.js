@@ -64,6 +64,7 @@ const ForgotPassword = () => {
           Toast.show({
             type: 'error',
             text1: res?.data || 'Something went wrong',
+            position: 'bottom'
           });
         }
       })
@@ -73,6 +74,7 @@ const ForgotPassword = () => {
         Toast.show({
           type: 'error',
           text1: res?.data || 'Something went wrong',
+          position: 'bottom'
         });
       });
   };

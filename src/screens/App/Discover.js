@@ -184,6 +184,7 @@ const Bookmark = ({...props}) => {
                 image={item?.featureImg}
                 title={item?.title}
                 views={item?.views}
+                commentCount={item?.commentCount}
                 date={item?.createdAt}
                 onPress={() => navigation.navigate('BlogDetail', {data: item})}
               />
@@ -216,6 +217,7 @@ const Bookmark = ({...props}) => {
                 image={item?.featureImg}
                 title={item?.title}
                 views={item?.views}
+                commentCount={item?.commentCount}
                 date={item?.createdAt}
                 onPress={() => navigation.navigate('BlogDetail', {data: item})}
               />
