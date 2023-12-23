@@ -11,6 +11,7 @@ import Comments from '../screens/App/Comments';
 import Search from '../screens/App/Search';
 import Notification from '../screens/App/Notification';
 import EditProfile from '../screens/App/EditProfileInsideApp';
+import SendFeedback from '../screens/App/SendFeedback';
 
 const Stack = createNativeStackNavigator();
 
@@ -31,6 +32,7 @@ const HomeStack = () => {
       <Stack.Screen name="Search" component={Search} />
       <Stack.Screen name="Notification" component={Notification} />
       <Stack.Screen name="EditProfile" component={EditProfile} />
+      <Stack.Screen name="SendFeedback" component={SendFeedback} />
 
     </Stack.Navigator>
   );

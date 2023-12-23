@@ -27,6 +27,7 @@ import TrendingCard from '../../components/Card/TrendingCard';
 import HomeHeader from '../../components/Headers/HomeHeader';
 import endPoints from '../../constants/endPoints';
 import apiRequest from '../../utils/apiRequest';
+import hideBlog from '../../utils/hideBlog';
 import { setLoader } from '../../redux/globalSlice';
 import LoadMore from '../../components/Buttons/LoadMore';
 import images from '../../assets/images';
@@ -37,7 +38,7 @@ const Home = () => {
 
   const selectedLang = useSelector(state => state.language.selectedLang);
   const { userData } = useSelector(state => state.user);
-
+  const hideBlogs = userData.user?.hideBloged
   const [newsCategories, setNewsCategories] = useState([]);
   const [isFetching, setIsFetching] = useState(true);
 
@@ -58,7 +59,7 @@ const Home = () => {
     },
   };
 
-  const getTrendingData = () => {
+  const getTrendingData = async () => {
     dispatch(setLoader(true));
     apiRequest
       .get(endPoints.categorySearchByTitle + 'Trending')
@@ -71,7 +72,9 @@ const Home = () => {
             '?limit=5&page=1',
           )
           .then(res => {
-            setTrendingData(res.data.data.allBlogsFinal);
+            let orginalArr = res.data.data.allBlogsFinal;
+            setTrendingData(hideBlog(orginalArr, hideBlogs));
+            // setTrendingData(res.data.data.allBlogsFinal);
             setTotalTrendingPages(res.data.totalPages);
             dispatch(setLoader(false));
           })
@@ -101,7 +104,9 @@ const Home = () => {
             )
             .then(res => {
               dispatch(setLoader(false));
-              setTrendingData([...trendingData, ...res.data.data.allBlogsFinal]);
+              let orginalArr = res.data.data.allBlogsFinal;
+              setTrendingData([...trendingData, hideBlog(orginalArr, hideBlogs)]);
+              // setTrendingData([...trendingData, ...res.data.data.allBlogsFinal]);
               setTrendingPage(trendingPage + 1);
             })
             .catch(err => {
@@ -121,7 +126,9 @@ const Home = () => {
     apiRequest
       .get(endPoints.getAllBlogs + '?limit=5&page=1', config)
       .then(res => {
-        setAllBlogs(res.data.data);
+        let orginalArr = res.data.data;
+        setAllBlogs(hideBlog(orginalArr, hideBlogs));
+        // setAllBlogs(res.data.data);
         setTotalPages(res.data.totalPages);
         dispatch(setLoader(false));
         if (id !== undefined) {
@@ -147,7 +154,9 @@ const Home = () => {
       apiRequest
         .get(URL + '?limit=5&page=' + (page + 1), config)
         .then(res => {
-          setAllBlogs([...allBlogs, ...res.data.data]);
+          let orginalArr = res.data.data;
+          setAllBlogs([...allBlogs, hideBlog(orginalArr, hideBlogs)]);
+          // setAllBlogs([...allBlogs, ...res.data.data]);
           dispatch(setLoader(false));
           setPage(page + 1);
         })
@@ -191,7 +200,9 @@ const Home = () => {
       apiRequest
         .get(endPoints.getBlogsByCategory + id + '?limit=5&page=1')
         .then(res => {
-          setAllBlogs(res.data.data.blog);
+          let orginalArr = res.data.data;
+          setAllBlogs(hideBlog(orginalArr, hideBlogs));
+          // setAllBlogs(res.data.data.blog);
           setTotalPages(res.data.totalPages);
           dispatch(setLoader(false));
         })
@@ -221,11 +232,25 @@ const Home = () => {
     setNewsCategories(result);
   };
 
+  // useEffect(() => {
+  //   getTrendingData();
+  //   getAllCategories();
+  //   getAllBlogs();
+  // }, []);
+
   useEffect(() => {
     getTrendingData();
     getAllCategories();
     getAllBlogs();
-  }, []);
+  }, [userData]);
+
+  const reCall = () => {
+    // setAllBlogs([])
+    // setTrendingData([])
+    // getTrendingData();
+    // getAllCategories();
+    // getAllBlogs();
+  }
 
   return (
     <View style={styles.container}>
@@ -238,15 +263,7 @@ const Home = () => {
           onPressProfile={() => navigation.navigate('Profile')}
         />
 
-        {trendingData && trendingData.length === 0 && allBlogs && allBlogs.length === 0 && (
-          <View style={styles.empty}>
-            <Image
-              source={images.Empty}
-              style={{ width: width * 0.4, height: width * 0.4 }}
-              resizeMode="contain"
-            />
-          </View>
-        )}
+        
 
         {trendingData && trendingData.length !== 0 && (
           <View style={{ ...globalStyle.rcb, marginTop: height * 0.04 }}>
@@ -270,6 +287,7 @@ const Home = () => {
           showsHorizontalScrollIndicator={false}
           renderItem={({ item, index }) => (
             <TrendingCard
+              refreshFunc={() => reCall()}
               id={item?._id}
               image={item?.featureImg}
               title={item?.title}
@@ -320,13 +338,14 @@ const Home = () => {
           showsVerticalScrollIndicator={false}
           ListFooterComponent={() => {
             if (totalPages > page) {
-              return <LoadMore onPress={getMoreBlogData} />;
+              return allBlogs.length != 0 && <LoadMore onPress={getMoreBlogData} />;
             } else {
               return null;
             }
           }}
           renderItem={({ item }) => (
             <SimpleCard
+              refreshFunc={() => reCall()}
               id={item?._id}
               image={item?.featureImg}
               title={item?.title}
@@ -338,6 +357,15 @@ const Home = () => {
           )}
         />
         <View style={{ height: heightPercentageToDP(10) }} />
+        {trendingData && trendingData.length === 0 && allBlogs && allBlogs.length === 0 && (
+          <View style={styles.empty}>
+            <Image
+              source={images.Empty}
+              style={{ width: width * 0.4, height: width * 0.4 }}
+              resizeMode="contain"
+            />
+          </View>
+        )}
       </ScrollView>
     </View>
   );
@@ -392,7 +420,7 @@ const styles = StyleSheet.create({
   }),
   empty: {
     alignSelf: 'center',
-    position: 'absolute',
-    top: height * 0.35,
+    // position: 'absolute',
+    // top: height * 0.35,
   },
 });

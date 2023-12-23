@@ -13,6 +13,7 @@ import apiRequest from '../../utils/apiRequest';
 import { setLoader } from '../../redux/globalSlice';
 import LoadMore from '../../components/Buttons/LoadMore';
 import BackHeader from '../../components/Headers/BackHeader';
+import hideBlog from '../../utils/hideBlog';
 
 const Trending = ({ ...props }) => {
   const screenTitle = props?.route?.params?.screenTitle;
@@ -21,7 +22,8 @@ const Trending = ({ ...props }) => {
   const dispatch = useDispatch();
 
   const selectedLang = useSelector(state => state.language.selectedLang);
-  const { islLogin, userData } = useSelector(state => state.user);
+  const { userData } = useSelector(state => state.user);
+  const hideBlogs = userData.user?.hideBloged
 
   const [isFetching, setIsFetching] = useState(true);
 
@@ -42,7 +44,9 @@ const Trending = ({ ...props }) => {
             '?limit=5&page=1',
           )
           .then(res => {
-            setTrendingData(res.data.data.allBlogsFinal);
+            let orginalArr = res.data.data.allBlogsFinal;
+            setTrendingData(hideBlog(orginalArr, hideBlogs));
+            // setTrendingData(res.data.data.allBlogsFinal);
             setTotalTrendingPages(res.data.totalPages);
             dispatch(setLoader(false));
           })
@@ -71,8 +75,10 @@ const Trending = ({ ...props }) => {
               (trendingPage + 1),
             )
             .then(res => {
+              let orginalArr = res.data.data.allBlogsFinal;
               dispatch(setLoader(false));
-              setTrendingData([...trendingData, ...res.data.data.allBlogsFinal]);
+              setTrendingData([...trendingData, hideBlog(orginalArr, hideBlogs)]);
+              // setTrendingData([...trendingData, ...res.data.data.allBlogsFinal]);
               setTrendingPage(trendingPage + 1);
             })
             .catch(err => {
@@ -89,7 +95,11 @@ const Trending = ({ ...props }) => {
 
   useEffect(() => {
     getTrendingData();
-  }, []);
+  }, [userData]);
+
+  const reCall = () => {
+    getTrendingData();
+  }
 
   return (
     <View style={styles.container}>
@@ -119,6 +129,7 @@ const Trending = ({ ...props }) => {
           }}
           renderItem={({ item, index }) => (
             <SimpleCard
+              refreshFunc={() => reCall()}
               id={item?._id}
               image={item?.featureImg}
               title={item?.title}

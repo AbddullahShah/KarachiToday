@@ -88,6 +88,7 @@ const EditProfile = ({ ...props }) => {
               .then(res => {
                 dispatch(setUser(res.data));
                 dispatch(setLoader(false));
+                setImage(null);
                 navigation.navigate('BottomTabStack');
               })
               .catch(err => {
@@ -103,6 +104,7 @@ const EditProfile = ({ ...props }) => {
             dispatch(setUser(res.data));
             dispatch(setLoader(false));
             // navigation.navigate('Profile');
+            setImage(null);
             navigation.navigate('BottomTabStack');
           }
         })
@@ -173,14 +175,37 @@ const EditProfile = ({ ...props }) => {
               })
             }
             style={styles.avatar}>
-            <Image
+            {
+              (image) ? (
+                <Image
+                  source={{ uri: image.path }}
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    borderRadius: 100,
+                  }}
+                />
+
+              ) : (
+                <Image
+                  source={userData?.user?.profile_pic ? { uri: userData?.user?.profile_pic } : images.Dummy}
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    borderRadius: 100,
+                  }}
+                />
+              )
+            }
+
+            {/* <Image
               source={userData?.user?.profile_pic ? { uri: userData?.user?.profile_pic } : images.Dummy}
               style={{
                 width: '100%',
                 height: '100%',
                 borderRadius: 100,
               }}
-            />
+            /> */}
             <Image
               source={images.Edit}
               style={{

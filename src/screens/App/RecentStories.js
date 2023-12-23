@@ -6,28 +6,30 @@ import {
   TouchableOpacity,
   FlatList,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
-import {useDispatch, useSelector} from 'react-redux';
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
-const {width, height} = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
 
 // local imports
 import colors from '../../constants/colors';
-import {useNavigation} from '@react-navigation/native';
-import {fontsFamily, fontsSize} from '../../constants/fonts';
+import { useNavigation } from '@react-navigation/native';
+import { fontsFamily, fontsSize } from '../../constants/fonts';
 import SimpleCard from '../../components/Card/SimpleCard';
 import endPoints from '../../constants/endPoints';
 import apiRequest from '../../utils/apiRequest';
-import {setLoader} from '../../redux/globalSlice';
+import { setLoader } from '../../redux/globalSlice';
 import LoadMore from '../../components/Buttons/LoadMore';
 import BackHeader from '../../components/Headers/BackHeader';
+import hideBlog from '../../utils/hideBlog';
 
-const RecentStories = ({...props}) => {
+const RecentStories = ({ ...props }) => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
 
   const selectedLang = useSelector(state => state.language.selectedLang);
-  const {islLogin, userData} = useSelector(state => state.user);
+  const { userData } = useSelector(state => state.user);
+  const hideBlogs = userData.user?.hideBloged
 
   const [newsCategories, setNewsCategories] = useState([]);
   const [isFetching, setIsFetching] = useState(true);
@@ -50,7 +52,9 @@ const RecentStories = ({...props}) => {
       .get(endPoints.getAllBlogs + '?limit=10&page=1', config)
       .then(res => {
         console.log(res.data);
-        setAllBlogs(res.data.data);
+        let orginalArr = res.data.data;
+        setAllBlogs(hideBlog(orginalArr, hideBlogs));
+        // setAllBlogs(res.data.data);
         setTotalPages(res.data.totalPages);
         dispatch(setLoader(false));
         if (id !== undefined) {
@@ -76,7 +80,9 @@ const RecentStories = ({...props}) => {
       apiRequest
         .get(URL + '?limit=10&page=' + (page + 1), config)
         .then(res => {
-          setAllBlogs([...allBlogs, ...res.data.data]);
+          let orginalArr = res.data.data;
+          setAllBlogs([...allBlogs, hideBlog(orginalArr, hideBlogs)]);
+          // setAllBlogs([...allBlogs, ...res.data.data]);
           dispatch(setLoader(false));
           setPage(page + 1);
         })
@@ -153,7 +159,12 @@ const RecentStories = ({...props}) => {
   useEffect(() => {
     getAllBlogs();
     getAllCategories();
-  }, []);
+  }, [userData]);
+
+  const reCall = () => {
+    // getAllBlogs();
+    // getAllCategories();
+  }
 
   return (
     <View style={styles.container}>
@@ -168,9 +179,9 @@ const RecentStories = ({...props}) => {
           initialNumToRender={5}
           data={newsCategories}
           keyExtractor={(_, index) => index.toString()}
-          style={{marginTop: height * 0.02}}
+          style={{ marginTop: height * 0.02 }}
           showsHorizontalScrollIndicator={false}
-          renderItem={({item, index}) => {
+          renderItem={({ item, index }) => {
             return (
               <TouchableOpacity
                 activeOpacity={0.8}
@@ -185,29 +196,30 @@ const RecentStories = ({...props}) => {
           data={allBlogs}
           initialNumToRender={5}
           keyExtractor={(_, index) => index.toString()}
-          style={{marginTop: height * 0.02}}
+          style={{ marginTop: height * 0.02 }}
           showsVerticalScrollIndicator={false}
           ListFooterComponent={() => {
             if (totalPages > page) {
               return (
                 <>
                   <LoadMore onPress={getMoreBlogData} />
-                  <View style={{height: height * 0.2}} />
+                  <View style={{ height: height * 0.2 }} />
                 </>
               );
             } else {
-              return <View style={{height: height * 0.2}} />;
+              return <View style={{ height: height * 0.2 }} />;
             }
           }}
-          renderItem={({item, index}) => (
+          renderItem={({ item, index }) => (
             <SimpleCard
+              refreshFunc={() => reCall()}
               id={item?._id}
               image={item?.featureImg}
               title={item?.title}
               views={item?.views}
               commentCount={item?.commentCount}
               date={item?.createdAt}
-              onPress={() => {}}
+              onPress={() => { }}
             />
           )}
         />

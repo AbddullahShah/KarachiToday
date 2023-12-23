@@ -25,13 +25,15 @@ import endPoints from '../../constants/endPoints';
 import apiRequest from '../../utils/apiRequest';
 import globalStyle from '../../utils/globalStyle';
 import { fontsFamily, fontsSize } from '../../constants/fonts';
+import hideBlog from '../../utils/hideBlog';
 
 const Bookmark = ({ ...props }) => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
 
   const selectedLang = useSelector(state => state.language.selectedLang);
-  const { islLogin, userData } = useSelector(state => state.user);
+  const { userData } = useSelector(state => state.user);
+  const hideBlogs = userData.user?.hideBloged
 
   const [isFetching, setIsFetching] = useState(true);
 
@@ -64,7 +66,9 @@ const Bookmark = ({ ...props }) => {
             '?limit=5&page=1',
           )
           .then(res => {
-            setTrendingData(res.data.data.allBlogsFinal);
+            let orginalArr = res.data.data.allBlogsFinal;
+            setTrendingData(hideBlog(orginalArr, hideBlogs));
+            // setTrendingData(res.data.data.allBlogsFinal);
             setTotalTrendingPages(res.data.totalPages);
             dispatch(setLoader(false));
           })
@@ -94,7 +98,9 @@ const Bookmark = ({ ...props }) => {
             )
             .then(res => {
               dispatch(setLoader(false));
-              setTrendingData([...trendingData, ...res.data.data.allBlogsFinal]);
+              let orginalArr = res.data.data.allBlogsFinal;
+              setTrendingData([...trendingData, hideBlog(orginalArr, hideBlogs)]);
+              // setTrendingData([...trendingData, ...res.data.data.allBlogsFinal]);
               setTrendingPage(trendingPage + 1);
             })
             .catch(err => {
@@ -114,7 +120,9 @@ const Bookmark = ({ ...props }) => {
     apiRequest
       .get(endPoints.getAllBlogs + '?limit=5&page=1', config)
       .then(res => {
-        setAllBlogs(res.data.data);
+        let orginalArr = res.data.data;
+        setAllBlogs(hideBlog(orginalArr, hideBlogs));
+        // setAllBlogs(res.data.data);
         setTotalPages(res.data.totalPages);
         dispatch(setLoader(false));
         if (id !== undefined) {
@@ -133,7 +141,9 @@ const Bookmark = ({ ...props }) => {
       apiRequest
         .get(endPoints.getAllBlogs + '?limit=5&page=' + (page + 1), config)
         .then(res => {
-          setAllBlogs([...allBlogs, ...res.data.data]);
+          let orginalArr = res.data.data;
+          setAllBlogs([...allBlogs, hideBlog(orginalArr, hideBlogs)]);
+          // setAllBlogs([...allBlogs, ...res.data.data]);
           dispatch(setLoader(false));
           setPage(page + 1);
         })
@@ -147,7 +157,12 @@ const Bookmark = ({ ...props }) => {
   useEffect(() => {
     getTrendingData();
     getAllBlogs();
-  }, []);
+  }, [userData]);
+
+  const reCall = () => {
+    // getTrendingData();
+    // getAllBlogs();
+  }
 
   return (
     <View style={styles.container}>
@@ -180,6 +195,7 @@ const Bookmark = ({ ...props }) => {
             showsHorizontalScrollIndicator={false}
             renderItem={({ item, index }) => (
               <TrendingCard
+                refreshFunc={() => reCall()}
                 id={item?._id}
                 image={item?.featureImg}
                 title={item?.title}
@@ -213,6 +229,7 @@ const Bookmark = ({ ...props }) => {
             showsHorizontalScrollIndicator={false}
             renderItem={({ item, index }) => (
               <TrendingCard
+                refreshFunc={() => reCall()}
                 id={item?._id}
                 image={item?.featureImg}
                 title={item?.title}

@@ -2,7 +2,7 @@ import {
   heightPercentageToDP,
   widthPercentageToDP,
 } from 'react-native-responsive-screen';
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Modal,
@@ -14,29 +14,33 @@ import {
   FlatList,
   Platform,
 } from 'react-native';
-import {useDispatch, useSelector} from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 // local imports
-import {fontsFamily, fontsSize} from '../../constants/fonts';
+import { fontsFamily, fontsSize } from '../../constants/fonts';
 import colors from '../../constants/colors';
 import images from '../../assets/images';
 import endPoints from '../../constants/endPoints';
 import apiRequest from '../../utils/apiRequest';
-import {setSavedID} from '../../redux/userSlice';
+import { setSavedID, setUser } from '../../redux/userSlice';
 import ActionModal from './ActionModal';
+import { useNavigation } from '@react-navigation/native';
 
-const {width, height} = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
 
 const MenuModal = ({
-  navigation,
+  // navigation,
   isVisible,
-  onPress = () => {},
+  onPress = () => { onPress() },
   onClose,
   blogID,
+  refreshFunc,
   ...props
 }) => {
+  const navigation = useNavigation();
+
   const dispatch = useDispatch();
-  const {userData, savedID} = useSelector(state => state.user);
+  const { userData, savedID } = useSelector(state => state.user);
 
   const [isActionModal, setIsActionModal] = useState(false);
   const [toastMsg, setToastMsg] = useState('');
@@ -69,6 +73,7 @@ const MenuModal = ({
       color: colors.textDark,
       onPress: () => {
         onClose();
+        navigation.navigate('SendFeedback', { screenTitle: 'Report Blog' })
       },
     },
     {
@@ -77,13 +82,14 @@ const MenuModal = ({
       color: colors.textDark,
       onPress: () => {
         onClose();
+        navigation.navigate('SendFeedback', { screenTitle: 'Send Feedback' })
       },
     },
   ];
 
   const savedUnsaved = () => {
     onClose();
-    const params = {savedBlog: blogID};
+    const params = { savedBlog: blogID };
     apiRequest
       .post(endPoints.saveUnsavedBlogs, params, config)
       .then(response => {
@@ -111,10 +117,23 @@ const MenuModal = ({
 
   const hideUnHide = () => {
     onClose();
-    const params = {hideBloged: blogID};
+    refreshFunc && refreshFunc != undefined && refreshFunc();
+    const params = { hideBloged: blogID };
     apiRequest
       .post(endPoints.hideUnHideBlogs, params, config)
-      .then(res => {})
+      .then(res => {
+        console.log(res.data)
+        apiRequest
+          .get(endPoints.findUser + userData.user._id, config)
+          .then(res => {
+            console.log(res.data, "UPDATED_USER")
+            dispatch(setUser(res.data));
+            refreshFunc()
+          })
+          .catch(err => {
+            console.log(err);
+          });
+      })
       .catch(err => {
         console.log(err);
       });
@@ -139,9 +158,9 @@ const MenuModal = ({
               keyExtractor={(_, index) => index.toString()}
               showsVerticalScrollIndicator={false}
               ListFooterComponent={() => (
-                <View style={{height: height * 0.1}} />
+                <View style={{ height: height * 0.1 }} />
               )}
-              renderItem={({item}) => {
+              renderItem={({ item }) => {
                 return (
                   <TouchableOpacity
                     onPress={item.onPress}
@@ -149,10 +168,10 @@ const MenuModal = ({
                     style={styles.card}>
                     <Image
                       source={item.icon}
-                      style={[styles.iconStyle, {tintColor: item.color}]}
+                      style={[styles.iconStyle, { tintColor: item.color }]}
                       resizeMode="contain"
                     />
-                    <Text style={[styles.txt1, {color: item.color}]}>
+                    <Text style={[styles.txt1, { color: item.color }]}>
                       {item.name}
                     </Text>
                   </TouchableOpacity>

@@ -24,7 +24,7 @@ import { fontsFamily, fontsSize } from '../../constants/fonts';
 import colors from '../../constants/colors';
 import MenuModal from '../Modals/MenuModal';
 
-const TrendingCard = ({ id, image, title, views, onPress, date, commentCount }) => {
+const TrendingCard = ({ id, image, title, views, onPress, date, commentCount, refreshFunc }) => {
   const navigation = useNavigation();
 
   const [isModal, setIsModal] = useState(false);
@@ -100,6 +100,7 @@ const TrendingCard = ({ id, image, title, views, onPress, date, commentCount }) 
         </View>
       </TouchableOpacity>
       <MenuModal
+        refreshFunc={refreshFunc}
         isVisible={isModal}
         onClose={() => setIsModal(false)}
         blogID={id}

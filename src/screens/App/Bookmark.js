@@ -1,28 +1,28 @@
-import {StyleSheet, View, Dimensions, Text, FlatList} from 'react-native';
-import React, {useEffect, useState} from 'react';
-import {useDispatch, useSelector} from 'react-redux';
+import { StyleSheet, View, Dimensions, Text, FlatList } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
-const {width, height} = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
 
 // local imports
 import colors from '../../constants/colors';
-import {useNavigation} from '@react-navigation/native';
-import {fontsFamily, fontsSize} from '../../constants/fonts';
+import { useNavigation } from '@react-navigation/native';
+import { fontsFamily, fontsSize } from '../../constants/fonts';
 import SimpleCard from '../../components/Card/SimpleCard';
 import endPoints from '../../constants/endPoints';
 import apiRequest from '../../utils/apiRequest';
-import {setLoader} from '../../redux/globalSlice';
+import { setLoader } from '../../redux/globalSlice';
 import BackHeader from '../../components/Headers/BackHeader';
-import {Image} from 'react-native';
+import { Image } from 'react-native';
 import images from '../../assets/images';
-import {setSavedID} from '../../redux/userSlice';
+import { setSavedID } from '../../redux/userSlice';
 
-const Bookmark = ({...props}) => {
+const Bookmark = ({ ...props }) => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
 
   const selectedLang = useSelector(state => state.language.selectedLang);
-  const {islLogin, userData} = useSelector(state => state.user);
+  const { islLogin, userData } = useSelector(state => state.user);
 
   const [data, setData] = useState([]);
 
@@ -71,7 +71,7 @@ const Bookmark = ({...props}) => {
           <View style={styles.emptyWrapper}>
             <Image
               source={images.Empty}
-              style={{width: width * 0.4, height: width * 0.4}}
+              style={{ width: width * 0.4, height: width * 0.4 }}
               resizeMode="contain"
             />
             <Text style={styles.txt1}>Empty!</Text>
@@ -84,10 +84,11 @@ const Bookmark = ({...props}) => {
             data={data}
             initialNumToRender={5}
             keyExtractor={(_, index) => index.toString()}
-            style={{marginTop: height * 0.02}}
+            style={{ marginTop: height * 0.02 }}
             showsVerticalScrollIndicator={false}
-            renderItem={({item, index}) => (
+            renderItem={({ item, index }) => (
               <SimpleCard
+                refreshFunc={() => getBookmark()}
                 id={item?._id}
                 image={item?.featureImg}
                 title={item?.title}
@@ -95,7 +96,7 @@ const Bookmark = ({...props}) => {
                 commentCount={item?.commentCount}
                 date={item?.createdAt}
                 onRefresh={() => getBookmark()}
-                onPress={() => navigation.navigate('BlogDetail', {data: item})}
+                onPress={() => navigation.navigate('BlogDetail', { data: item })}
               />
             )}
           />

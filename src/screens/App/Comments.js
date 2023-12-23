@@ -130,7 +130,9 @@ const Comments = ({ ...props }) => {
           renderItem={({ item }) => {
             return (
               <CommentsCard
-                id={item.id}
+                onRefresh={() => { getComments() }}
+                id={item._id}
+                likes={item.like}
                 comments={item.comment}
                 date={item.updatedAt}
                 blogId={item.blogId}

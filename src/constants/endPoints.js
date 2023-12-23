@@ -6,6 +6,7 @@ export default endPoints = {
   // Auth Endpoints
   register: 'user/create/user/',
   login: 'user/login/user/',
+  findUser: 'user/find/user/',
   updateUser: 'user/update/',
   uploadUserImage: 'user/profile/pic/',
   forgotPassword: 'user/forgot-password/',
@@ -20,6 +21,8 @@ export default endPoints = {
   searchBlogByTitle: 'blog/search/blog/',
   getCommentsByBlog: 'blog/findcomment/',
   postComments: 'blog/comment/',
+  likeComment: 'blog/likeComment/',
   findBlogcomment: 'blog/findBlogcomment/',
   oneBlog: '/blog/one/blogs/',
+  createQuery: '/qu/create/query',
 };

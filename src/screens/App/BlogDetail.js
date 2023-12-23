@@ -26,6 +26,7 @@ import apiRequest from '../../utils/apiRequest';
 import endPoints from '../../constants/endPoints';
 import { setLoader } from '../../redux/globalSlice';
 import MenuModal from '../../components/Modals/MenuModal';
+import hideBlog from '../../utils/hideBlog';
 
 const BlogDetail = ({ ...props }) => {
   const data = props?.route?.params?.data;
@@ -33,6 +34,7 @@ const BlogDetail = ({ ...props }) => {
   const dispatch = useDispatch();
   const [oneBlog, setoneBlog] = useState({});
   const { userData } = useSelector(state => state.user);
+  const hideBlogs = userData.user?.hideBloged
   const [isModal, setIsModal] = useState(false);
 
   const config = {
@@ -44,15 +46,21 @@ const BlogDetail = ({ ...props }) => {
 
   useEffect(() => {
     getOneBlog();
-  }, []);
+  }, [userData]);
 
   const getOneBlog = () => {
     dispatch(setLoader(true));
     apiRequest
       .get(endPoints.oneBlog + data?._id, config)
       .then(res => {
-        setoneBlog(res.data.cleanBlogData)
-        // console.log(res.data.cleanBlogData, "cleanBlogData")
+        let data = hideBlog([res.data.cleanBlogData], hideBlogs)
+        if (data.length != 0) {
+          setoneBlog([0])
+        }
+        else {
+          navigation.goBack()
+        }
+        // setoneBlog(res.data.cleanBlogData)
         dispatch(setLoader(false));
       })
       .catch(err => {

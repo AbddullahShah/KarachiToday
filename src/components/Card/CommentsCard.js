@@ -1,8 +1,10 @@
-import { StyleSheet, View, Dimensions, Text, Image } from 'react-native';
-import React from 'react';
+import { StyleSheet, View, Dimensions, Text, Image, TouchableOpacity } from 'react-native';
+import React, { useEffect } from 'react';
 import moment from "moment";
-
+import endPoints from '../../constants/endPoints';
+import apiRequest from '../../utils/apiRequest';
 const { width, height } = Dimensions.get('window');
+import { useDispatch, useSelector } from 'react-redux';
 
 // local imports
 import colors from '../../constants/colors';
@@ -18,7 +20,32 @@ const CommentsCard = ({
   image,
   blogId,
   comments,
+  likes,
+  onRefresh
 }) => {
+  const { userData } = useSelector(state => state.user);
+  const config = {
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: 'Bearer ' + userData?.token,
+    },
+  };
+
+  useEffect(() => {
+    let result = likes.includes(userData.user._id);
+  }, [likes]);
+
+  const likeDislike = () => {
+    apiRequest
+      .get(endPoints.likeComment + id, config)
+      .then(response => {
+        onRefresh()
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  }
+
   return (
     <View style={styles.card}>
       <View
@@ -27,7 +54,7 @@ const CommentsCard = ({
           gap: width * 0.04,
         }}>
         <Image
-          source={image !== undefined ? { uri: image } : images.Avatar}
+          source={image !== undefined ? { uri: image } : images.Dummy}
           style={{ width: width * 0.09, height: width * 0.09 }}
           resizeMode="contain"
         />
@@ -38,9 +65,26 @@ const CommentsCard = ({
         </View>
       </View>
       <Text style={styles.txt3}>{comments}</Text>
+
+      <TouchableOpacity
+        style={{ flexDirection: 'row', }}
+        onPress={() => { likeDislike() }}
+      >
+        <Image
+          source={likes.includes(userData.user._id) ? images.Like : images.Dislike}
+          style={{
+            width: width * 0.05, height: width * 0.05, marginTop: 10,
+            color: 'red'
+          }}
+          resizeMode="contain"
+        />
+        <Text style={[styles.txt1, { marginTop: 10, marginLeft: 5, color: colors.textLight }]}>{likes?.length}</Text>
+      </TouchableOpacity>
+
       {/* <TouchableOpacity activeOpacity={0.6} onPress={onPress}>
         <Text style={styles.txt4}>Reply</Text>
       </TouchableOpacity> */}
+
     </View>
   );
 };

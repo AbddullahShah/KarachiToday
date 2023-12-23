@@ -32,6 +32,8 @@ export default Images = {
   IBtn: require('./i_btn.png'),
   Feedback: require('./feedback.png'),
   Send: require('./send.png'),
+  Like: require('./like.png'),
+  Dislike: require('./dislike.png'),
 
   // News Categories
   Politics: require('./newsCategory/politics.png'),
