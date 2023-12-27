@@ -11,8 +11,9 @@ import {
   Text,
   TouchableOpacity,
   View,
+  BackHandler
 } from 'react-native';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
 
@@ -29,8 +30,20 @@ const Profile = () => {
 
   const { isLogin, userData } = useSelector(state => state.user);
   const selectedLang = useSelector(state => state.language.selectedLang);
-  console.log(userData?.user?.email, "")
-  
+  // console.log(userData?.user?.email, "")
+
+  // useEffect(() => {
+  //   const backAction = () => {
+  //     navigation.goBack()
+  //     return true;
+  //   };
+  //   const backHandler = BackHandler.addEventListener(
+  //     'hardwareBackPress',
+  //     backAction,
+  //   );
+  //   return () => backHandler.remove();
+  // }, []);
+
   const logout = () => {
     Alert.alert('Logout your account', 'Are you sure logout your account', [
       {

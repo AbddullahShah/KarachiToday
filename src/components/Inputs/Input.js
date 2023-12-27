@@ -2,7 +2,7 @@ import {
   heightPercentageToDP,
   widthPercentageToDP,
 } from 'react-native-responsive-screen';
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 
 // local import
 import {
@@ -13,7 +13,7 @@ import {
   Image,
   Pressable,
 } from 'react-native';
-import {fontsFamily, fontsSize} from '../../constants/fonts';
+import { fontsFamily, fontsSize } from '../../constants/fonts';
 import colors from '../../constants/colors';
 import images from '../../assets/images';
 
@@ -47,6 +47,7 @@ const Input = ({
           />
         )}
         <TextInput
+          autoCapitalize='none'
           editable={editable}
           value={value}
           placeholder={placeholderText}

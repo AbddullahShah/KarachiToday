@@ -12,7 +12,8 @@ import {
     TouchableOpacity,
     Image,
     Pressable,
-    TextInput
+    TextInput,
+    BackHandler
 } from 'react-native';
 import ImagePicker from 'react-native-image-crop-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -81,6 +82,18 @@ const SendFeedback = ({ ...props }) => {
                 });
         }
     };
+
+    useEffect(() => {
+        const backAction = () => {
+            navigation.goBack()
+            return true;
+        };
+        const backHandler = BackHandler.addEventListener(
+            'hardwareBackPress',
+            backAction,
+        );
+        return () => backHandler.remove();
+    }, []);
 
     return (
         <>

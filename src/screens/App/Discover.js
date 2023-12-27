@@ -9,6 +9,7 @@ import {
   FlatList,
   Text,
   ScrollView,
+  BackHandler
 } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -54,6 +55,18 @@ const Bookmark = ({ ...props }) => {
     },
   };
 
+  // useEffect(() => {
+  //   const backAction = () => {
+  //     navigation.goBack()
+  //     return true;
+  //   };
+  //   const backHandler = BackHandler.addEventListener(
+  //     'hardwareBackPress',
+  //     backAction,
+  //   );
+  //   return () => backHandler.remove();
+  // }, []);
+
   const getTrendingData = () => {
     dispatch(setLoader(true));
     apiRequest
@@ -63,13 +76,16 @@ const Bookmark = ({ ...props }) => {
           .get(
             endPoints.getBlogsByCategory +
             res.data.data.category[0]._id +
-            '?limit=5&page=1',
+            '?limit=10&page=1'
+            // '?limit=2',
+            // '?limit=5&page=1',
           )
           .then(res => {
             let orginalArr = res.data.data.allBlogsFinal;
             setTrendingData(hideBlog(orginalArr, hideBlogs));
             // setTrendingData(res.data.data.allBlogsFinal);
             setTotalTrendingPages(res.data.totalPages);
+            setTrendingPage(1);
             dispatch(setLoader(false));
           })
           .catch(err => {
@@ -83,42 +99,51 @@ const Bookmark = ({ ...props }) => {
       });
   };
 
+
+
   const getMoreTrendingData = () => {
-    if (isFetching && totalTrendingPages > trendingPage) {
-      dispatch(setLoader(true));
-      apiRequest
-        .get(endPoints.categorySearchByTitle + 'Trending')
-        .then(res => {
-          apiRequest
-            .get(
-              endPoints.getBlogsByCategory +
-              res.data.data.category[0]._id +
-              '?limit=5&page=' +
-              (trendingPage + 1),
-            )
-            .then(res => {
-              dispatch(setLoader(false));
-              let orginalArr = res.data.data.allBlogsFinal;
-              setTrendingData([...trendingData, hideBlog(orginalArr, hideBlogs)]);
-              // setTrendingData([...trendingData, ...res.data.data.allBlogsFinal]);
-              setTrendingPage(trendingPage + 1);
-            })
-            .catch(err => {
-              console.log(err);
-              dispatch(setLoader(false));
-            });
-        })
-        .catch(err => {
-          console.log(err);
-          dispatch(setLoader(false));
-        });
-    }
+    // if (isFetching && totalTrendingPages > trendingPage) {
+    dispatch(setLoader(true));
+    apiRequest
+      .get(endPoints.categorySearchByTitle + 'Trending')
+      .then(res => {
+        apiRequest
+          .get(
+            endPoints.getBlogsByCategory +
+            res.data.data.category[0]._id +
+            '?limit=10&page=' + (trendingPage + 1)
+            // '?limit=' + (trendingPage + 4),
+            // '?limit=5&page=' +
+            // (trendingPage + 1),
+          )
+          .then(res => {
+            dispatch(setLoader(false));
+            let orginalArr = res.data.data.allBlogsFinal;
+            const updated = trendingData.concat(hideBlog(orginalArr, hideBlogs));
+            setTrendingData(updated);
+            // setTrendingData(hideBlog(orginalArr, hideBlogs));
+            // setTrendingData([...trendingData, hideBlog(orginalArr, hideBlogs)]);
+            // setTrendingData([...trendingData, ...res.data.data.allBlogsFinal]);
+            setTrendingPage(trendingPage + 1);
+          })
+          .catch(err => {
+            console.log(err);
+            dispatch(setLoader(false));
+          });
+      })
+      .catch(err => {
+        console.log(err);
+        dispatch(setLoader(false));
+      });
+    // }
   };
 
   const getAllBlogs = id => {
     dispatch(setLoader(true));
     apiRequest
-      .get(endPoints.getAllBlogs + '?limit=5&page=1', config)
+      // .get(endPoints.getAllBlogs + '?limit=5&page=1', config)
+      // .get(endPoints.getAllBlogs + '?limit=2', config)
+      .get(endPoints.getAllBlogs + '?limit=10&page=1', config)
       .then(res => {
         let orginalArr = res.data.data;
         setAllBlogs(hideBlog(orginalArr, hideBlogs));
@@ -136,14 +161,16 @@ const Bookmark = ({ ...props }) => {
   };
 
   const getMoreBlogData = () => {
-    if (isFetching && totalPages > page) {
+    if (isFetching) {
+      let URL;
+      URL = endPoints.getAllBlogs;
       dispatch(setLoader(true));
       apiRequest
-        .get(endPoints.getAllBlogs + '?limit=5&page=' + (page + 1), config)
+        .get(URL + '?limit=10&page=' + (page + 1), config)
         .then(res => {
           let orginalArr = res.data.data;
-          setAllBlogs([...allBlogs, hideBlog(orginalArr, hideBlogs)]);
-          // setAllBlogs([...allBlogs, ...res.data.data]);
+          const updated = allBlogs.concat(hideBlog(orginalArr, hideBlogs));
+          setAllBlogs(updated);
           dispatch(setLoader(false));
           setPage(page + 1);
         })
@@ -153,6 +180,30 @@ const Bookmark = ({ ...props }) => {
         });
     }
   };
+
+  // const getMoreBlogData = () => {
+  //   if (isFetching) {
+  //     dispatch(setLoader(true));
+  //     apiRequest
+  //       // .get(endPoints.getAllBlogs + '?limit=5&page=' + (page + 1), config)
+  //       // .get(URL + '?limit=' + (page + 4), config)
+  //       .get(endPoints.getAllBlogs + + '?limit=10&page=' + (page + 1), config)
+  //       .then(res => {
+  //         let orginalArr = res.data.data;
+  //         const updated = allBlogs.concat(hideBlog(orginalArr, hideBlogs));
+  //         setAllBlogs(updated);
+  //         // setAllBlogs(hideBlog(orginalArr, hideBlogs));
+  //         // setAllBlogs([...allBlogs, hideBlog(orginalArr, hideBlogs)]);
+  //         // setAllBlogs([...allBlogs, ...res.data.data]);
+  //         dispatch(setLoader(false));
+  //         setPage(page + 1);
+  //       })
+  //       .catch(err => {
+  //         console.log(err);
+  //         dispatch(setLoader(false));
+  //       });
+  //   }
+  // };
 
   useEffect(() => {
     getTrendingData();

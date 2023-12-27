@@ -7,7 +7,8 @@ import {
   Text,
   TouchableOpacity,
   Share,
-  Alert
+  Alert,
+  BackHandler
 } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -45,6 +46,19 @@ const BlogDetail = ({ ...props }) => {
   }
 
   useEffect(() => {
+    const backAction = () => {
+      navigation.goBack()
+      return true;
+    };
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction,
+    );
+    return () => backHandler.remove();
+  }, []);
+
+
+  useEffect(() => {
     getOneBlog();
   }, [userData]);
 
@@ -55,12 +69,12 @@ const BlogDetail = ({ ...props }) => {
       .then(res => {
         let data = hideBlog([res.data.cleanBlogData], hideBlogs)
         if (data.length != 0) {
-          setoneBlog([0])
+          setoneBlog(data[0])
         }
         else {
           navigation.goBack()
         }
-        // setoneBlog(res.data.cleanBlogData)
+        setoneBlog(res.data.cleanBlogData)
         dispatch(setLoader(false));
       })
       .catch(err => {

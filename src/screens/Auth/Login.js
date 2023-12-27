@@ -107,6 +107,8 @@ const Login = () => {
               // password: '12345678',
               // email: 'test11@gmail.com',
               // password: '123456789',
+              // email: 'testing@gmail.com',
+              // password: 'password',
               email: '',
               password: '',
             }}
@@ -132,7 +134,7 @@ const Login = () => {
                   label={'Email'}
                   icon={images.Email}
                   placeholderText={'Email'}
-                  value={values.email}
+                  value={values.email.toLocaleLowerCase()}
                   handleOnChangeTxt={handleChange('email')}
                   onBlur={() => setFieldTouched('email')}
                   keyboardType={'email-address'}
@@ -148,7 +150,7 @@ const Login = () => {
                   value={values.password}
                   handleOnChangeTxt={handleChange('password')}
                   onBlur={() => setFieldTouched('password')}
-                  keyboardType={'password'}
+                  // keyboardType={'email-address'}
                   error={touched.password && errors.password}
                   errorType={errors.password}
                   marginTop={heightPercentageToDP(3)}

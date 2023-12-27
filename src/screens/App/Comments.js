@@ -10,6 +10,7 @@ import {
   TouchableOpacity,
   Animated,
   FlatList,
+  BackHandler,
   KeyboardAvoidingView,
 } from 'react-native';
 import React, { useEffect, useRef, useState } from 'react';
@@ -95,6 +96,20 @@ const Comments = ({ ...props }) => {
   useEffect(() => {
     getComments();
   }, []);
+
+
+  useEffect(() => {
+    const backAction = () => {
+      navigation.goBack()
+      return true;
+    };
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction,
+    );
+    return () => backHandler.remove();
+  }, []);
+
 
   return (
     <View style={styles.container}>

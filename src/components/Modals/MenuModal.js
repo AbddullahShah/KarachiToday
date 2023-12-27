@@ -98,7 +98,7 @@ const MenuModal = ({
           .then(res => {
             const savedID = res?.data?.map(x => x._id);
             dispatch(setSavedID(savedID));
-            onPress();
+            // onPress();
             setIsActionModal(true);
             setToastMsg(
               savedID.includes(blogID)

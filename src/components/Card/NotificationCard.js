@@ -36,7 +36,7 @@ const NotificationCard = ({ item }) => {
     // </TouchableOpacity>
     <>
       <TouchableOpacity
-        onPress={() => navigation.navigate('BlogDetail', { data: item?.blogId })}
+        onPress={() => navigation.navigate('Comments', { data: item?.blogId._id })}
         activeOpacity={1}
         style={{ ...styles.storiesCard }}>
         <View style={{ width: '70%' }}>

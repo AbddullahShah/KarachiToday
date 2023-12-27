@@ -11,7 +11,8 @@ import {
   View,
   TouchableOpacity,
   Image,
-  Pressable
+  Pressable,
+  BackHandler
 } from 'react-native';
 import ImagePicker from 'react-native-image-crop-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -48,11 +49,22 @@ const EditProfile = ({ ...props }) => {
   const { islLogin, userData } = useSelector(state => state.user);
 
   useEffect(() => {
-
     userData.user.phone_number && setPhone(JSON.stringify(userData.user.phone_number))
     userData.user.name && setFullName(userData.user.name)
     userData.user.bio && setBio(userData.user.bio)
   }, [])
+
+  useEffect(() => {
+    const backAction = () => {
+      navigation.goBack()
+      return true;
+    };
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction,
+    );
+    return () => backHandler.remove();
+  }, []);
 
   const config = {
     headers: {

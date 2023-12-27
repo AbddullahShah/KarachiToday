@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, View, Dimensions, FlatList } from 'react-native';
+import { StyleSheet, View, Dimensions, FlatList, BackHandler } from 'react-native';
 const { width, height } = Dimensions.get('window');
 
 // local imports
@@ -12,14 +12,14 @@ import NotificationCard from '../../components/Card/NotificationCard';
 import apiRequest from '../../utils/apiRequest';
 import { setLoader } from '../../redux/globalSlice';
 import endPoints from '../../constants/endPoints';
+// import hideBlog from '../../utils/hideBlog';
 
 const Notification = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const { userData } = useSelector(state => state.user);
   const [myComments, setmyComments] = useState([]);
-  console.log(userData?.user?._id, "userDatauserDatauserDatauserData")
-
+  const hideBlogs = userData.user?.hideBloged
   const config = {
     headers: {
       'Content-Type': 'application/json',
@@ -30,12 +30,32 @@ const Notification = () => {
     getUserComments();
   }, []);
 
+  useEffect(() => {
+    const backAction = () => {
+      navigation.goBack()
+      return true;
+    };
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction,
+    );
+    return () => backHandler.remove();
+  }, []);
+
+
+  const hideBlogComment = (a, b) => {
+    // Filter array a to exclude objects with blogId matching any ID in array b
+    let nonMatchingObjects = a.filter(objA => !b.includes(objA.blogId._id));
+    return nonMatchingObjects;
+  }
+
   const getUserComments = () => {
     dispatch(setLoader(true));
     apiRequest
       .get(endPoints.findBlogcomment + userData?.user?._id, config)
       .then(res => {
-        setmyComments(res.data.data)
+        let orginalArr = res.data.data
+        setmyComments(hideBlogComment(orginalArr, hideBlogs))
         dispatch(setLoader(false));
       })
       .catch(err => {

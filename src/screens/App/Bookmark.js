@@ -1,4 +1,4 @@
-import { StyleSheet, View, Dimensions, Text, FlatList } from 'react-native';
+import { StyleSheet, View, Dimensions, Text, FlatList, BackHandler } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -32,6 +32,18 @@ const Bookmark = ({ ...props }) => {
       Authorization: 'Bearer ' + userData?.token,
     },
   };
+
+  // useEffect(() => {
+  //   const backAction = () => {
+  //     navigation.goBack()
+  //     return true;
+  //   };
+  //   const backHandler = BackHandler.addEventListener(
+  //     'hardwareBackPress',
+  //     backAction,
+  //   );
+  //   return () => backHandler.remove();
+  // }, []);
 
   const getBookmark = () => {
     apiRequest

@@ -145,7 +145,8 @@ const Register = () => {
                   value={values.password}
                   handleOnChangeTxt={handleChange('password')}
                   onBlur={() => setFieldTouched('password')}
-                  keyboardType={'password'}
+                  // keyboardType={'password'}
+                  // keyboardType={'email-address'}
                   error={touched.password && errors.password}
                   errorType={errors.password}
                   marginTop={heightPercentageToDP(3)}

@@ -5,29 +5,30 @@ import {
   TouchableOpacity,
   FlatList,
   TextInput,
+  BackHandler
 } from 'react-native';
-import React, {useState} from 'react';
-import {useSelector} from 'react-redux';
+import React, { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
 
-const {width, height} = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
 
 // local imports
 import colors from '../../constants/colors';
-import {useNavigation} from '@react-navigation/native';
-import {fontsFamily, fontsSize} from '../../constants/fonts';
+import { useNavigation } from '@react-navigation/native';
+import { fontsFamily, fontsSize } from '../../constants/fonts';
 import SimpleCard from '../../components/Card/SimpleCard';
 import endPoints from '../../constants/endPoints';
 import apiRequest from '../../utils/apiRequest';
-import {Image} from 'react-native';
+import { Image } from 'react-native';
 import images from '../../assets/images';
 import PrimaryHeader from '../../components/Headers/PrimaryHeader';
-import {ActivityIndicator} from 'react-native';
+import { ActivityIndicator } from 'react-native';
 
-const Search = ({...props}) => {
+const Search = ({ ...props }) => {
   const navigation = useNavigation();
 
   const selectedLang = useSelector(state => state.language.selectedLang);
-  const {islLogin, userData} = useSelector(state => state.user);
+  const { islLogin, userData } = useSelector(state => state.user);
 
   const [data, setData] = useState([]);
   const [text, onChangeText] = useState('');
@@ -61,12 +62,24 @@ const Search = ({...props}) => {
     setTimer(timeOut);
   };
 
+  useEffect(() => {
+    const backAction = () => {
+      navigation.goBack()
+      return true;
+    };
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction,
+    );
+    return () => backHandler.remove();
+  }, []);
+
   return (
     <View style={styles.container}>
       <View style={styles.wrapper}>
         <PrimaryHeader
           isLogo={false}
-          style={{height: height * 0.06}}
+          style={{ height: height * 0.06 }}
           onPress={() => navigation.goBack()}
         />
         <View style={styles.inputWrapper}>
@@ -96,7 +109,7 @@ const Search = ({...props}) => {
           <View style={styles.emptyWrapper}>
             <Image
               source={images.SearchEmpty}
-              style={{width: width * 0.4, height: width * 0.4}}
+              style={{ width: width * 0.4, height: width * 0.4 }}
               resizeMode="contain"
             />
           </View>
@@ -105,16 +118,16 @@ const Search = ({...props}) => {
             data={data}
             initialNumToRender={5}
             keyExtractor={(_, index) => index.toString()}
-            style={{marginTop: height * 0.02}}
+            style={{ marginTop: height * 0.02 }}
             showsVerticalScrollIndicator={false}
-            renderItem={({item}) => (
+            renderItem={({ item }) => (
               <SimpleCard
                 id={item?._id}
                 image={item?.featureImg}
                 title={item?.title}
                 views={item?.views}
                 date={item?.createdAt}
-                onPress={() => navigation.navigate('BlogDetail', {data: item})}
+                onPress={() => navigation.navigate('BlogDetail', { data: item })}
               />
             )}
           />

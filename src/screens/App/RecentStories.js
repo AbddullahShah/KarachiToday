@@ -5,6 +5,8 @@ import {
   Text,
   TouchableOpacity,
   FlatList,
+  ScrollView,
+  BackHandler
 } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -50,12 +52,14 @@ const RecentStories = ({ ...props }) => {
     dispatch(setLoader(true));
     apiRequest
       .get(endPoints.getAllBlogs + '?limit=10&page=1', config)
+      // .get(endPoints.getAllBlogs + '?limit=10', config)
       .then(res => {
         console.log(res.data);
         let orginalArr = res.data.data;
         setAllBlogs(hideBlog(orginalArr, hideBlogs));
         // setAllBlogs(res.data.data);
         setTotalPages(res.data.totalPages);
+        console.log(res.data, "setTotalPagessetTotalPages");
         dispatch(setLoader(false));
         if (id !== undefined) {
           setPage(1);
@@ -79,9 +83,12 @@ const RecentStories = ({ ...props }) => {
       dispatch(setLoader(true));
       apiRequest
         .get(URL + '?limit=10&page=' + (page + 1), config)
+        // .get(URL + '?limit=' + (page + 4), config)
         .then(res => {
           let orginalArr = res.data.data;
-          setAllBlogs([...allBlogs, hideBlog(orginalArr, hideBlogs)]);
+          const updated = allBlogs.concat(hideBlog(orginalArr, hideBlogs));
+          setAllBlogs(updated);
+          // setAllBlogs([...allBlogs, hideBlog(orginalArr, hideBlogs)]);
           // setAllBlogs([...allBlogs, ...res.data.data]);
           dispatch(setLoader(false));
           setPage(page + 1);
@@ -126,7 +133,7 @@ const RecentStories = ({ ...props }) => {
       apiRequest
         .get(endPoints.getBlogsByCategory + id + '?limit=5&page=1')
         .then(res => {
-          setAllBlogs(res.data.data.blog);
+          setAllBlogs(res.data.data.allBlogsFinal);
           setTotalPages(res.data.totalPages);
           dispatch(setLoader(false));
         })
@@ -166,8 +173,21 @@ const RecentStories = ({ ...props }) => {
     // getAllCategories();
   }
 
+  useEffect(() => {
+    const backAction = () => {
+      navigation.goBack()
+      return true;
+    };
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction,
+    );
+    return () => backHandler.remove();
+  }, []);
+
   return (
     <View style={styles.container}>
+
       <View style={styles.wrapper}>
         <BackHeader
           title={'Recent Stories'}
@@ -192,23 +212,28 @@ const RecentStories = ({ ...props }) => {
             );
           }}
         />
-        <FlatList
+        {/* <FlatList
           data={allBlogs}
           initialNumToRender={5}
           keyExtractor={(_, index) => index.toString()}
           style={{ marginTop: height * 0.02 }}
           showsVerticalScrollIndicator={false}
           ListFooterComponent={() => {
-            if (totalPages > page) {
-              return (
-                <>
-                  <LoadMore onPress={getMoreBlogData} />
-                  <View style={{ height: height * 0.2 }} />
-                </>
-              );
+            if (allBlogs.length) {
+              return allBlogs.length != 0 && <LoadMore onPress={getMoreBlogData} />;
             } else {
-              return <View style={{ height: height * 0.2 }} />;
+              return null;
             }
+            // if (totalPages > page) {
+            //   return (
+            //     <>
+            //       <LoadMore onPress={getMoreBlogData} />
+            //       <View style={{ height: height * 0.2 }} />
+            //     </>
+            //   );
+            // } else {
+            //   return <View style={{ height: height * 0.2 }} />;
+            // }
           }}
           renderItem={({ item, index }) => (
             <SimpleCard
@@ -222,9 +247,37 @@ const RecentStories = ({ ...props }) => {
               onPress={() => { }}
             />
           )}
-        />
-      </View>
-    </View>
+        /> */}
+        <ScrollView contentContainerStyle={{ paddingBottom: 200 }} showsVerticalScrollIndicator={false}>
+          <FlatList
+            data={allBlogs}
+            initialNumToRender={5}
+            keyExtractor={(_, index) => index.toString()}
+            style={{ marginTop: height * 0.02 }}
+            showsVerticalScrollIndicator={false}
+            ListFooterComponent={() => {
+              if (totalPages > page) {
+                return allBlogs && allBlogs.length != 0 && <LoadMore onPress={getMoreBlogData} />;
+              } else {
+                return null;
+              }
+            }}
+            renderItem={({ item }) => (
+              <SimpleCard
+                refreshFunc={() => reCall()}
+                id={item?._id}
+                image={item?.featureImg}
+                title={item?.title}
+                views={item?.views}
+                commentCount={item?.commentCount}
+                date={item?.createdAt}
+                onPress={() => navigation.navigate('BlogDetail', { data: item })}
+              />
+            )}
+          />
+        </ScrollView>
+      </View >
+    </View >
   );
 };
 
