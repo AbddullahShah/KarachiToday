@@ -23,7 +23,7 @@ import globalStyle from '../../utils/globalStyle';
 import { fontsFamily, fontsSize } from '../../constants/fonts';
 import MenuModal from '../Modals/MenuModal';
 
-const SimpleCard = ({ id, image, title, views, onPress, onRefresh, date, commentCount, refreshFunc }) => {
+const SimpleCard = ({ id, image, title, views, onPress, onRefresh, date, commentCount, }) => {
   const navigation = useNavigation();
 
   const [isModal, setIsModal] = useState(false);
@@ -107,7 +107,6 @@ const SimpleCard = ({ id, image, title, views, onPress, onRefresh, date, comment
         </View>
       </TouchableOpacity>
       <MenuModal
-        refreshFunc={refreshFunc}
         onPress={onRefresh}
         isVisible={isModal}
         onClose={() => setIsModal(false)}

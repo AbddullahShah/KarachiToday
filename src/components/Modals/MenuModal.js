@@ -34,7 +34,6 @@ const MenuModal = ({
   onPress = () => { onPress() },
   onClose,
   blogID,
-  refreshFunc,
   ...props
 }) => {
   const navigation = useNavigation();
@@ -117,18 +116,14 @@ const MenuModal = ({
 
   const hideUnHide = () => {
     onClose();
-    refreshFunc && refreshFunc != undefined && refreshFunc();
     const params = { hideBloged: blogID };
     apiRequest
       .post(endPoints.hideUnHideBlogs, params, config)
       .then(res => {
-        console.log(res.data)
         apiRequest
           .get(endPoints.findUser + userData.user._id, config)
           .then(res => {
-            console.log(res.data, "UPDATED_USER")
             dispatch(setUser(res.data));
-            refreshFunc()
           })
           .catch(err => {
             console.log(err);

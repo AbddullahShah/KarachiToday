@@ -5,13 +5,11 @@ import {
 import {
   Alert,
   Image,
-  Pressable,
   ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
-  BackHandler
 } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -22,27 +20,11 @@ import colors from '../../constants/colors';
 import images from '../../assets/images';
 import { fontsFamily, fontsSize } from '../../constants/fonts';
 import { logoutUser } from '../../redux/userSlice';
-import languages from '../../lang/languages';
 
 const Profile = () => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
-
-  const { isLogin, userData } = useSelector(state => state.user);
-  const selectedLang = useSelector(state => state.language.selectedLang);
-  // console.log(userData?.user?.email, "")
-
-  // useEffect(() => {
-  //   const backAction = () => {
-  //     navigation.goBack()
-  //     return true;
-  //   };
-  //   const backHandler = BackHandler.addEventListener(
-  //     'hardwareBackPress',
-  //     backAction,
-  //   );
-  //   return () => backHandler.remove();
-  // }, []);
+  const { userData } = useSelector(state => state.user);
 
   const logout = () => {
     Alert.alert('Logout your account', 'Are you sure logout your account', [
@@ -93,7 +75,6 @@ const Profile = () => {
           <View
             style={styles.avatar}
             activeOpacity={0.8}
-          // onPress={() => { }}
           >
             <Image
               source={
@@ -134,7 +115,6 @@ const Profile = () => {
               <View style={styles.seprator}>
                 <Text style={styles.text2}>Email</Text>
                 <Text style={styles.text3}>{userData?.user?.email.toLowerCase()}</Text>
-                {/* let lowercasetext = text.toLowerCase(); //To convert Lower Case */}
               </View>
             )}
             {userData?.user?.bio && (
@@ -250,5 +230,4 @@ const styles = StyleSheet.create({
     borderBottomWidth: 0.5,
     paddingBottom: 10
   }
-
 });

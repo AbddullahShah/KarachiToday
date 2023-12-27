@@ -168,11 +168,6 @@ const RecentStories = ({ ...props }) => {
     getAllCategories();
   }, [userData]);
 
-  const reCall = () => {
-    // getAllBlogs();
-    // getAllCategories();
-  }
-
   useEffect(() => {
     const backAction = () => {
       navigation.goBack()
@@ -212,42 +207,6 @@ const RecentStories = ({ ...props }) => {
             );
           }}
         />
-        {/* <FlatList
-          data={allBlogs}
-          initialNumToRender={5}
-          keyExtractor={(_, index) => index.toString()}
-          style={{ marginTop: height * 0.02 }}
-          showsVerticalScrollIndicator={false}
-          ListFooterComponent={() => {
-            if (allBlogs.length) {
-              return allBlogs.length != 0 && <LoadMore onPress={getMoreBlogData} />;
-            } else {
-              return null;
-            }
-            // if (totalPages > page) {
-            //   return (
-            //     <>
-            //       <LoadMore onPress={getMoreBlogData} />
-            //       <View style={{ height: height * 0.2 }} />
-            //     </>
-            //   );
-            // } else {
-            //   return <View style={{ height: height * 0.2 }} />;
-            // }
-          }}
-          renderItem={({ item, index }) => (
-            <SimpleCard
-              refreshFunc={() => reCall()}
-              id={item?._id}
-              image={item?.featureImg}
-              title={item?.title}
-              views={item?.views}
-              commentCount={item?.commentCount}
-              date={item?.createdAt}
-              onPress={() => { }}
-            />
-          )}
-        /> */}
         <ScrollView contentContainerStyle={{ paddingBottom: 200 }} showsVerticalScrollIndicator={false}>
           <FlatList
             data={allBlogs}
@@ -264,7 +223,6 @@ const RecentStories = ({ ...props }) => {
             }}
             renderItem={({ item }) => (
               <SimpleCard
-                refreshFunc={() => reCall()}
                 id={item?._id}
                 image={item?.featureImg}
                 title={item?.title}

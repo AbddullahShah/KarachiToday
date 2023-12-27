@@ -2,14 +2,14 @@ import {
   heightPercentageToDP,
   widthPercentageToDP,
 } from 'react-native-responsive-screen';
-import {Image, Pressable, StyleSheet, Text, View} from 'react-native';
+import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 import React from 'react';
-import {useNavigation} from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 
 // local imports
 import colors from '../../constants/colors';
 import images from '../../assets/images';
-import {fontsFamily, fontsSize} from '../../constants/fonts';
+import { fontsFamily, fontsSize } from '../../constants/fonts';
 import PrimaryButton from '../../components/Buttons/PrimaryButton';
 
 const AuthWrapper = () => {
@@ -26,19 +26,21 @@ const AuthWrapper = () => {
         <Text style={styles.txt1}>
           Welcome! Let’s drive in into your account!
         </Text>
-        <Pressable style={styles.btn1}>
+        {/* <Pressable style={styles.btn1}>
           <Image
             source={images.Google}
             resizeMode="contain"
             style={styles.icon1}
           />
           <Text style={styles.txt2}>Continue with Google</Text>
-        </Pressable>
-        <PrimaryButton
-          text={'Sign in with password'}
-          onPress={() => navigation.navigate('Login')}
-        />
-        <View style={{position: 'absolute', bottom: heightPercentageToDP(8)}}>
+        </Pressable> */}
+        <View style={styles.btn1}>
+          <PrimaryButton
+            text={'Sign in with password'}
+            onPress={() => navigation.navigate('Login')}
+          />
+        </View>
+        <View style={{ position: 'absolute', bottom: heightPercentageToDP(8) }}>
           <Text style={styles.txt3}>
             Don’t have an account?{' '}
             <Text
@@ -70,7 +72,7 @@ const styles = StyleSheet.create({
     fontFamily: fontsFamily.medium,
     fontSize: fontsSize.md2,
     color: colors.textLight,
-    marginTop: heightPercentageToDP(10),
+    marginTop: heightPercentageToDP(20),
   },
   txt2: {
     fontFamily: fontsFamily.medium,
@@ -94,10 +96,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 100,
-    borderWidth: 1,
-    borderColor: colors.textLight,
+    // borderWidth: 1,
+    // borderColor: colors.textLight,
     height: heightPercentageToDP(6),
-    marginTop: heightPercentageToDP(10),
+    marginTop: heightPercentageToDP(4),
     marginBottom: heightPercentageToDP(2),
   },
   icon1: {

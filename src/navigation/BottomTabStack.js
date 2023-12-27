@@ -13,9 +13,9 @@ import images from '../assets/images';
 
 // screens
 import Home from '../screens/App/Home';
-import Profile from '../screens/App/Profile';
 import Discover from '../screens/App/Discover';
 import Bookmark from '../screens/App/Bookmark';
+import Profile from '../screens/App/Profile';
 
 const Tab = createBottomTabNavigator();
 

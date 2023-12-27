@@ -107,10 +107,10 @@ const Login = () => {
               // password: '12345678',
               // email: 'test11@gmail.com',
               // password: '123456789',
-              // email: 'testing@gmail.com',
-              // password: 'password',
-              email: '',
-              password: '',
+              email: 'testing@gmail.com',
+              password: 'password',
+              // email: '',
+              // password: '',
             }}
             onSubmit={value => {
               signIn(value);

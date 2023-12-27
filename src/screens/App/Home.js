@@ -12,11 +12,11 @@ import {
   FlatList,
   Image,
   Alert,
-  BackHandler
+  BackHandler,
+  RefreshControl
 } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-
 const { width, height } = Dimensions.get('window');
 
 // local imports
@@ -37,10 +37,9 @@ import images from '../../assets/images';
 const Home = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
-
-  const selectedLang = useSelector(state => state.language.selectedLang);
   const { userData } = useSelector(state => state.user);
   const hideBlogs = userData.user?.hideBloged
+  const [refreshing, setRefreshing] = useState(false);
   const [newsCategories, setNewsCategories] = useState([]);
   const [isFetching, setIsFetching] = useState(true);
 
@@ -72,15 +71,14 @@ const Home = () => {
             endPoints.getBlogsByCategory +
             res.data.data.category[0]._id +
             '?limit=10&page=1'
-            // '?limit=2',
           )
           .then(res => {
             let orginalArr = res.data.data.allBlogsFinal;
             setTrendingData(hideBlog(orginalArr, hideBlogs));
-            // setTrendingData(res.data.data.allBlogsFinal);
             setTotalTrendingPages(res.data.totalPages);
             setTrendingPage(1);
             dispatch(setLoader(false));
+           
           })
           .catch(err => {
             console.log(err);
@@ -104,15 +102,12 @@ const Home = () => {
             endPoints.getBlogsByCategory +
             res.data.data.category[0]._id +
             '?limit=10&page=' + (trendingPage + 1)
-            // '?limit=' + (trendingPage + 4),
           )
           .then(res => {
             dispatch(setLoader(false));
             let orginalArr = res.data.data.allBlogsFinal;
             const updated = trendingData.concat(hideBlog(orginalArr, hideBlogs));
             setTrendingData(updated);
-            // setTrendingData(hideBlog(orginalArr, hideBlogs));
-            // setTrendingData([...trendingData, hideBlog(orginalArr, hideBlogs)]);
             // setTrendingData([...trendingData, ...res.data.data.allBlogsFinal]);
             setTrendingPage(trendingPage + 1);
           })
@@ -130,16 +125,14 @@ const Home = () => {
 
   const getAllBlogs = id => {
     dispatch(setLoader(true));
-    // console.log(endPoints.getAllBlogs + '?limit=2', "LoadFirst");
     apiRequest
       .get(endPoints.getAllBlogs + '?limit=10&page=1', config)
-      // .get(endPoints.getAllBlogs + '?limit=2', config)
       .then(res => {
         let orginalArr = res.data.data;
         setAllBlogs(hideBlog(orginalArr, hideBlogs));
-        // setAllBlogs(res.data.data);
         setTotalPages(res.data.totalPages);
         dispatch(setLoader(false));
+       
         if (id !== undefined) {
           setPage(1);
         }
@@ -159,18 +152,13 @@ const Home = () => {
       } else {
         URL = endPoints.getBlogsByCategory + filter[0]?._id;
       }
-      // console.log(URL + '?limit=' + (page + 4), 'GetBlogsByCategory')
       dispatch(setLoader(true));
       apiRequest
         .get(URL + '?limit=10&page=' + (page + 1), config)
-        // .get(URL + '?limit=' + (page + 1), config)
         .then(res => {
           let orginalArr = res.data.data;
           const updated = allBlogs.concat(hideBlog(orginalArr, hideBlogs));
           setAllBlogs(updated);
-          // setAllBlogs(hideBlog(orginalArr, hideBlogs));
-          // setAllBlogs([...allBlogs, hideBlog(orginalArr, hideBlogs)]);
-          // // setAllBlogs([...allBlogs, ...res.data.data]);
           dispatch(setLoader(false));
           setPage(page + 1);
         })
@@ -198,6 +186,7 @@ const Home = () => {
         result.unshift(dummyData);
         setNewsCategories(result);
         dispatch(setLoader(false));
+       
       })
       .catch(err => {
         console.log(err);
@@ -215,10 +204,7 @@ const Home = () => {
         .get(endPoints.getBlogsByCategory + id + '?limit=5&page=1')
         .then(res => {
           let orginalArr = res.data.data.allBlogsFinal;
-          // console.log(orginalArr);
           setAllBlogs(hideBlog(orginalArr, hideBlogs));
-          // setAllBlogs(orginalArr);
-          // setAllBlogs(res.data.data.blog);
           setTotalPages(res.data.totalPages);
           dispatch(setLoader(false));
         })
@@ -248,25 +234,19 @@ const Home = () => {
     setNewsCategories(result);
   };
 
-  // useEffect(() => {
-  //   getTrendingData();
-  //   getAllCategories();
-  //   getAllBlogs();
-  // }, []);
-
   useEffect(() => {
     getTrendingData();
     getAllCategories();
     getAllBlogs();
   }, [userData]);
 
-  const reCall = () => {
-    // setAllBlogs([])
-    // setTrendingData([])
-    // getTrendingData();
-    // getAllCategories();
-    // getAllBlogs();
-  }
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    getTrendingData();
+    getAllCategories();
+    getAllBlogs();
+    setRefreshing(false);
+  }, []);
 
   useEffect(() => {
     const backAction = () => {
@@ -289,7 +269,11 @@ const Home = () => {
 
   return (
     <View style={styles.container}>
-      <ScrollView style={styles.wrapper} showsVerticalScrollIndicator={false}>
+      <ScrollView style={styles.wrapper} showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+      >
         {/* Header */}
         <HomeHeader
           name={userData?.user?.name}
@@ -297,8 +281,6 @@ const Home = () => {
           onPress={() => navigation.navigate('Notification')}
           onPressProfile={() => navigation.navigate('Profile')}
         />
-
-
 
         {trendingData && trendingData.length !== 0 && (
           <View style={{ ...globalStyle.rcb, marginTop: height * 0.04 }}>
@@ -322,7 +304,6 @@ const Home = () => {
           showsHorizontalScrollIndicator={false}
           renderItem={({ item, index }) => (
             <TrendingCard
-              refreshFunc={() => reCall()}
               id={item?._id}
               image={item?.featureImg}
               title={item?.title}
@@ -344,7 +325,6 @@ const Home = () => {
             </Text>
           </View>
         )}
-
         <FlatList
           horizontal
           initialNumToRender={5}
@@ -380,7 +360,6 @@ const Home = () => {
           }}
           renderItem={({ item }) => (
             <SimpleCard
-              refreshFunc={() => reCall()}
               id={item?._id}
               image={item?.featureImg}
               title={item?.title}
@@ -455,7 +434,5 @@ const styles = StyleSheet.create({
   }),
   empty: {
     alignSelf: 'center',
-    // position: 'absolute',
-    // top: height * 0.35,
   },
 });

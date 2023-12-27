@@ -9,14 +9,12 @@ import {
   FlatList,
   Text,
   ScrollView,
-  BackHandler
+  RefreshControl
 } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
-
 const { width, height } = Dimensions.get('window');
-
 // local imports
 import colors from '../../constants/colors';
 import BackHeader from '../../components/Headers/BackHeader';
@@ -31,12 +29,10 @@ import hideBlog from '../../utils/hideBlog';
 const Bookmark = ({ ...props }) => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
-
-  const selectedLang = useSelector(state => state.language.selectedLang);
   const { userData } = useSelector(state => state.user);
   const hideBlogs = userData.user?.hideBloged
-
   const [isFetching, setIsFetching] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
 
   // Blogs data states
   const [page, setPage] = useState(1);
@@ -55,18 +51,6 @@ const Bookmark = ({ ...props }) => {
     },
   };
 
-  // useEffect(() => {
-  //   const backAction = () => {
-  //     navigation.goBack()
-  //     return true;
-  //   };
-  //   const backHandler = BackHandler.addEventListener(
-  //     'hardwareBackPress',
-  //     backAction,
-  //   );
-  //   return () => backHandler.remove();
-  // }, []);
-
   const getTrendingData = () => {
     dispatch(setLoader(true));
     apiRequest
@@ -77,13 +61,10 @@ const Bookmark = ({ ...props }) => {
             endPoints.getBlogsByCategory +
             res.data.data.category[0]._id +
             '?limit=10&page=1'
-            // '?limit=2',
-            // '?limit=5&page=1',
           )
           .then(res => {
             let orginalArr = res.data.data.allBlogsFinal;
             setTrendingData(hideBlog(orginalArr, hideBlogs));
-            // setTrendingData(res.data.data.allBlogsFinal);
             setTotalTrendingPages(res.data.totalPages);
             setTrendingPage(1);
             dispatch(setLoader(false));
@@ -98,9 +79,6 @@ const Bookmark = ({ ...props }) => {
         dispatch(setLoader(false));
       });
   };
-
-
-
   const getMoreTrendingData = () => {
     // if (isFetching && totalTrendingPages > trendingPage) {
     dispatch(setLoader(true));
@@ -112,18 +90,12 @@ const Bookmark = ({ ...props }) => {
             endPoints.getBlogsByCategory +
             res.data.data.category[0]._id +
             '?limit=10&page=' + (trendingPage + 1)
-            // '?limit=' + (trendingPage + 4),
-            // '?limit=5&page=' +
-            // (trendingPage + 1),
           )
           .then(res => {
             dispatch(setLoader(false));
             let orginalArr = res.data.data.allBlogsFinal;
             const updated = trendingData.concat(hideBlog(orginalArr, hideBlogs));
             setTrendingData(updated);
-            // setTrendingData(hideBlog(orginalArr, hideBlogs));
-            // setTrendingData([...trendingData, hideBlog(orginalArr, hideBlogs)]);
-            // setTrendingData([...trendingData, ...res.data.data.allBlogsFinal]);
             setTrendingPage(trendingPage + 1);
           })
           .catch(err => {
@@ -141,13 +113,10 @@ const Bookmark = ({ ...props }) => {
   const getAllBlogs = id => {
     dispatch(setLoader(true));
     apiRequest
-      // .get(endPoints.getAllBlogs + '?limit=5&page=1', config)
-      // .get(endPoints.getAllBlogs + '?limit=2', config)
       .get(endPoints.getAllBlogs + '?limit=10&page=1', config)
       .then(res => {
         let orginalArr = res.data.data;
         setAllBlogs(hideBlog(orginalArr, hideBlogs));
-        // setAllBlogs(res.data.data);
         setTotalPages(res.data.totalPages);
         dispatch(setLoader(false));
         if (id !== undefined) {
@@ -181,43 +150,25 @@ const Bookmark = ({ ...props }) => {
     }
   };
 
-  // const getMoreBlogData = () => {
-  //   if (isFetching) {
-  //     dispatch(setLoader(true));
-  //     apiRequest
-  //       // .get(endPoints.getAllBlogs + '?limit=5&page=' + (page + 1), config)
-  //       // .get(URL + '?limit=' + (page + 4), config)
-  //       .get(endPoints.getAllBlogs + + '?limit=10&page=' + (page + 1), config)
-  //       .then(res => {
-  //         let orginalArr = res.data.data;
-  //         const updated = allBlogs.concat(hideBlog(orginalArr, hideBlogs));
-  //         setAllBlogs(updated);
-  //         // setAllBlogs(hideBlog(orginalArr, hideBlogs));
-  //         // setAllBlogs([...allBlogs, hideBlog(orginalArr, hideBlogs)]);
-  //         // setAllBlogs([...allBlogs, ...res.data.data]);
-  //         dispatch(setLoader(false));
-  //         setPage(page + 1);
-  //       })
-  //       .catch(err => {
-  //         console.log(err);
-  //         dispatch(setLoader(false));
-  //       });
-  //   }
-  // };
-
   useEffect(() => {
     getTrendingData();
     getAllBlogs();
   }, [userData]);
 
-  const reCall = () => {
-    // getTrendingData();
-    // getAllBlogs();
-  }
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    getTrendingData();
+    getAllBlogs();
+    setRefreshing(false);
+  }, []);
+
 
   return (
     <View style={styles.container}>
-      <View style={styles.wrapper}>
+      <ScrollView style={styles.wrapper}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }>
         <BackHeader
           isLogo
           title={'Discover'}
@@ -246,7 +197,6 @@ const Bookmark = ({ ...props }) => {
             showsHorizontalScrollIndicator={false}
             renderItem={({ item, index }) => (
               <TrendingCard
-                refreshFunc={() => reCall()}
                 id={item?._id}
                 image={item?.featureImg}
                 title={item?.title}
@@ -280,7 +230,6 @@ const Bookmark = ({ ...props }) => {
             showsHorizontalScrollIndicator={false}
             renderItem={({ item, index }) => (
               <TrendingCard
-                refreshFunc={() => reCall()}
                 id={item?._id}
                 image={item?.featureImg}
                 title={item?.title}
@@ -292,7 +241,7 @@ const Bookmark = ({ ...props }) => {
             )}
           />
         </ScrollView>
-      </View>
+      </ScrollView>
     </View>
   );
 };

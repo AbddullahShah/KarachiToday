@@ -1,7 +1,6 @@
-import { StyleSheet, View, Dimensions, Text, FlatList, BackHandler } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import { StyleSheet, View, Dimensions, Text, FlatList, RefreshControl, ScrollView } from 'react-native';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-
 const { width, height } = Dimensions.get('window');
 
 // local imports
@@ -11,20 +10,19 @@ import { fontsFamily, fontsSize } from '../../constants/fonts';
 import SimpleCard from '../../components/Card/SimpleCard';
 import endPoints from '../../constants/endPoints';
 import apiRequest from '../../utils/apiRequest';
-import { setLoader } from '../../redux/globalSlice';
 import BackHeader from '../../components/Headers/BackHeader';
 import { Image } from 'react-native';
 import images from '../../assets/images';
 import { setSavedID } from '../../redux/userSlice';
+import hideBlog from '../../utils/hideBlog';
 
 const Bookmark = ({ ...props }) => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
-
-  const selectedLang = useSelector(state => state.language.selectedLang);
-  const { islLogin, userData } = useSelector(state => state.user);
-
+  const { userData } = useSelector(state => state.user);
+  const hideBlogs = userData.user?.hideBloged
   const [data, setData] = useState([]);
+  const [refreshing, setRefreshing] = useState(false);
 
   const config = {
     headers: {
@@ -33,23 +31,11 @@ const Bookmark = ({ ...props }) => {
     },
   };
 
-  // useEffect(() => {
-  //   const backAction = () => {
-  //     navigation.goBack()
-  //     return true;
-  //   };
-  //   const backHandler = BackHandler.addEventListener(
-  //     'hardwareBackPress',
-  //     backAction,
-  //   );
-  //   return () => backHandler.remove();
-  // }, []);
-
   const getBookmark = () => {
     apiRequest
       .get(endPoints.getSaveBlogs, config)
       .then(res => {
-        setData(res.data);
+        setData(hideBlog(res.data, hideBlogs));
         const savedID = res?.data?.map(x => x._id);
         dispatch(setSavedID(savedID));
       })
@@ -62,7 +48,6 @@ const Bookmark = ({ ...props }) => {
     const unsubscribe = navigation.addListener('focus', () => {
       getBookmark();
     });
-
     return unsubscribe;
   }, []);
 
@@ -70,15 +55,24 @@ const Bookmark = ({ ...props }) => {
     getBookmark();
   }, []);
 
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    getBookmark();
+    setRefreshing(false);
+  }, []);
+
   return (
     <View style={styles.container}>
-      <View style={styles.wrapper}>
+      <ScrollView style={styles.wrapper}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+      >
         <BackHeader
           isLogo
           title={'Bookmark'}
           rightPress={() => navigation.navigate('Search')}
         />
-
         {data.length === 0 ? (
           <View style={styles.emptyWrapper}>
             <Image
@@ -100,7 +94,6 @@ const Bookmark = ({ ...props }) => {
             showsVerticalScrollIndicator={false}
             renderItem={({ item, index }) => (
               <SimpleCard
-                refreshFunc={() => getBookmark()}
                 id={item?._id}
                 image={item?.featureImg}
                 title={item?.title}
@@ -113,8 +106,8 @@ const Bookmark = ({ ...props }) => {
             )}
           />
         )}
-      </View>
-    </View>
+      </ScrollView>
+    </View >
   );
 };
 

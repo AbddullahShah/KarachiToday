@@ -106,10 +106,6 @@ const Trending = ({ ...props }) => {
     getTrendingData();
   }, [userData]);
 
-  const reCall = () => {
-    getTrendingData();
-  }
-
   useEffect(() => {
     const backAction = () => {
       navigation.goBack()
@@ -158,7 +154,6 @@ const Trending = ({ ...props }) => {
           }}
           renderItem={({ item, index }) => (
             <SimpleCard
-              refreshFunc={() => reCall()}
               id={item?._id}
               image={item?.featureImg}
               title={item?.title}
