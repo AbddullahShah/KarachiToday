@@ -23,6 +23,7 @@ import globalStyle from '../../utils/globalStyle';
 import { fontsFamily, fontsSize } from '../../constants/fonts';
 import colors from '../../constants/colors';
 import MenuModal from '../Modals/MenuModal';
+import { generateLink } from '../../utils/generateShareLink';
 
 const TrendingCard = ({ id, image, title, views, onPress, date, commentCount, }) => {
   const navigation = useNavigation();
@@ -30,23 +31,15 @@ const TrendingCard = ({ id, image, title, views, onPress, date, commentCount, })
   const [isModal, setIsModal] = useState(false);
 
   const onShare = async () => {
+    const getLink = await generateLink(id)
     try {
-      const result = await Share.share({
-        message: title,
+      Share.share({
+        message: getLink,
       });
-      if (result.action === Share.sharedAction) {
-        if (result.activityType) {
-          // shared with activity type of result.activityType
-        } else {
-          // shared
-        }
-      } else if (result.action === Share.dismissedAction) {
-        // dismissed
-      }
     } catch (error) {
-      Alert.alert(error.message);
+      console.log('Sharing Error:', error)
     }
-  };
+  }
 
   const handleMenu = () => {
     setIsModal(true);

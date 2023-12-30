@@ -1,5 +1,8 @@
-import { StyleSheet, View, Dimensions, FlatList, BackHandler } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import {
+  StyleSheet, View, Dimensions, FlatList,
+  BackHandler, RefreshControl, ScrollView
+} from 'react-native';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 const { width, height } = Dimensions.get('window');
@@ -31,6 +34,7 @@ const Trending = ({ ...props }) => {
   const [trendingPage, setTrendingPage] = useState(1);
   const [trendingData, setTrendingData] = useState([]);
   const [totalTrendingPages, setTotalTrendingPages] = useState(0);
+  const [refreshing, setRefreshing] = useState(false);
 
   const getTrendingData = () => {
     dispatch(setLoader(true));
@@ -107,6 +111,10 @@ const Trending = ({ ...props }) => {
   }, [userData]);
 
   useEffect(() => {
+    getTrendingData();
+  }, []);
+
+  useEffect(() => {
     const backAction = () => {
       navigation.goBack()
       return true;
@@ -118,6 +126,12 @@ const Trending = ({ ...props }) => {
     return () => backHandler.remove();
   }, []);
 
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    getTrendingData();
+    setRefreshing(false);
+  }, []);
+
   return (
     <View style={styles.container}>
       <View style={styles.wrapper}>
@@ -126,44 +140,51 @@ const Trending = ({ ...props }) => {
           leftPress={() => navigation.goBack()}
           rightPress={() => navigation.navigate('Search')}
         />
-        <FlatList
-          data={trendingData}
-          initialNumToRender={5}
-          keyExtractor={(_, index) => index.toString()}
-          style={{ flex: 1, marginTop: height * 0.02 }}
-          showsVerticalScrollIndicator={false}
-          ListFooterComponent={() => {
-            // if (totalTrendingPages > trendingPage) {
-            //   return trendingData && trendingData.length != 0 &&
-            //     <View style={{ marginBottom: 20 }}>
-            //       <LoadMore onPress={getMoreTrendingData} />
-            //     </View>
-            // } else {
-            //   return null;
-            // }
-            if (totalTrendingPages > trendingPage) {
-              return (
-                <>
-                  <LoadMore onPress={getMoreTrendingData} />
-                  <View style={{ height: height * 0.1 }} />
-                </>
-              );
-            } else {
-              return <View style={{ height: height * 0.1 }} />;
-            }
-          }}
-          renderItem={({ item, index }) => (
-            <SimpleCard
-              id={item?._id}
-              image={item?.featureImg}
-              title={item?.title}
-              views={item?.views}
-              commentCount={item?.commentCount}
-              date={item?.createdAt}
-              onPress={() => navigation.navigate('BlogDetail', { data: item })}
-            />
-          )}
-        />
+        <ScrollView  showsVerticalScrollIndicator={false}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
+        >
+
+          <FlatList
+            data={trendingData}
+            initialNumToRender={5}
+            keyExtractor={(_, index) => index.toString()}
+            style={{ flex: 1, marginTop: height * 0.02 }}
+            showsVerticalScrollIndicator={false}
+            ListFooterComponent={() => {
+              // if (totalTrendingPages > trendingPage) {
+              //   return trendingData && trendingData.length != 0 &&
+              //     <View style={{ marginBottom: 20 }}>
+              //       <LoadMore onPress={getMoreTrendingData} />
+              //     </View>
+              // } else {
+              //   return null;
+              // }
+              if (totalTrendingPages > trendingPage) {
+                return (
+                  <>
+                    <LoadMore onPress={getMoreTrendingData} />
+                    <View style={{ height: height * 0.1 }} />
+                  </>
+                );
+              } else {
+                return <View style={{ height: height * 0.1 }} />;
+              }
+            }}
+            renderItem={({ item, index }) => (
+              <SimpleCard
+                id={item?._id}
+                image={item?.featureImg}
+                title={item?.title}
+                views={item?.views}
+                commentCount={item?.commentCount}
+                date={item?.createdAt}
+                onPress={() => navigation.navigate('BlogDetail', { data: item })}
+              />
+            )}
+          />
+        </ScrollView>
       </View>
     </View>
   );

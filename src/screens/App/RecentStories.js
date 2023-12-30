@@ -6,9 +6,10 @@ import {
   TouchableOpacity,
   FlatList,
   ScrollView,
-  BackHandler
+  BackHandler,
+  RefreshControl
 } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 const { width, height } = Dimensions.get('window');
@@ -40,6 +41,7 @@ const RecentStories = ({ ...props }) => {
   const [page, setPage] = useState(1);
   const [allBlogs, setAllBlogs] = useState([]);
   const [totalPages, setTotalPages] = useState(0);
+  const [refreshing, setRefreshing] = useState(false);
 
   const config = {
     headers: {
@@ -180,6 +182,13 @@ const RecentStories = ({ ...props }) => {
     return () => backHandler.remove();
   }, []);
 
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    getAllBlogs();
+    getAllCategories();
+    setRefreshing(false);
+  }, []);
+
   return (
     <View style={styles.container}>
 
@@ -207,7 +216,11 @@ const RecentStories = ({ ...props }) => {
             );
           }}
         />
-        <ScrollView contentContainerStyle={{ paddingBottom: 200 }} showsVerticalScrollIndicator={false}>
+        <ScrollView contentContainerStyle={{ paddingBottom: 200 }} showsVerticalScrollIndicator={false}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
+        >
           <FlatList
             data={allBlogs}
             initialNumToRender={5}

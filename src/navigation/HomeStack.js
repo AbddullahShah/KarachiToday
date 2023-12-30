@@ -1,6 +1,7 @@
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useSelector } from 'react-redux';
+
 // screens
 import BottomTabStack from './BottomTabStack';
 import Trending from '../screens/App/Trending';
@@ -19,7 +20,8 @@ const HomeStack = () => {
   return (
     <Stack.Navigator
       initialRouteName={userData?.user?.name && userData?.user?.name != undefined ? 'BottomTabStack' : 'EditProfile'}
-      screenOptions={{ headerShown: false }}>
+      screenOptions={{ headerShown: false }}
+    >
       <Stack.Screen name="BottomTabStack" component={BottomTabStack} />
       <Stack.Screen name="Trending" component={Trending} />
       <Stack.Screen name="RecentStories" component={RecentStories} />

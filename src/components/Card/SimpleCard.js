@@ -12,6 +12,7 @@ import {
   Share,
 } from 'react-native';
 import React, { useState } from 'react';
+import dynamicLinks from '@react-native-firebase/dynamic-links';
 
 const { width, height } = Dimensions.get('window');
 import { useNavigation } from '@react-navigation/native';
@@ -22,6 +23,7 @@ import images from '../../assets/images';
 import globalStyle from '../../utils/globalStyle';
 import { fontsFamily, fontsSize } from '../../constants/fonts';
 import MenuModal from '../Modals/MenuModal';
+import { generateLink } from '../../utils/generateShareLink';
 
 const SimpleCard = ({ id, image, title, views, onPress, onRefresh, date, commentCount, }) => {
   const navigation = useNavigation();
@@ -29,23 +31,15 @@ const SimpleCard = ({ id, image, title, views, onPress, onRefresh, date, comment
   const [isModal, setIsModal] = useState(false);
 
   const onShare = async () => {
+    const getLink = await generateLink(id)
     try {
-      const result = await Share.share({
-        message: title,
+      Share.share({
+        message: getLink,
       });
-      if (result.action === Share.sharedAction) {
-        if (result.activityType) {
-          // shared with activity type of result.activityType
-        } else {
-          // shared
-        }
-      } else if (result.action === Share.dismissedAction) {
-        // dismissed
-      }
     } catch (error) {
-      Alert.alert(error.message);
+      console.log('Sharing Error:', error)
     }
-  };
+  }
 
   const handleMenu = () => {
     setIsModal(true);

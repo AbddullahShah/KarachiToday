@@ -8,7 +8,8 @@ import {
   TouchableOpacity,
   Share,
   Alert,
-  BackHandler
+  BackHandler,
+  Linking
 } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -28,13 +29,15 @@ import endPoints from '../../constants/endPoints';
 import { setLoader } from '../../redux/globalSlice';
 import MenuModal from '../../components/Modals/MenuModal';
 import hideBlog from '../../utils/hideBlog';
+import { generateLink } from '../../utils/generateShareLink';
 
 const BlogDetail = ({ ...props }) => {
   const data = props?.route?.params?.data;
+  const itemId = props?.route?.params?.id;
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const [oneBlog, setoneBlog] = useState({});
-  const { userData } = useSelector(state => state.user);
+  const { userData, isLogin } = useSelector(state => state.user);
   const hideBlogs = userData.user?.hideBloged
   const [isModal, setIsModal] = useState(false);
 
@@ -57,24 +60,27 @@ const BlogDetail = ({ ...props }) => {
     return () => backHandler.remove();
   }, []);
 
-
   useEffect(() => {
     getOneBlog();
   }, [userData]);
 
-  const getOneBlog = () => {
+  const getOneBlog = async () => {
     dispatch(setLoader(true));
+    console.log(endPoints.oneBlog + (data?._id || itemId), 'getBlog');
     apiRequest
-      .get(endPoints.oneBlog + data?._id, config)
+      .get(endPoints.oneBlog + (data?._id || itemId), config)
       .then(res => {
         let data = hideBlog([res.data.cleanBlogData], hideBlogs)
         if (data.length != 0) {
           setoneBlog(data[0])
         }
         else {
-          navigation.goBack()
+          (itemId) ? (
+            navigation.navigate('MainStack')
+          ) : (
+            navigation.goBack()
+          )
         }
-        setoneBlog(res.data.cleanBlogData)
         dispatch(setLoader(false));
       })
       .catch(err => {
@@ -84,29 +90,29 @@ const BlogDetail = ({ ...props }) => {
   };
 
   const onShare = async () => {
+    const getLink = await generateLink(data?._id || itemId)
     try {
-      const result = await Share.share({
-        message: oneBlog?.title,
+      Share.share({
+        message: getLink,
       });
-      if (result.action === Share.sharedAction) {
-        if (result.activityType) {
-          // shared with activity type of result.activityType
-        } else {
-          // shared
-        }
-      } else if (result.action === Share.dismissedAction) {
-        // dismissed
-      }
     } catch (error) {
-      Alert.alert(error.message);
+      console.log('Sharing Error:', error)
     }
-  };
+  }
 
   return (
     <View style={styles.container}>
       <View style={styles.wrapper}>
         <BlogDetailHeader
-          leftPress={() => navigation.goBack()}
+          // leftPress={() => navigation.goBack()}
+          leftPress={() => {
+            (itemId) ? (
+              (isLogin) ? (navigation.goBack()) :
+                navigation.navigate('MainStack')
+            ) : (
+              navigation.goBack()
+            )
+          }}
           onShare={() => { onShare() }}
           onMenu={() => { setIsModal(true) }}
         />
