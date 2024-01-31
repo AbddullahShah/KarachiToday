@@ -29,7 +29,7 @@ import hideBlog from '../../utils/hideBlog';
 const Bookmark = ({ ...props }) => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
-  const { userData } = useSelector(state => state.user);
+  const { userData, isLogin } = useSelector(state => state.user);
   const hideBlogs = userData.user?.hideBloged
   const [isFetching, setIsFetching] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -64,7 +64,7 @@ const Bookmark = ({ ...props }) => {
           )
           .then(res => {
             let orginalArr = res.data.data.allBlogsFinal;
-            setTrendingData(hideBlog(orginalArr, hideBlogs));
+            setTrendingData(isLogin ? hideBlog(orginalArr, hideBlogs) : orginalArr);
             setTotalTrendingPages(res.data.totalPages);
             setTrendingPage(1);
             dispatch(setLoader(false));
@@ -94,7 +94,7 @@ const Bookmark = ({ ...props }) => {
           .then(res => {
             dispatch(setLoader(false));
             let orginalArr = res.data.data.allBlogsFinal;
-            const updated = trendingData.concat(hideBlog(orginalArr, hideBlogs));
+            const updated = trendingData.concat(isLogin ? hideBlog(orginalArr, hideBlogs) : orginalArr);
             setTrendingData(updated);
             setTrendingPage(trendingPage + 1);
           })
@@ -116,7 +116,7 @@ const Bookmark = ({ ...props }) => {
       .get(endPoints.getAllBlogs + '?limit=10&page=1', config)
       .then(res => {
         let orginalArr = res.data.data;
-        setAllBlogs(hideBlog(orginalArr, hideBlogs));
+        setAllBlogs(isLogin ? hideBlog(orginalArr, hideBlogs) : orginalArr);
         setTotalPages(res.data.totalPages);
         dispatch(setLoader(false));
         if (id !== undefined) {
@@ -138,7 +138,7 @@ const Bookmark = ({ ...props }) => {
         .get(URL + '?limit=10&page=' + (page + 1), config)
         .then(res => {
           let orginalArr = res.data.data;
-          const updated = allBlogs.concat(hideBlog(orginalArr, hideBlogs));
+          const updated = allBlogs.concat(isLogin ? hideBlog(orginalArr, hideBlogs) : orginalArr);
           setAllBlogs(updated);
           dispatch(setLoader(false));
           setPage(page + 1);

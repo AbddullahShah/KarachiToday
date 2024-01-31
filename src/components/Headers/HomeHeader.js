@@ -11,6 +11,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
 const { width, height } = Dimensions.get('window');
 
@@ -21,13 +22,15 @@ import globalStyle from '../../utils/globalStyle';
 import { fontsFamily, fontsSize } from '../../constants/fonts';
 
 const HomeHeader = ({ name, image, onPress, onPressProfile }) => {
+  const { isLogin } = useSelector(state => state.user);
+
   return (
     <View
       style={{
         ...globalStyle.rcb,
         marginTop: height * 0.02,
       }}>
-      <TouchableOpacity style={{ ...globalStyle.rc, gap: width * 0.03 }}
+      <TouchableOpacity style={{ ...globalStyle.rc, gap: width * 0.03, }}
         onPress={onPressProfile}
       >
         <View style={styles.avatar}>
@@ -37,11 +40,9 @@ const HomeHeader = ({ name, image, onPress, onPressProfile }) => {
             style={styles.img100}
           />
         </View>
-        <View>
+        <View >
           <Text style={styles.txt1}>Welcome</Text>
-          <Text numberOfLines={1} style={styles.txt2}>
-            {name}
-          </Text>
+          <Text numberOfLines={1} style={styles.txt2}>{isLogin ? name : 'User'}</Text>
         </View>
       </TouchableOpacity>
       <TouchableOpacity

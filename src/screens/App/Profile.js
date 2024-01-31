@@ -24,7 +24,7 @@ import { logoutUser } from '../../redux/userSlice';
 const Profile = () => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
-  const { userData } = useSelector(state => state.user);
+  const { userData, isLogin } = useSelector(state => state.user);
 
   const logout = () => {
     Alert.alert('Logout your account', 'Are you sure logout your account', [
@@ -68,84 +68,103 @@ const Profile = () => {
 
   return (
     <View style={styles.container}>
-      <ScrollView
-        style={styles.mainWrapper}
-        showsVerticalScrollIndicator={false}>
-        <View style={styles.wrapper}>
-          <View
-            style={styles.avatar}
-            activeOpacity={0.8}
-          >
-            <Image
-              source={
-                userData?.user?.profile_pic !== undefined
-                  ? { uri: userData?.user?.profile_pic }
-                  : images.Dummy
-              }
-              style={styles.img}
-              resizeMode="cover"
-            />
-          </View>
-          <View style={styles.card}>
-            <View style={{ justifyContent: 'space-between', flexDirection: 'row' }}>
-              <Text style={styles.text1}>Profile Info</Text>
-              <TouchableOpacity
-                onPress={() => navigation.navigate('EditProfile')}
+      {
+        (isLogin) ? (
+          <ScrollView
+            style={styles.mainWrapper}
+            showsVerticalScrollIndicator={false}>
+            <View style={styles.wrapper}>
+              <View
+                style={styles.avatar}
+                activeOpacity={0.8}
               >
                 <Image
-                  source={images.Edit}
-                  style={{ height: 20, width: 20 }}
+                  source={
+                    userData?.user?.profile_pic !== undefined
+                      ? { uri: userData?.user?.profile_pic }
+                      : images.Dummy
+                  }
+                  style={styles.img}
                   resizeMode="cover"
                 />
-              </TouchableOpacity>
-            </View>
-            {userData?.user?.name && (
-              <View style={styles.seprator}>
-                <Text style={styles.text2}>Name</Text>
-                <Text style={styles.text3}>{userData?.user?.name}</Text>
               </View>
-            )}
-            {userData?.user?.phone_number && (
-              <View style={styles.seprator}>
-                <Text style={styles.text2}>Phone</Text>
-                <Text style={styles.text3}>{userData?.user?.phone_number}</Text>
+              <View style={styles.card}>
+                <View style={{ justifyContent: 'space-between', flexDirection: 'row' }}>
+                  <Text style={styles.text1}>Profile Info</Text>
+                  <TouchableOpacity
+                    onPress={() => navigation.navigate('EditProfile')}
+                  >
+                    <Image
+                      source={images.Edit}
+                      style={{ height: 20, width: 20 }}
+                      resizeMode="cover"
+                    />
+                  </TouchableOpacity>
+                </View>
+                {userData?.user?.name && (
+                  <View style={styles.seprator}>
+                    <Text style={styles.text2}>Name</Text>
+                    <Text style={styles.text3}>{userData?.user?.name}</Text>
+                  </View>
+                )}
+                {userData?.user?.phone_number && (
+                  <View style={styles.seprator}>
+                    <Text style={styles.text2}>Phone</Text>
+                    <Text style={styles.text3}>{userData?.user?.phone_number}</Text>
+                  </View>
+                )}
+                {userData?.user?.email && (
+                  <View style={styles.seprator}>
+                    <Text style={styles.text2}>Email</Text>
+                    <Text style={styles.text3}>{userData?.user?.email.toLowerCase()}</Text>
+                  </View>
+                )}
+                {userData?.user?.bio && (
+                  <View style={styles.seprator}>
+                    <Text style={styles.text2}>Bio</Text>
+                    <Text style={styles.text3}>{userData?.user?.bio}</Text>
+                  </View>
+                )}
               </View>
-            )}
-            {userData?.user?.email && (
-              <View style={styles.seprator}>
-                <Text style={styles.text2}>Email</Text>
-                <Text style={styles.text3}>{userData?.user?.email.toLowerCase()}</Text>
-              </View>
-            )}
-            {userData?.user?.bio && (
-              <View style={styles.seprator}>
-                <Text style={styles.text2}>Bio</Text>
-                <Text style={styles.text3}>{userData?.user?.bio}</Text>
-              </View>
-            )}
-          </View>
 
-          <View style={{ alignItems: 'center', }}>
-            <TouchableOpacity
-              activeOpacity={0.8}
-              onPress={() => deleteAccount()}
-              style={[styles.card, styles.buttonResize, { backgroundColor: colors.primary, }]}>
-              <Text style={[styles.text3, { color: colors.white }]}>
-                Account Delete
-              </Text>
+              <View style={{ alignItems: 'center', }}>
+                <TouchableOpacity
+                  activeOpacity={0.8}
+                  onPress={() => deleteAccount()}
+                  style={[styles.card, styles.buttonResize, { backgroundColor: colors.primary, }]}>
+                  <Text style={[styles.text3, { color: colors.white }]}>
+                    Account Delete
+                  </Text>
+                </TouchableOpacity>
+              </View>
+              <View style={{ alignItems: 'center', }}>
+                <TouchableOpacity
+                  activeOpacity={0.8}
+                  onPress={() => logout()}
+                  style={[styles.card, styles.buttonResize, { backgroundColor: 'red' }]}>
+                  <Text style={[styles.text3, { color: colors.white }]}>Logout</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+            <View style={{ height: 100 }} />
+          </ScrollView>
+        ) : (
+          <View style={styles.isNotLogin}>
+            <TouchableOpacity style={styles.isNotLogin}
+              onPress={() => { navigation.navigate('AuthStack') }}
+            >
+              <Image
+                source={images.Logo}
+                style={{ height: '10%', width: '20%', marginBottom: 10 }}
+                resizeMode="cover"
+              />
+              <Text style={[styles.text3]}>Sign In To Continue</Text>
             </TouchableOpacity>
           </View>
-          <View style={{ alignItems: 'center', }}>
-            <TouchableOpacity
-              activeOpacity={0.8}
-              onPress={() => logout()}
-              style={[styles.card, styles.buttonResize, { backgroundColor: 'red' }]}>
-              <Text style={[styles.text3, { color: colors.white }]}>Logout</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-        <View style={{ height: 100 }} />
-      </ScrollView>
+        )
+      }
+
+
     </View>
   );
 };
@@ -161,6 +180,13 @@ const styles = StyleSheet.create({
     width: '90%',
     alignSelf: 'center',
     marginTop: heightPercentageToDP(4),
+  },
+
+  isNotLogin: {
+    flex: 1,
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   mainWrapper: {
     width: '100%',

@@ -104,7 +104,6 @@ const App = () => {
           <Provider store={store}>
             <Loader />
             <PersistGate persistor={persistor}>
-
               <NavigationContainer
                 // linking={deepLinking}
                 theme={{ colors: { background: 'white' } }}

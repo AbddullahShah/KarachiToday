@@ -66,11 +66,11 @@ const BlogDetail = ({ ...props }) => {
 
   const getOneBlog = async () => {
     dispatch(setLoader(true));
-    console.log(endPoints.oneBlog + (data?._id || itemId), 'getBlog');
+    // console.log(endPoints.oneBlog + (data?._id || itemId), 'getBlog');
     apiRequest
       .get(endPoints.oneBlog + (data?._id || itemId), config)
       .then(res => {
-        let data = hideBlog([res.data.cleanBlogData], hideBlogs)
+        let data = isLogin ? hideBlog([res.data.cleanBlogData], hideBlogs) : [res.data.cleanBlogData];
         if (data.length != 0) {
           setoneBlog(data[0])
         }
@@ -106,12 +106,13 @@ const BlogDetail = ({ ...props }) => {
         <BlogDetailHeader
           // leftPress={() => navigation.goBack()}
           leftPress={() => {
-            (itemId) ? (
-              (isLogin) ? (navigation.goBack()) :
-                navigation.navigate('MainStack')
-            ) : (
+            // (itemId) ? (
+            //   (isLogin) ? (navigation.goBack()) :
+            //     navigation.navigate('MainStack')
+            // ) : (
+            //   navigation.goBack()
+            //   )
               navigation.goBack()
-            )
           }}
           onShare={() => { onShare() }}
           onMenu={() => { setIsModal(true) }}

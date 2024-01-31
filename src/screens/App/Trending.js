@@ -25,7 +25,7 @@ const Trending = ({ ...props }) => {
   const dispatch = useDispatch();
 
   const selectedLang = useSelector(state => state.language.selectedLang);
-  const { userData } = useSelector(state => state.user);
+  const { userData, isLogin } = useSelector(state => state.user);
   const hideBlogs = userData.user?.hideBloged
 
   const [isFetching, setIsFetching] = useState(true);
@@ -51,7 +51,7 @@ const Trending = ({ ...props }) => {
           )
           .then(res => {
             let orginalArr = res.data.data.allBlogsFinal;
-            setTrendingData(hideBlog(orginalArr, hideBlogs));
+            setTrendingData(isLogin ? hideBlog(orginalArr, hideBlogs) : orginalArr);
             // setTrendingData(res.data.data.allBlogsFinal);
             // setTotalTrendingPages(res.data.total);
             setTotalTrendingPages(res.data.totalPages);
@@ -87,7 +87,7 @@ const Trending = ({ ...props }) => {
           .then(res => {
             let orginalArr = res.data.data.allBlogsFinal;
             dispatch(setLoader(false));
-            const updated = trendingData.concat(hideBlog(orginalArr, hideBlogs));
+            const updated = trendingData.concat(isLogin ? hideBlog(orginalArr, hideBlogs) : orginalArr);
             setTrendingData(updated);
             // setTrendingData(hideBlog(orginalArr, hideBlogs));
             // setTrendingData([...trendingData, hideBlog(orginalArr, hideBlogs)]);
@@ -140,7 +140,7 @@ const Trending = ({ ...props }) => {
           leftPress={() => navigation.goBack()}
           rightPress={() => navigation.navigate('Search')}
         />
-        <ScrollView  showsVerticalScrollIndicator={false}
+        <ScrollView showsVerticalScrollIndicator={false}
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           }

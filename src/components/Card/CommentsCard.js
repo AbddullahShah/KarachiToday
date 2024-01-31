@@ -23,7 +23,7 @@ const CommentsCard = ({
   likes,
   onRefresh
 }) => {
-  const { userData } = useSelector(state => state.user);
+  const { userData, isLogin } = useSelector(state => state.user);
   const config = {
     headers: {
       'Content-Type': 'application/json',
@@ -32,18 +32,19 @@ const CommentsCard = ({
   };
 
   useEffect(() => {
-    let result = likes.includes(userData.user._id);
+    let result = isLogin && likes.includes(userData.user._id);
   }, [likes]);
 
   const likeDislike = () => {
-    apiRequest
-      .get(endPoints.likeComment + id, config)
-      .then(response => {
-        onRefresh()
-      })
-      .catch(err => {
-        console.log(err);
-      });
+    isLogin &&
+      apiRequest
+        .get(endPoints.likeComment + id, config)
+        .then(response => {
+          onRefresh()
+        })
+        .catch(err => {
+          console.log(err);
+        });
   }
 
   return (
@@ -66,18 +67,33 @@ const CommentsCard = ({
       </View>
       <Text style={styles.txt3}>{comments}</Text>
 
-      <TouchableOpacity
+      <TouchableOpacity activeOpacity={1}
         style={{ flexDirection: 'row', }}
         onPress={() => { likeDislike() }}
       >
-        <Image
-          source={likes.includes(userData.user._id) ? images.Like : images.Dislike}
-          style={{
-            width: width * 0.05, height: width * 0.05, marginTop: 10,
-            color: 'red'
-          }}
-          resizeMode="contain"
-        />
+        {
+          isLogin &&
+          <Image
+            source={likes.includes(userData.user._id) ? images.Like : images.Dislike}
+            style={{
+              width: width * 0.05, height: width * 0.05, marginTop: 10,
+              color: 'red'
+            }}
+            resizeMode="contain"
+          />
+        }
+        {
+          !isLogin &&
+          <Image
+            source={images.Dislike}
+            style={{
+              width: width * 0.05, height: width * 0.05, marginTop: 10,
+              color: 'red'
+            }}
+            resizeMode="contain"
+          />
+        }
+
         <Text style={[styles.txt1, { marginTop: 10, marginLeft: 5, color: colors.textLight }]}>{likes?.length}</Text>
       </TouchableOpacity>
 

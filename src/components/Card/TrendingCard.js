@@ -14,6 +14,7 @@ import {
 } from 'react-native';
 import React, { useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
+import { useDispatch, useSelector } from 'react-redux';
 
 const { width, height } = Dimensions.get('window');
 
@@ -27,6 +28,7 @@ import { generateLink } from '../../utils/generateShareLink';
 
 const TrendingCard = ({ id, image, title, views, onPress, date, commentCount, }) => {
   const navigation = useNavigation();
+  const { isLogin } = useSelector(state => state.user);
 
   const [isModal, setIsModal] = useState(false);
 
@@ -86,9 +88,12 @@ const TrendingCard = ({ id, image, title, views, onPress, date, commentCount, })
             <TouchableOpacity activeOpacity={0.8} onPress={() => onShare()}>
               <Image source={images.Share} style={styles.msgImg} />
             </TouchableOpacity>
-            <TouchableOpacity activeOpacity={0.8} onPress={() => handleMenu()}>
-              <Image source={images.Menu} style={styles.msgImg} />
-            </TouchableOpacity>
+            {
+              isLogin && <TouchableOpacity activeOpacity={0.8} onPress={() => handleMenu()}>
+                <Image source={images.Menu} style={styles.msgImg} />
+              </TouchableOpacity>
+            }
+
           </View>
         </View>
       </TouchableOpacity>

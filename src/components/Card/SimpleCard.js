@@ -16,6 +16,7 @@ import dynamicLinks from '@react-native-firebase/dynamic-links';
 
 const { width, height } = Dimensions.get('window');
 import { useNavigation } from '@react-navigation/native';
+import { useDispatch, useSelector } from 'react-redux';
 
 // local imports
 import colors from '../../constants/colors';
@@ -27,6 +28,7 @@ import { generateLink } from '../../utils/generateShareLink';
 
 const SimpleCard = ({ id, image, title, views, onPress, onRefresh, date, commentCount, }) => {
   const navigation = useNavigation();
+  const { isLogin } = useSelector(state => state.user);
 
   const [isModal, setIsModal] = useState(false);
 
@@ -94,9 +96,12 @@ const SimpleCard = ({ id, image, title, views, onPress, onRefresh, date, comment
             <TouchableOpacity activeOpacity={0.8} onPress={() => onShare()}>
               <Image source={images.Share} style={{ ...styles.msgImg }} />
             </TouchableOpacity>
-            <TouchableOpacity activeOpacity={0.8} onPress={() => handleMenu()}>
-              <Image source={images.Menu} style={{ ...styles.msgImg }} />
-            </TouchableOpacity>
+            {
+              isLogin &&
+              <TouchableOpacity activeOpacity={0.8} onPress={() => handleMenu()}>
+                <Image source={images.Menu} style={{ ...styles.msgImg }} />
+              </TouchableOpacity>
+            }
           </View>
         </View>
       </TouchableOpacity>

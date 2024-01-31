@@ -10,15 +10,18 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
-const {width, height} = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
 
 // local imports
 import colors from '../../constants/colors';
 import images from '../../assets/images';
-import {fontsFamily, fontsSize} from '../../constants/fonts';
+import { fontsFamily, fontsSize } from '../../constants/fonts';
 
-const BlogDetailHeader = ({leftPress, onShare, onMenu}) => {
+const BlogDetailHeader = ({ leftPress, onShare, onMenu }) => {
+  const { isLogin } = useSelector(state => state.user);
+
   return (
     <View style={styles.wrapper}>
       <TouchableOpacity activeOpacity={0.8} onPress={leftPress}>
@@ -36,13 +39,16 @@ const BlogDetailHeader = ({leftPress, onShare, onMenu}) => {
             style={styles.iconImg}
           />
         </TouchableOpacity>
-        <TouchableOpacity activeOpacity={0.8} onPress={onMenu}>
-          <Image
-            source={images.Menu}
-            resizeMode="contain"
-            style={styles.iconImg}
-          />
-        </TouchableOpacity>
+        {
+          isLogin &&
+          <TouchableOpacity activeOpacity={0.8} onPress={onMenu}>
+            <Image
+              source={images.Menu}
+              resizeMode="contain"
+              style={styles.iconImg}
+            />
+          </TouchableOpacity>
+        }
       </View>
     </View>
   );

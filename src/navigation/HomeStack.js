@@ -19,7 +19,8 @@ const HomeStack = () => {
   const { userData } = useSelector(state => state.user);
   return (
     <Stack.Navigator
-      initialRouteName={userData?.user?.name && userData?.user?.name != undefined ? 'BottomTabStack' : 'EditProfile'}
+      // initialRouteName={userData?.user?.name && userData?.user?.name != undefined ? 'BottomTabStack' : 'EditProfile'}
+      initialRouteName={BottomTabStack}
       screenOptions={{ headerShown: false }}
     >
       <Stack.Screen name="BottomTabStack" component={BottomTabStack} />

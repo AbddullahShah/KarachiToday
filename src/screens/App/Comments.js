@@ -37,7 +37,7 @@ const Comments = ({ ...props }) => {
   const dispatch = useDispatch();
 
   const selectedLang = useSelector(state => state.language.selectedLang);
-  const { userData } = useSelector(state => state.user);
+  const { userData, isLogin } = useSelector(state => state.user);
 
   const tabLineAnimatedValue = useRef(new Animated.Value(0)).current;
   const [isNewest, setIsNewest] = useState(true);
@@ -159,7 +159,10 @@ const Comments = ({ ...props }) => {
         />
       </View>
 
-      <CommentInput onPress={postComment} />
+      {
+        isLogin &&
+        <CommentInput onPress={postComment} />
+      }
     </View>
   );
 };

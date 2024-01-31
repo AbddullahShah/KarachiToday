@@ -37,7 +37,7 @@ import images from '../../assets/images';
 const Home = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
-  const { userData } = useSelector(state => state.user);
+  const { userData, isLogin } = useSelector(state => state.user);
   const hideBlogs = userData.user?.hideBloged
   const [refreshing, setRefreshing] = useState(false);
   const [newsCategories, setNewsCategories] = useState([]);
@@ -74,11 +74,12 @@ const Home = () => {
           )
           .then(res => {
             let orginalArr = res.data.data.allBlogsFinal;
-            setTrendingData(hideBlog(orginalArr, hideBlogs));
+            // setTrendingData(hideBlog(orginalArr, hideBlogs));
+            setTrendingData(isLogin ? hideBlog(orginalArr, hideBlogs) : orginalArr);
             setTotalTrendingPages(res.data.totalPages);
             setTrendingPage(1);
             dispatch(setLoader(false));
-           
+
           })
           .catch(err => {
             console.log(err);
@@ -106,9 +107,8 @@ const Home = () => {
           .then(res => {
             dispatch(setLoader(false));
             let orginalArr = res.data.data.allBlogsFinal;
-            const updated = trendingData.concat(hideBlog(orginalArr, hideBlogs));
+            const updated = trendingData.concat(isLogin ? hideBlog(orginalArr, hideBlogs) : orginalArr);
             setTrendingData(updated);
-            // setTrendingData([...trendingData, ...res.data.data.allBlogsFinal]);
             setTrendingPage(trendingPage + 1);
           })
           .catch(err => {
@@ -129,10 +129,9 @@ const Home = () => {
       .get(endPoints.getAllBlogs + '?limit=10&page=1', config)
       .then(res => {
         let orginalArr = res.data.data;
-        setAllBlogs(hideBlog(orginalArr, hideBlogs));
+        setAllBlogs(isLogin ? hideBlog(orginalArr, hideBlogs) : orginalArr);
         setTotalPages(res.data.totalPages);
         dispatch(setLoader(false));
-       
         if (id !== undefined) {
           setPage(1);
         }
@@ -157,7 +156,7 @@ const Home = () => {
         .get(URL + '?limit=10&page=' + (page + 1), config)
         .then(res => {
           let orginalArr = res.data.data;
-          const updated = allBlogs.concat(hideBlog(orginalArr, hideBlogs));
+          const updated = allBlogs.concat(isLogin ? hideBlog(orginalArr, hideBlogs) : orginalArr);
           setAllBlogs(updated);
           dispatch(setLoader(false));
           setPage(page + 1);
@@ -186,7 +185,7 @@ const Home = () => {
         result.unshift(dummyData);
         setNewsCategories(result);
         dispatch(setLoader(false));
-       
+
       })
       .catch(err => {
         console.log(err);
@@ -204,7 +203,7 @@ const Home = () => {
         .get(endPoints.getBlogsByCategory + id + '?limit=5&page=1')
         .then(res => {
           let orginalArr = res.data.data.allBlogsFinal;
-          setAllBlogs(hideBlog(orginalArr, hideBlogs));
+          setAllBlogs(isLogin ? hideBlog(orginalArr, hideBlogs) : orginalArr);
           setTotalPages(res.data.totalPages);
           dispatch(setLoader(false));
         })

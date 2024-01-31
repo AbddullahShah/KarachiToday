@@ -31,7 +31,7 @@ const RecentStories = ({ ...props }) => {
   const dispatch = useDispatch();
 
   const selectedLang = useSelector(state => state.language.selectedLang);
-  const { userData } = useSelector(state => state.user);
+  const { userData, isLogin } = useSelector(state => state.user);
   const hideBlogs = userData.user?.hideBloged
 
   const [newsCategories, setNewsCategories] = useState([]);
@@ -58,7 +58,7 @@ const RecentStories = ({ ...props }) => {
       .then(res => {
         console.log(res.data);
         let orginalArr = res.data.data;
-        setAllBlogs(hideBlog(orginalArr, hideBlogs));
+        setAllBlogs(isLogin ? hideBlog(orginalArr, hideBlogs) : orginalArr);
         // setAllBlogs(res.data.data);
         setTotalPages(res.data.totalPages);
         console.log(res.data, "setTotalPagessetTotalPages");
@@ -88,7 +88,7 @@ const RecentStories = ({ ...props }) => {
         // .get(URL + '?limit=' + (page + 4), config)
         .then(res => {
           let orginalArr = res.data.data;
-          const updated = allBlogs.concat(hideBlog(orginalArr, hideBlogs));
+          const updated = allBlogs.concat(isLogin ? hideBlog(orginalArr, hideBlogs) : orginalArr);
           setAllBlogs(updated);
           // setAllBlogs([...allBlogs, hideBlog(orginalArr, hideBlogs)]);
           // setAllBlogs([...allBlogs, ...res.data.data]);

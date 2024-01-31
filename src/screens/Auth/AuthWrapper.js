@@ -2,7 +2,7 @@ import {
   heightPercentageToDP,
   widthPercentageToDP,
 } from 'react-native-responsive-screen';
-import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Image, Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import React from 'react';
 import { useNavigation } from '@react-navigation/native';
 
@@ -39,6 +39,12 @@ const AuthWrapper = () => {
             text={'Sign in with password'}
             onPress={() => navigation.navigate('Login')}
           />
+          <TouchableOpacity
+            style={{ marginTop: 20 }}
+            onPress={() => { navigation.navigate('HomeStack') }}
+          >
+            <Text style={{ color: 'black', fontWeight: 'bold' }}>Skip</Text>
+          </TouchableOpacity>
         </View>
         <View style={{ position: 'absolute', bottom: heightPercentageToDP(8) }}>
           <Text style={styles.txt3}>
@@ -92,13 +98,9 @@ const styles = StyleSheet.create({
   },
   btn1: {
     width: '100%',
-    flexDirection: 'row',
-    alignItems: 'center',
+    // height: 200,
     justifyContent: 'center',
-    borderRadius: 100,
-    // borderWidth: 1,
-    // borderColor: colors.textLight,
-    height: heightPercentageToDP(6),
+    alignItems: 'center',
     marginTop: heightPercentageToDP(4),
     marginBottom: heightPercentageToDP(2),
   },

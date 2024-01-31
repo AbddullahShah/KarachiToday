@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, View, Dimensions, FlatList, BackHandler } from 'react-native';
+import { StyleSheet, View, Dimensions, FlatList, BackHandler, TouchableOpacity, Image, Text } from 'react-native';
 const { width, height } = Dimensions.get('window');
 
 // local imports
@@ -13,11 +13,12 @@ import apiRequest from '../../utils/apiRequest';
 import { setLoader } from '../../redux/globalSlice';
 import endPoints from '../../constants/endPoints';
 // import hideBlog from '../../utils/hideBlog';
+import { fontsFamily, fontsSize } from '../../constants/fonts';
 
 const Notification = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
-  const { userData } = useSelector(state => state.user);
+  const { userData, isLogin } = useSelector(state => state.user);
   const [myComments, setmyComments] = useState([]);
   const hideBlogs = userData.user?.hideBloged
   const config = {
@@ -73,16 +74,37 @@ const Notification = () => {
           leftPress={() => navigation.goBack()}
           rightPress={() => navigation.navigate('Profile')}
         />
-        <FlatList
-          // data={Array(10).fill(undefined)}
-          data={myComments}
-          initialNumToRender={5}
-          keyExtractor={(_, index) => index.toString()}
-          ListFooterComponent={() => <View style={{ height: height * 0.1 }} />}
-          style={{ marginTop: height * 0.02 }}
-          showsVerticalScrollIndicator={false}
-          renderItem={({ item }) => <NotificationCard item={item} />}
-        />
+
+        {
+          isLogin && <FlatList
+            // data={Array(10).fill(undefined)}
+            data={myComments}
+            initialNumToRender={5}
+            keyExtractor={(_, index) => index.toString()}
+            ListFooterComponent={() => <View style={{ height: height * 0.1 }} />}
+            style={{ marginTop: height * 0.02 }}
+            showsVerticalScrollIndicator={false}
+            renderItem={({ item }) => <NotificationCard item={item} />}
+          />
+        }
+
+        {
+          !isLogin &&
+          <View style={styles.isNotLogin}>
+            <TouchableOpacity style={styles.isNotLogin}
+              onPress={() => { navigation.navigate('AuthStack') }}
+            >
+              <Image
+                source={images.Logo}
+                style={{ height: '10%', width: '20%', marginBottom: 10 }}
+                resizeMode="cover"
+              />
+              <Text style={[styles.text3]}>Sign In To Continue</Text>
+            </TouchableOpacity>
+          </View>
+
+        }
+
       </View>
     </View>
   );
@@ -99,5 +121,16 @@ const styles = StyleSheet.create({
     flex: 1,
     width: '90%',
     alignSelf: 'center',
+  },
+  isNotLogin: {
+    flex: 1,
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  text3: {
+    fontFamily: fontsFamily.bold,
+    fontSize: fontsSize.md1,
+    color: colors.textDark,
   },
 });

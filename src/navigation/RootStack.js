@@ -16,7 +16,7 @@ const RootStack = ({ itemId, isFlag }) => {
   const { isLogin } = useSelector(state => state.user);
 
   useEffect(() => {
-    isLogin && itemId && navigation.navigate('BlogDetail', { id: itemId })
+    itemId && navigation.navigate('BlogDetail', { id: itemId })
   }, [itemId, isFlag]);
 
   return (

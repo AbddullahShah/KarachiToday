@@ -1,4 +1,4 @@
-import { StyleSheet, View, Dimensions, Text, FlatList, RefreshControl, ScrollView } from 'react-native';
+import { StyleSheet, View, Dimensions, Text, FlatList, RefreshControl, ScrollView, TouchableOpacity } from 'react-native';
 import React, { useEffect, useState, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 const { width, height } = Dimensions.get('window');
@@ -19,7 +19,7 @@ import hideBlog from '../../utils/hideBlog';
 const Bookmark = ({ ...props }) => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
-  const { userData } = useSelector(state => state.user);
+  const { userData, isLogin } = useSelector(state => state.user);
   const hideBlogs = userData.user?.hideBloged
   const [data, setData] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
@@ -63,50 +63,70 @@ const Bookmark = ({ ...props }) => {
 
   return (
     <View style={styles.container}>
-      <ScrollView style={styles.wrapper}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }
-      >
-        <BackHeader
-          isLogo
-          title={'Bookmark'}
-          rightPress={() => navigation.navigate('Search')}
-        />
-        {data.length === 0 ? (
-          <View style={styles.emptyWrapper}>
-            <Image
-              source={images.Empty}
-              style={{ width: width * 0.4, height: width * 0.4 }}
-              resizeMode="contain"
+
+      {
+        (isLogin) ? (
+          <ScrollView style={styles.wrapper}
+            refreshControl={
+              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            }
+          >
+            <BackHeader
+              isLogo
+              title={'Bookmark'}
+              rightPress={() => navigation.navigate('Search')}
             />
-            <Text style={styles.txt1}>Empty!</Text>
-            <Text style={styles.txt2}>
-              You have not saved any news to this collection.
-            </Text>
-          </View>
-        ) : (
-          <FlatList
-            data={data}
-            initialNumToRender={5}
-            keyExtractor={(_, index) => index.toString()}
-            style={{ marginTop: height * 0.02 }}
-            showsVerticalScrollIndicator={false}
-            renderItem={({ item, index }) => (
-              <SimpleCard
-                id={item?._id}
-                image={item?.featureImg}
-                title={item?.title}
-                views={item?.views}
-                commentCount={item?.commentCount}
-                date={item?.createdAt}
-                onRefresh={() => getBookmark()}
-                onPress={() => navigation.navigate('BlogDetail', { data: item })}
+            {data.length === 0 ? (
+              <View style={styles.emptyWrapper}>
+                <Image
+                  source={images.Empty}
+                  style={{ width: width * 0.4, height: width * 0.4 }}
+                  resizeMode="contain"
+                />
+                <Text style={styles.txt1}>Empty!</Text>
+                <Text style={styles.txt2}>
+                  You have not saved any news to this collection.
+                </Text>
+              </View>
+            ) : (
+              <FlatList
+                data={data}
+                initialNumToRender={5}
+                keyExtractor={(_, index) => index.toString()}
+                style={{ marginTop: height * 0.02 }}
+                showsVerticalScrollIndicator={false}
+                renderItem={({ item, index }) => (
+                  <SimpleCard
+                    id={item?._id}
+                    image={item?.featureImg}
+                    title={item?.title}
+                    views={item?.views}
+                    commentCount={item?.commentCount}
+                    date={item?.createdAt}
+                    onRefresh={() => getBookmark()}
+                    onPress={() => navigation.navigate('BlogDetail', { data: item })}
+                  />
+                )}
               />
             )}
-          />
-        )}
-      </ScrollView>
+          </ScrollView>
+
+        ) : (
+          <View style={styles.isNotLogin}>
+            <TouchableOpacity style={styles.isNotLogin}
+              onPress={() => { navigation.navigate('AuthStack') }}
+            >
+              <Image
+                source={images.Logo}
+                style={{ height: '10%', width: '20%', marginBottom: 10 }}
+                resizeMode="cover"
+              />
+              <Text style={[styles.text3]}>Sign In To Continue</Text>
+            </TouchableOpacity>
+          </View>
+        )
+      }
+
     </View >
   );
 };
@@ -122,6 +142,17 @@ const styles = StyleSheet.create({
     flex: 1,
     width: '90%',
     alignSelf: 'center',
+  },
+  isNotLogin: {
+    flex: 1,
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  text3: {
+    fontFamily: fontsFamily.bold,
+    fontSize: fontsSize.md1,
+    color: colors.textDark,
   },
   emptyWrapper: {
     flex: 1,
